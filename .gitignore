@@ -1,0 +1,32 @@
+# ビルドの中間ファイル
+.build.html
+.cover.html
+# 検品で1ページだけ撮ったもの（tools/inspect/page.sh）
+.page.png
+
+# 配布する PDF だけ追跡する。それ以外は中間物
+*.pdf
+!pyconjp2026-keynote.pdf
+
+# Python の中間物
+__pycache__/
+*.pyc
+
+# ページを画像に書き出したもの（見た目の確認用）
+render/
+
+# エディタ・OS
+.vscode/
+.DS_Store
+
+# 撮影・書き出しの中間物（完成品は assets/ と demo/ と trailer/ に置く）
+tools/capture/fr_*/
+tools/capture/g4_*
+tools/capture/g5_*
+tools/capture/snd_*.wav
+tools/capture/bgm.wav
+tools/capture/_job_tmp*
+trailer/fr_*/
+trailer/tr_*.wav
+trailer/tr_take.gif
+trailer/__pycache__/

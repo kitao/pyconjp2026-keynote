@@ -1,0 +1,3789 @@
+/* @theme pyxel */
+
+/* ============================================================
+   このファイルの読み方
+
+   1枚 1920x1080 の固定寸法の Marp テーマ。長さはすべて px で書く。
+   文言は slides.md 側、見た目の定義はこのファイルが持つ。
+
+   1. 先頭の :root が設計トークン。色・文字サイズ・余白・行間・
+      版面の値はすべてここで決める。ページ側で px を直に書かない
+   2. その後は「役割別」（見出し・本文・表・カードなど）に並ぶ
+   3. 中盤に「プロパティ別の横断セクション」がある（行間／要素間の
+      余白／日英ペア／文字サイズ）。同じセレクタが役割別の章にも
+      現れるが、これは値の管理を一箇所に集める意図。
+      セレクタ単位でまとめ直してはいけない（並び順が結果に効く。
+      Marp は素のセレクタに section 要素を挿入して詳細度を底上げするため、
+      著述時の詳細度差1個分はコンパイル後に消え、順序勝ちに化ける）
+   4. 末尾はページ固有の指定（P.19・P.20・P.34〜P.39・P.44〜P.50）
+
+   値を触ったら、全52ページを変更前後で書き出して1枚ずつ突き合わせ、
+   直したページ以外が動いていないことを確かめること。
+
+   ── 設計の段（全ページを見直して整理）──────
+   値は下の段から採る。段に無い値を書くときは、その場に理由を残すこと。
+
+   書体   --font-ja（和文）/ --font-mono（等幅）
+   文字   --fs-xs 14 / --fs-s 17 / --fs-sm 19 / --t1 20 / --fs-m 22 /
+          --fs-ml 24 / --t2 25 / --fs-l 26 / --fs-xl 29 / --t3 31 /
+          --fs-2xl 32 / --fs-3xl 34 / --fs-body 36 / --fs-h2 38 /
+          --fs-4xl 40 / --fs-4-5xl 44 / --fs-5xl 48 / --fs-6xl 52 /
+          --fs-h1 60 / --fs-7xl 66 / --fs-8xl 79 / --fs-lead 39
+          比率で決めるもの：--fs-en-ratio .70em（併記の英文）/ --fs-code-in .9em
+   太さ   --w-light 300 / --w-body 400 / --w-title 500 /
+          --w-label 600（= --w-cover / --w-strong）/ --w-bold 700
+   行間   --lh-tight 1.1 / --lh-title 1.2 / --lh-snug 1.25 / --lh-label 1.3 /
+          --lh-en 1.35 / --lh-mid 1.4 / --lh-body 1.45 / --lh-loose 1.5 /
+          --lh-code 1.55
+   併記   英文の上マージンは --pair-lead -5 / --pair-box 1 /
+          --pair-xs 2 / --pair-s 4 の4段
+   リード下 --lead-gap 27（密なページ型。ゆったりした既定は .lead の32）
+   間隔   --sp-1 8 / --sp-2 12 / --sp-3 14 / --sp-4 16 / --sp-5 18 /
+          --sp-6 22 / --sp-7 24 / --sp-8 26 / --sp-9 30 / --sp-10 34 /
+          --sp-11 44 / --sp-12 48 / --sp-13 56 / --sp-14 72
+   角丸   --r-xs 3 / --img-r 6 / --r-md 10 / --r-lg 12 / --card-r 16 / 50%
+   アイコン 座に載せる絵は「座の短辺の 2/3」。丸座も角丸の座も同じ1つの比率
+          （枠のある座は枠を含めた外形で数える）。他社ロゴだけ --brand-fit .8 を掛けて詰める。
+          線の太さは絵の側が持つ：viewBox を 200px に伸ばしたときの実効値で 10.9 に揃える
+          （64の枠なら stroke-width 3.5、24の枠なら 1.308）。CSS でアイコンごとに補正しない。
+          絵の大きさも同じで、64の枠に長辺52（四角い図形）／54（丸・斜め）で描く。
+          例外は assets/icon/note.svg だけ：連桁が右上に伸びてインクが右に偏るので、
+          外接矩形ではなく**インクの重心**を枠の中心に置いた（左へ5.0）。
+          縦長なので大きさも54ではなく52（54だと座の中で大きく見える）
+   字間   --ls-tight .01 / --ls-en .02 / --ls-label .04 / --ls-caps .08 /
+          --ls-tag .14 / --ls-num .18
+   枠     太さは --bd-w 1.5px（塗りつぶさない外枠は色が違っても同じ太さ）。
+          色は --card-bd。--card-line はその一括指定
+   面     --card-bg 札 / --pale-b 青の淡 / --pale-n 無彩の淡 /
+          --tile-bg タイル / --code-bg コードの板
+   線     --card-bd 札の枠 / --tile-bd 白タイルの枠 / --line-fig 図の線 /
+          --axis 分布図の軸 / --rule 細い区切り / --card-line カードの線（外も中も）
+   文字色 --ink 本文 / --ink2 弱い黒 / --ja2 補助 / --sub 二次 /
+          --sub2 三次 / --sub3 出典 / --cy 効かせたい語
+   章の色 --ch1 / --ch2 / --ch3（目次と章扉だけ。中身のページでは使わない）
+
+   意図のある例外（段から外してある。理由はその場に書いてある）
+     ・行送りを切る箇所（line-height: 1 / 0）と、他要素と高さを揃える px 指定
+     ・P.4/P.5（.mock）＝求人票を模すため独自の目盛り
+     ・P.34 の円環（gap 140px）、P.20 の絵幅差（gap 190px）、
+       動画2本の境目（gap 96px・P.26 のエディタ2画面は 204px）、GIF2枚（gap 64px）
+   ============================================================ */
+
+/* ============================================================
+   設計トークン。色・文字サイズ・余白・行間はすべてここで決める。
+   個々のページで直接 px を書かず、この値を参照すること。
+   :root なので、宣言の位置に関わらずファイル全体に効く。
+   ============================================================ */
+:root {
+  /* ── 日英ペアの隙間 ─────────────────────────
+     日本語とその訳文の間隔。目標は見た目12px。行の高さが要素ごとに違うので
+     ひとつの値では揃わず、置く場所ごとに実測して決めている。
+     経歴表（.bio）だけは行送りを計算で相殺しているので、この段を使わない */
+  --pair-lead: -5px;      /* リード・メッセージ・章タイトル */
+  --pair-box: 1px;        /* カードの中 */
+  /* 上の2つで拾えない要素のための2段。.en の既定は --pair-box */
+  --pair-xs: 2px;         /* 小さなラベルの中（既定より少しだけ開ける） */
+  --pair-s: 4px;          /* 小 */
+
+  /* ── 密なページ型のリード下のアキ ─────────────────
+     ゆったりしたページの既定（.lead の32px）と、釣り合いの実測から決まる
+     ページ（P.11=26・P.31=28・P.37=29 など）はこの段を使わない */
+  --lead-gap: 27px;
+
+  /* ── 表 ────────────────────────────────── */
+  /* 経歴表（.bio）の縦の段。ここだけが値を持つ。
+     行送りが字の上下に作る余白は差し引いてあるので、どの値も「目で見たアキ」。
+     だから 1段組み（P.9/P.10）と 2段組み（P.11）で同じ値が使える。
+     結びつきの強い順に狭く、必ず この順序を保つこと ↓ */
+  --bio-pair:   5px;      /* 日本語 ↔ 対になる英訳。同じ一言なので最も密 */
+  --bio-hang:  12px;      /* 主 ↔ ぶら下がり。主から来ても隣の従から来ても同じ値。
+                             段は字下げが示すので、アキで差を付けると上下が不揃いに見える */
+  --tbl-row-pad: 13px;    /* 罫 ↔ セルの中身。セルの中のどのアキよりも広いこと。
+                             ここが --bio-hang より狭いと、ぶら下がりが親より
+                             下の罫に近くなり、セルの中身が一塊に見えなくなる */
+  --bio-sub:     .94;     /* ぶら下がりの縮小率。日本語も英訳も同じ率で縮める */
+
+  /* ── 文字サイズの段階（基準16px・比率1.25）───── */
+  --t1: 20px;
+  --t2: 25px;
+  --t3: 31px;
+  --t4: 39px;
+  --t5: 49px;
+  --t6: 61px;
+  --t7: 76px;
+
+  /* ── デッキの色の出どころ（Pyxelの既定16色のうち使っている番号。
+     定義は crates/pyxel-core/src/settings.rs の DEFAULT_COLORS）──
+     この資料の色はここからしか採らない */
+  --p1: #2b335f;   /* NAVY   → 見出し・ロゴの紺（--ink-t） */
+  --p2: #7e2072;   /* PURPLE → 3章の色（--ch3） */
+  --p3: #19959c;   /* GREEN  → 2章の色（--ch2） */
+  --p5: #395c98;   /* BLUE   → 効かせどころ（--cy）・1章の色（--ch1） */
+  --p8: #d4186c;   /* RED    → 注意・強調のピンク */
+
+  /* ── 色 ────────────────────────────────── */
+  --ink: #22222b;         /* 本文の墨。白地に投影すると真っ黒は硬いので少し起こす */
+  --ink-t: var(--p1);     /* 大きな見出しの墨。ロゴと同じ紺。太い字で真っ黒だと重い */
+  --odd: #8f4a86;         /* 章タイトルの中の「奇妙な」部分 */
+  --ink2: #3c3c46;        /* やや弱い黒 */
+  --ja2: #4a4a52;         /* 補助の日本語 */
+  --cy: var(--p5);        /* 効かせたい語（白地に6.7:1） */
+  --sub: #82828e;         /* 二次情報の灰。章タイトルの副題と英文で共通。色は付けない */
+  --en-c: var(--sub);     /* 英文。墨より明らかに薄い灰にして、日本語の邪魔をしない */
+  --rule: #d0d6e3;        /* ごく細い区切り（列や項目の仕切り）。1pxで引く */
+  --rule-wait: #b8b8c2;   /* 素材待ちの仮枠。点線はこの用途だけに使う */
+  --title-rule: var(--p1);  /* 見出しの下の罫。見出しと同じ紺。罫は見出しの一部なので色を分けない。
+                               強調色（藍 var(--cy)）を罫に使うと強調が効かなくなるので分けている */
+  --box: #ececee;         /* 淡い箱の地。中立。ここを暖色にすると、上に乗る藍のラベルと
+                             寒暖が割れて喧嘩する。暖色は求人票の紙とドット絵に任せる */
+  --slide: #fff;
+
+  /* ── 座布団（カード）の形 ─────────────────
+   白地の枠に中身を入れる型。年表・用語欄・分布図・自己紹介で使う。
+   角丸は用途で3段：カード16px／画像と小さな座布団6px／丸いタイル50% */
+  --card-r: 16px;
+  /* 角丸は5段。小さな印3px／画像と小箱6px（--img-r）／タイル10px／
+     箱12px／カード16px（--card-r）／丸50%。ここから外すときは理由を残すこと */
+  --r-xs: 3px;
+  --r-md: 10px;
+  --r-lg: 12px;
+  --badge: #dce7fa;       /* アイコンの丸座。札（#f4f7fd）より一段濃い青 */
+  /* 札の枠の一括指定。色と太さは --card-bd / --bd-w と同じものを見る */
+  /* カードの線はこれ1種。外枠も、中の仕切り（見出しの下や縦の区切り）も同じ */
+  --card-line: var(--bd-w) solid var(--card-bd);
+  /* 表の罫はカードの線より一段淡い専用色。表は細い線が多数並ぶ格子なので、
+     カードと同じ濃さだと線が中身に勝つ。2pxなのは1pxが投影で消えるため */
+  --rule-tbl: #c1c9da;
+  --tbl-w: 2px;
+  --tbl-line: var(--tbl-w) solid var(--rule-tbl);
+
+  /* Xのロゴ。表紙の連絡先（.ids .x）と締めの札（.links .x）で共用する */
+  --icon-x: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%234a4a52%22%3E%3Cpath%20d%3D%22M18.244%202.25h3.308l-7.227%208.26%208.502%2011.24H16.17l-5.214-6.817L4.99%2021.75H1.68l7.73-8.835L1.254%202.25H8.08l4.713%206.231zm-1.161%2017.52h1.833L7.084%204.126H5.117z%22%2F%3E%3C%2Fsvg%3E");
+  /* 役割ごとの線と面。ここを直せばデッキ全体に効く。
+     色みのある枠（P.7の3群・P.34のクリーム・P.47の時代別）は意味を持つので別扱い */
+  /* 札・カードの枠。塗りつぶさず枠だけで区切る形なので、
+     中の区切り線（--rule 1.44）やタイルの枠（--tile-bd 1.51）より強くする。
+     白地との明度差 1.87。1枚のカードの線は外も中も --card-line の1種*/
+  --card-bd: #aebfd8;
+  /* 塗りつぶさない外枠の線の太さ。色が違っても太さは揃える。
+     点線の仮枠（--rule-wait 2px）と、求人票を模した P.4/P.5 だけが例外 */
+  --bd-w: 1.5px;
+  --tile-bd: #c6ccdb;     /* 白いタイルの枠（P.45・P.46・P.48） */
+  --line-fig: #9aa7bd;    /* 図の線と矢印。罫と同じ格に落とした色 */
+  --axis: #b9b9c2;        /* 分布図の軸（P.16・P.17） */
+  /* 淡い面。無彩と青の2系統。色みのある面（緑・紫・藤・クリーム）は
+     意味に紐づくので、ここには入れない */
+  --pale-n: #f0f1f5;      /* 無彩の淡い面。結論の帯・注記 */
+  --pale-b: #eef2fa;      /* 青の淡い面。表の強調行・図の地 */
+  --tile-bg: #eaf2fe;     /* タイルの地（アイコンの座・小さな箱） */
+  /* 札の地は白。区切りは枠(--card-bd)だけが担う。
+     ここを変えれば札を使う全ページに効く */
+  --card-bg: #fff;
+  --code-bg: #1b1b22;     /* コードの板 */
+  --sub2: #9a9aa4;        /* 三次情報の灰。--sub より一段薄い（注記・キャプションの補助） */
+  --sub3: #8a8a94;        /* --sub と --ja2 の中間。クレジット・出典 */
+  --code-fg: #e8e8ee;     /* コードの板の地の文字 */
+  /* 太さは3段。400=地の文／--w-title=500=見出し／--w-label=600=ラベル。
+     700 は「ここだけ強くする」箇所にだけ残してある */
+  --w-body: 400;
+
+  /* ── 文字の段 ─────────────────────────────
+     小さいほうから。--t1〜--t3 は既存の名前を残してある（20/25/31）*/
+  --fs-xs:  14px;   /* 図の中のラベル・英語の添え字 */
+  --fs-s:   17px;   /* 補助の説明 */
+  --fs-sm:  19px;   /* 小さな見出しの英文 */
+  --fs-m:   22px;   /* 表の値・キャプション */
+  --fs-ml:  24px;   /* 併記の英文 */
+  --fs-l:   26px;   /* カードの説明 */
+  --fs-xl:  29px;   /* 小見出し */
+  --fs-2xl: 32px;   /* 図の見出し */
+  --fs-3xl: 34px;   /* 大きめの見出し */
+  --fs-4xl: 40px;   /* 章の中の大見出し */
+  --fs-5xl: 48px;   /* 表紙級 */
+
+  /* ── 間隔の段 ─────────────────────────────
+     8の倍数を基本に、実際に使っている値で段を作る */
+  --sp-1:  8px;
+  --sp-2: 12px;
+  --sp-3: 14px;
+  --sp-4: 16px;
+  --sp-5: 18px;
+  --sp-6: 22px;
+  --sp-7: 24px;
+  --sp-8: 26px;
+  --sp-9: 30px;
+  --sp-10: 34px;
+  --sp-11: 44px;
+  --sp-12: 48px;
+  --sp-13: 56px;
+  --sp-14: 72px;
+
+  /* ── 字間 ─────────────────────────────
+     和文は詰めない。英字の小さなラベルだけ、読みやすさのために広げる */
+  --ls-tight: .01em;   /* 大きな見出し */
+  --ls-en:    .02em;   /* 英文の添え字 */
+  --ls-label: .04em;   /* 小さなラベル */
+  --ls-caps:  .08em;   /* 全角大文字風の見出し */
+  --ls-tag:   .14em;   /* 目次のラベル */
+  --ls-num:   .18em;   /* 章番号 */
+
+  /* ── 透け ─────────────────────────────── */
+  --op-mid:  .72;      /* 補助の文字 */
+
+  /* ── 章の色 ─────────────────────────────
+     目次の3行と章扉の番号だけに使う。中身のページでは使わない */
+  --ch1: var(--p5);   /* 1章。--cy と同じ藍 */
+  --ch2: var(--p3);   /* 2章。青緑 */
+  --ch3: var(--p2);   /* 3章。葡萄 */
+  /* P.46 の2群。動かす＝青、調べる＝青緑。アイコンの座とカードの枠で共通に使う */
+  --run-bd: #8fb4e0;   /* 動かす系の枠。白地との差 1.49→2.05 にして見えるようにした */
+  --run-fg: var(--cy);
+  --chk-bd: #74bcc2;   /* 調べる系の枠。同上 */
+  --chk-fg: #127f86;
+  --img-r: 6px;
+  /* 他社ロゴを自作アイコンの座に入れるときの詰め。ロゴは枠いっぱいに描かれて
+     いるが、assets/icon/ の自作アイコンは64の枠に52〜54で描いてある。
+     しかもロゴは塗りで線画より重いので、54/64 ≒ .84 より一段小さくする */
+  --brand-fit: .8;
+
+  /* ── 紙の書類を模したページ（P.4・P.5・P.28）────────
+     デッキの青系とは別の紙の色。3ページで同じ組を使うので、ここで一括して持つ */
+  --paper-bg:    #fdfbf2;   /* 紙の地 */
+  --paper-bd:    #cfc8b6;   /* 紙の枠 */
+  --paper-rule:  #cdc5b0;   /* 紙の中の罫の色。紙の地とのコントラストを表の罫と同等にする */
+  --paper-line: 2px solid var(--paper-rule);   /* 紙の中の罫。1pxは投影で消える */
+  --paper-rule2: #ddd5c2;   /* 紙の中の太い罫（見出しの下） */
+  --paper-hr:    #b9b19c;   /* 紙の中のいちばん強い罫（合計の上） */
+  --paper-ink:   #262119;   /* 紙の上の墨 */
+  --paper-ink2:  #4f4536;   /* 紙の上の墨（弱） */
+  --paper-sub:   #8a7f6a;   /* 紙の上の補助・英文 */
+
+  /* ── 色分けタイル（P.34 の .pack と P.37 の .flow が同じ組を使う）── */
+  /* アイコンの座の6色。番号は色の名前と同じ意味で、ページが変わっても対応は変えない。
+     同じ色が並ぶと絵が区別されないので、隣り合う座には別の番号を当てる */
+  --tile-c1-bd: #bcd6f7;                        /* 青。地は --tile-bg */
+  --tile-c2-bg: #fdeaf2;  --tile-c2-bd: #f6bcd4;   /* 桃 */
+  --tile-c3-bg: #efedfc;  --tile-c3-bd: #cbc4f2;   /* 藤 */
+  --tile-c4-bg: #fdeaef;  --tile-c4-bd: #f6bcc9;   /* 桜 */
+  --tile-c5-bg: #eeedfd;  --tile-c5-bd: #c8c4f4;   /* 菫 */
+  --tile-c6-bg: #e9f9ef;  --tile-c6-bd: #b4e6c6;   /* 緑 */
+
+  /* 補足の座布団（P.18・P.36。同じ型だと CSS のコメントで明示されている） */
+  --note-bg: #f2f6fc;
+
+  /* P.44 の2系統の色。slides.md の SVG（グラフの線と点）にも同じ値が入っている。
+     片方だけ変えると札とグラフで色が食い違う */
+  --g-world: #1e52c4;   /* 左：AIが書くコードの割合 */
+  --g-mine:  #127f86;   /* 右：新規開発者数 */
+
+  /* 人を表すラベル（P.45 の .hu） */
+  --hu-bg: #dbe1ec;  --hu-fg: #414b5c;
+
+  /* ── 色分けの組 ──────────────────────────
+     P.7 の手段の3群と P.37 の URL のセグメントで同じ組を使う。
+     ページごとに色を選び直すと、同じ「n番目」が別の色になって意味が濁る */
+  --seg1: #2f6ac4;   /* 青 */
+  --seg2: #1a8c93;   /* 青緑 */
+  --seg3: #4e9e68;   /* 緑 */
+  --seg4: #c07a1f;   /* 橙 */
+  --seg5: #8055bd;   /* 紫 */
+  --seg2-bg: #ede6f7;  /* 2群の淡い地（紫のアイコン座） */
+
+  /* P.47 の年表。レトロ2D →レトロ3D →これから、と色が進む */
+  --era1: #2f6ec9;   /* 2D */
+  --era2: #35b4d6;   /* 3D */
+  --era3: #58c68d;   /* これから */
+
+  /* コードの板の色（VS Code の Dark+ に合わせている） */
+  --code-fn: #dcdcaa;   /* 組み込み関数・定義した関数 */
+
+  /* 淡い灰へ抜けるグラデーションの終端（P.29 の地・P.34 の帯） */
+  --grad-end: #f2f3f6;
+
+  /* グラフの軸まわり（P.44 の左右2つのグラフで同じ組を使う）。
+     左右で別々に書くと、片方だけ直したときに必ずずれる */
+  --chart-grid: #cfd6e2;   /* 目盛りの横線 */
+  --chart-axis: #8e9bb4;   /* 軸そのもの */
+  --chart-tick: #6f7787;   /* 目盛りの数字 */
+  --chart-cat:  #5f6675;   /* 年のラベル */
+
+  /* P.33 の円環のアイコンの座。自分の行動＝青、人との関わり＝桃 */
+  --cyc-self:  #e8edf6;
+  --cyc-other: #fbe4ee;
+
+  /* ── 版面と中身の幅 ───────────────────────
+     版面は 131〜1789（幅1658）。中身はその中央に 1500px で置くのが基本。
+     two-up 型と .chron / .pack だけが版面いっぱいまで使う */
+  --body-w: 1500px;
+
+  /* ── 余白（1920x1080に対する実寸）─────────── */
+  --pad-t: 65px;
+  --pad-h: 131px;
+  /* 下の余白は、罫の下と同じ59pxがフッター（住人の頭 y=999）の上に残るよう
+     1080 − 999 + 59 から逆算した値。罫の下を変えるならここも合わせる */
+  --pad-b: 140px;
+  /* 版面の下端940は文字の基準。図が主役のページでは、図の下端がこれを数px〜十数px
+     下回ることを許している（住人の頭は999なので当たらない）。
+     ここを揃えるために図の縦横比を触らないこと。
+     実測：
+       P.22=964  section.cmds が padding-bottom を明示
+       P.35=958  年表の高さは中身で決まる（.chron のコメント参照）
+       P.40=942  VS Code の画面写真
+       P.45=950／P.46=950  札の高さをそろえるため padding-bottom は両方130px
+       P.47=950  section.horizon が padding-bottom:130px */
+
+  /* ── 文字 ──────────────────────────────── */
+  --fs-h1: 60px;          /* 見出し（日本語） */
+  --fs-h2: 38px;          /* 見出しの英題 = h1の0.64。章扉・P.2と同じ比率 */
+  --fs-body: 36px;        /* 本文 */
+  --fs-en: 25px;          /* 本文の英文 = 本文の0.70 */
+  --fs-lead: 39px;        /* リード（ページの答えを1行で言う要素）と、それに並ぶ見出しラベル。
+                             役割が決まった要素なので、本文の密度（dense）に連動して縮めない */
+
+  /* ── 太さ。大きい文字ほど細く、小さい文字ほど太く ─ */
+  --w-cover: 600;         /* 表紙・章扉の大きな文字 */
+  --w-title: 500;         /* 各ページの見出し */
+  --w-label: 600;         /* 小さなラベル・表の見出し */
+
+  /* ── 行間 ──────────────────────────────
+     見出しから地の文まで7段。ページ固有の事情でここから外すときは、
+     その理由をその場のコメントに残すこと（行送りを切る 1／0、
+     他の要素と高さを揃える px 指定は、意図のある例外として残してある）*/
+  --lh-title: 1.2;    /* ページ見出し・大きな字 */
+  --lh-snug:  1.25;   /* 小見出し・ラベル */
+  --lh-label: 1.3;    /* 箱の見出し・短い説明 */
+  --lh-en:    1.35;   /* 英文・補助 */
+  --lh-mid:   1.4;    /* 詰めた本文 */
+  --lh-body:  1.45;   /* 本文 */
+  --lh-loose: 1.5;    /* 地の文 */
+  --lh-tight: 1.1;    /* 大きな字を詰める（年号・機種名・締めの語） */
+  --lh-code:  1.55;   /* コードの板 */
+  --w-strong: 600;        /* 本文中の効かせたい語 */
+  --w-bold: 700;          /* その箇所だけ強くする（表の見出し・年・結論の帯） */
+  --w-light: 300;         /* 大きな英題。「大きい文字ほど細く」の原則で本文より細くする */
+
+  /* ── 書体 ───────────────────────────── */
+  --font-ja: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
+
+  /* ── 大きな字 ───────────────────────────
+     表紙・章扉・締めなど、ページに1つだけ置く大見出し */
+  --fs-6xl: 52px;   /* 締めの呼びかけ */
+  --fs-7xl: 66px;   /* 対比の「⇔」 */
+  --fs-8xl: 79px;   /* 締めの大見出し */
+  --fs-4-5xl: 44px; /* 自己紹介の氏名 */
+
+  /* 親に対する比。併記の英文と、本文中に混ぜるコード */
+  --fs-en-ratio: .70em;   /* 併記の英文＝和文の0.70。--fs-en(25px) と同じ考え方 */
+  --fs-code-in: .9em;     /* 本文に混ぜるコード */
+
+  /* 余白は段階を決めていない。要素ごとに実物を見て決めた実測値を直に書く。
+     行の高さが要素ごとに違うので、共通の刻みでは「近接の原則」が揃わない
+     （日英ペアの --pair-* だけは、その実測値に名前を付けたもの） */
+}
+
+/* @auto-scaling false */
+
+@import 'default';
+
+/* 既定テーマの表組みの枠を消す。枠は必要な箇所だけ自分で引く。
+   tr・thead・tbody も含め、既定テーマ（section table td … の3要素）に
+   負けない詳細度で消す。ページごとに消しに行くと必ず漏れる
+   （P.4・P.5 の縦罫や P.21 の行の上罫のような取りこぼしが出る）*/
+section table, section table thead, section table tbody,
+section table tr, section table th, section table td { border: none; background: none; }
+/* 既定テーマの縞模様も消す */
+section table tr:nth-child(odd) td, section table tr:nth-child(odd) th,
+section tbody tr:nth-child(odd) { background: none; }
+
+/* ── 見出し ────────────────────────────────
+   h1 が日本語、直後の h2 が英題。2段ぶんの高さを全ページで固定する。 */
+/* 見出しブロック（h1＋h2）の下に罫を引き、高さを固定する */
+section > h1 {
+  font-size: var(--fs-h1);
+  font-weight: var(--w-title);
+  line-height: var(--lh-title);
+  margin: 0;
+
+  flex: none;
+}
+section > h1 + h2 {
+  font-size: var(--fs-h2);
+  font-weight: var(--w-body);
+  line-height: var(--lh-snug);
+  margin: 0;              /* 上下はこの下の margin-top / margin-bottom で決める */
+  color: var(--en-c);
+  flex: none;
+  /* 和題との間と、英題から罫までの間を近い値にする。
+     min-height で高さを稼ぐと、その差分がまるごと罫の上の空白になる */
+  /* 和題と英題は「一つのタイトルの二段」。行の箱ではなく、実際の文字の
+     見え方（ラテン大文字は箱のかなり下から始まる）で間隔を合わせる */
+  /* --h2-drop: 英題を下げる量。下げた分だけ padding を減らすので罫は動かない */
+  --h2-drop: 2px;
+  margin-top: calc(-14px + var(--h2-drop));
+  padding-bottom: calc(21px - var(--h2-drop));
+  border-bottom: 1px solid var(--title-rule);
+  min-height: 48px;
+  box-sizing: content-box;
+  margin-bottom: 59px;
+}
+
+li {
+  margin: 0 0 24px;
+  line-height: var(--lh-body);
+}
+li::marker { color: var(--cy); }
+
+/* 入れ子のリストは「英文」。原文の下に薄く小さく置く。 */
+li > ul{
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+}
+li > ul > li {
+  font-size: var(--fs-en);
+  color: var(--en-c);
+  line-height: var(--lh-en);
+  margin: 0;
+}
+li > ul > li::marker { content: none; }
+
+/* 行内に添える英文。短いものはこちら。 */
+/* 英文は2種類だけ。置かれた場所の日本語に対する比で決めるので、
+   どのページでも同じ見え方になる。個別に px を書かないこと。
+     ・行内のタグ（「目的： Goal」）……… 0.62倍。同じ行に並ぶので控えめに
+     ・下に置く訳文（2行目に来るもの）… 0.70倍、上に6px
+   上マージンは行内では効かないので、まとめて指定してよい */
+.en {
+  font-size: .62em;
+  line-height: var(--lh-en);
+  color: var(--en-c);
+  font-weight: var(--w-body);
+  margin: 0 0 0 .5em;
+}
+.en.block,
+.bio .en,
+.col .en,
+.step .en,
+.pack .en,
+.issue .en,
+.tp .en,
+.agenda .a .en,
+.msg .en,
+.gd-means .gi > span .en,
+.map .lb .en,
+td .en {
+  display: block;
+  font-size: var(--fs-en-ratio);
+  margin-left: 0;
+  /* どの段にも当てはまらないものは「中」を既定にする。
+     ここを0にすると、段の指定が無い要素だけ日本語に密着する */
+  margin-top: var(--pair-box);
+}
+strong { color: var(--cy); font-weight: var(--w-strong); }
+
+/* ── リード文（見出しの直後の1行） ───────────── */
+/* 罫の下の間隔は、上端が画像のページでは59pxちょうどになるが、
+   文字で始まるページでは行の高さの余白ぶん9px下から始まって見える。
+   その分を戻して、見た目の間隔を揃える */
+/* ── 版面の中央に置く塊の幅 ───────────────────
+   版面いっぱい（1658px）に広げると左右が詰まって見えるので --body-w に収め、
+   余りを margin auto で左右へ等分する。この幅に揃えたものどうしは左端がそろう
+   （リードと、その下の2列・3枚並びが同じ線から始まる）。
+   2段組みはグリッドの列に合わせるので対象外。
+   width:100% を落とすと、margin auto を付けた flex アイテムは伸びずに
+   中身なりの幅になる（P.15 だけ 1470px になって P.50 と揃わなかった）*/
+section:not(.two-up) > .lead,
+.why, section.wrapup > .wu, .trio {
+  width: 100%; max-width: var(--body-w); margin-left: auto; margin-right: auto;
+}
+
+/* ── フッター（左下にページ番号・右下にロゴ） ──── */
+section::after {           /* Marpのページ番号 */
+  left: var(--pad-h);
+  right: auto;
+  /* 下端を右下の住人の足元（1049）に揃える。var(--sub2) は白地に2.6:1で
+     投影すると沈むので、隅の要素として無理のない5.0:1まで起こす */
+  bottom: 22px;
+  font-size: var(--fs-ml);
+  color: #6e6e79;
+  font-family: inherit;
+}
+/* ── 見出し帯の右端に Pyxel のマーク ────────────
+   罫を描く要素の中に置くと上が切れるので、ページ全体を描画面にする。
+   228×96 は1ドット12pxの整数倍。字の高さが英題（38px）と揃う。
+   底が罫の20px上に来て、罫がタイトルとマークを下で受ける形になる */
+section {
+  box-sizing: border-box;
+  width: 1920px;
+  height: 1080px;
+  padding: var(--pad-t) var(--pad-h) var(--pad-b);
+  background: var(--slide);
+  color: var(--ink);
+  font-family: var(--font-ja);
+  font-size: var(--fs-body);
+  line-height: var(--lh-loose);
+  /* 小書き仮名と長音符を行頭に落とさない。既定の normal だと
+     「リフ／ァレンス」「チームメンバ／ー」のように割れる */
+  line-break: strict;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  background-image: url("assets/pyxel/logo.png");
+  background-repeat: no-repeat;
+  /* ロゴの下端を英題のベースラインに合わせる */
+  background-position: right var(--pad-h) bottom 885px;
+  background-size: 228px 96px;
+}
+/* 罫のないページはマークだけ浮くので出さない */
+section.cover, section.section, section.hero, section.closing { background-image: none; }
+
+/* ── 章ごとの住人（右下） ────────────────────
+   ドットは1つ8px。80pxの絵を50pxで出すと1ドット5pxの整数倍になる。
+   ページ番号と同じ高さに並べて、余白に住み着いて見えるようにする */
+section.ch0::before, section.ch1::before, section.ch2::before,
+section.ch3::before, section.chend::before {
+  content: "";
+  position: absolute; right: var(--pad-h); bottom: 31px;
+  /* 3体で230px。右上のロゴ（228px）と同じ幅の塊になり、右端が上下で揃う */
+  width: 230px; height: 50px;
+  background-repeat: no-repeat;
+  background-size: 50px 50px;
+  background-position: left bottom, center bottom, right bottom;
+  image-rendering: pixelated;
+}
+/* イントロだけ2体。幅を詰めて右端をロゴに揃える（間隔は3体のときと同じ40px） */
+section.ch0::before {
+  width: 140px;
+  background-position: left bottom, right bottom;
+  background-image: url("assets/chr/player_r.png"), url("assets/chr/slime_green.png");
+}
+section.ch0.f2::before { background-image: url("assets/chr/player_2.png"), url("assets/chr/slime_green_2.png"); }
+/* 1章：章扉と同じ挟み撃ち。
+   1枚めくるごとにコマが1つ進むので、通して送ると住人が歩いて見える
+   （2コマなので、結果として1枚おきに同じ絵が出る）。f2 が2コマ目 */
+section.ch1::before { background-image: url("assets/chr/slime_green.png"), url("assets/chr/player_r.png"), url("assets/chr/slime_red.png"); }
+section.ch1.f2::before { background-image: url("assets/chr/slime_green_2.png"), url("assets/chr/player_2.png"), url("assets/chr/slime_red_2.png"); }
+/* 2章：花粉を飛ばすフラワーへ向かう */
+section.ch2::before { background-image: url("assets/chr/player_r.png"), url("assets/chr/pollen.png"), url("assets/chr/flower.png"); }
+/* 花粉だけコマを進めない。2コマで白赤→緑黄と色ごと変わるので、
+   1枚めくるたびに点滅して見える（本体でも1フレーム周期で舞う粒） */
+section.ch2.f2::before { background-image: url("assets/chr/player_2.png"), url("assets/chr/pollen.png"), url("assets/chr/flower_2.png"); }
+/* 3章：宝石は前にあるが、マミーが来るので後ろを気にしている */
+section.ch3::before { background-image: url("assets/chr/mummy_r.png"), url("assets/chr/player_r.png"), url("assets/chr/gem_red.png"); }
+/* 宝石はゲーム中も動かないタイルなので、2コマ目は無い（そのまま） */
+section.ch3.f2::before { background-image: url("assets/chr/mummy_2.png"), url("assets/chr/player_2.png"), url("assets/chr/gem_red.png"); }
+/* 締めは表紙と同じ顔ぶれ・同じ寸法で中央に並べる。
+   冒頭と締めが同じ並びで挟まれる。表紙は5体・50px・間隔104px・下から80px。
+   幅は 5*50 + 4*104 = 666px なので、中央 960 から左右に 154px 刻みで置く */
+section.chend::before {
+  left: 0; right: auto; width: 1920px; height: 50px; bottom: 80px;
+  background-position:
+    left 627px bottom, left 781px bottom, left 935px bottom,
+    left 1089px bottom, left 1243px bottom;
+  /* 締めはアニメ版。宝石はゲーム中も動かない静止タイルなのでPNGのまま */
+  background-image:
+    url("assets/chr/player.gif"), url("assets/chr/slime_green.gif"), url("assets/chr/flower.gif"),
+    url("assets/chr/mummy.gif"), url("assets/chr/gem_red.png");
+}
+
+/* フッターにロゴは出さない。左下のページ番号だけを置く */
+
+/* ── 表紙 ──────────────────────────────
+   ・揃え方は中央の1系統だけ。基準線を1本に絞る
+   ・タイトルから連絡先までを1つの塊として上下中央に置く。
+     余った高さは上下に等しく分かれ、死に領域を作らない
+   ・大きさは --t1〜--t7 の段階からしか採らない
+       和題 t7 ／ 和サブ t5 ／ 英題・名前 t3 ／ 英サブ・ローマ字 t2 ／ 連絡先 t1 */
+section.cover {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  /* 下にキャラクタの重みがあるので、文字の塊を少し上げて目で見た中央にする */
+  /* 主題1行だけで全体の約6割の重量があり、箱を中央に置くとインクが上に偏る。
+     箱の中心ではなく重心で見て落ち着く位置まで、わずかに下げる */
+  padding: 24px var(--pad-h) 0;
+}
+/* 表紙と章扉は、ページ番号も住人も出さない面にする。
+   章の区切りなので、本文の通し番号は要らない */
+section.cover::before, section.cover::after,
+section.section::after { content: none !important; display: none !important; }
+
+section.cover h1 {
+  flex: none;  font-size: var(--t7); font-weight: var(--w-cover);
+  line-height: var(--lh-title); letter-spacing: -.005em;
+  /* 末尾の「！」は全角なので右に約42pxのアキを持つ。そのぶん字面の中心が
+     左にずれて見えるので、左に padding を入れて視覚の中心を合わせる */
+  margin: 0; padding: 0 0 0 28px; border: none; min-height: 0; white-space: nowrap;
+}
+section.cover h1 + h2 {
+  flex: none; color: var(--ja2); font-size: var(--t5); font-weight: var(--w-light);
+  line-height: var(--lh-label); margin: 22px 0 0; padding: 0; border: none; min-height: 0;
+}
+section.cover .en-title {
+  flex: none; font-size: var(--t3); font-weight: var(--w-body);
+  line-height: var(--lh-mid); margin: 54px 0 0;
+}
+
+/* 英題は1行。主題と副題をダッシュでつなぐ（行頭に置かない） */
+
+/* ロゴは単独の群。上を広く、下を狭くして、下の氏名と組にならないようにする。
+   上下の余白は、絵258pxに13pxを足して箱の高さを289px相当に保つ配分
+   （上110.5・下6.5）。塊は上下中央に置かれるので、箱の高さが縮むと
+   タイトルと連絡先が内側へ寄る */
+section.cover .mark { flex: none; margin: 110.5px 0 6.5px; }
+/* 表紙のロゴは、右上と同じ228pxでは表紙の主役として小さく、
+   1.27倍の289pxでは大きすぎる。その中間の258pxを採る */
+section.cover .mark img { display: block; width: 258px; }
+
+section.cover .who {
+  flex: none; font-size: var(--t3); font-weight: var(--w-body); color: var(--ink);
+  margin: 86px 0 0; line-height: var(--lh-snug);
+}
+section.cover .who .rome { font-size: var(--t2); color: var(--sub); margin-left: 16px; }
+section.cover .ids { flex: none; font-size: var(--t2); color: var(--ja2); margin: 12px 0 0; line-height: var(--lh-mid); }
+section.cover .ids span { margin-left: 36px; }
+section.cover .ids span:first-child { margin-left: 0; }
+/* 版面のいちばん下の縁に立っている生き物。中央揃えの系統に合わせて中央に寄せる */
+section.cover .chars {
+  position: absolute; left: 0; right: 0; bottom: 80px;
+  margin: 0; padding: 0; line-height: 0; font-size: 0; text-align: center;
+}
+section.cover .chars img {
+  display: inline-block; width: 50px; height: 50px;
+  image-rendering: pixelated; vertical-align: bottom;
+}
+section.cover .chars img + img { margin-left: 104px; }
+
+/* Xとメールは小さなアイコンで示す（ラベル文字を置かない） */
+section.cover .ids span::before {
+  content: ''; display: inline-block; width: 26px; height: 26px;
+  margin-right: 12px; vertical-align: -4px;
+  background: no-repeat center / contain;
+}
+section.cover .ids .x::before    { background-image: var(--icon-x); }
+section.cover .ids .mail::before { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%234a4a52%22%20stroke-width%3D%221.308%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%222.4%22%20y%3D%225%22%20width%3D%2219.2%22%20height%3D%2214%22%20rx%3D%222.2%22%2F%3E%3Cpath%20d%3D%22m3.6%207.2%208.4%205.9%208.4-5.9%22%2F%3E%3C%2Fsvg%3E"); width: 28px; }
+
+/* ── 章扉 ────────────────────────────────
+   ・左端は他ページと同じ軸（131px）。黒地時代の追加インデントは廃止
+   ・ロゴは出さない。代わりにドット絵の住人が章タイトルの上に立つ
+   ・文字は本文ページの見出しより大きく、表紙の主題よりは小さく */
+section.section {
+  justify-content: center;
+  align-items: flex-start;
+  /* 章題だけを中央に置くと、下のキャラを含めた全体が下に寄って上が空く。
+     下の余白を厚くして、文字を上へ寄せ、塊全体で中央に見えるようにする */
+  padding: var(--pad-b) var(--pad-h) 254px;
+}
+section.section::before { content: none !important; }
+section.section h1 { flex: none;
+  font-size: var(--t6); font-weight: var(--w-cover);
+  line-height: var(--lh-snug); letter-spacing: var(--ls-tight);
+  border: none; min-height: 0; margin: 0; padding: 0; white-space: nowrap;
+}
+section.section h1 + h2 { flex: none;
+  font-size: var(--t4); font-weight: var(--w-light);
+  line-height: var(--lh-en);
+  border: none; min-height: 0; margin: 16px 0 0; padding: 0;
+}
+
+/* 章扉の住人。章題を「貼り紙」に見立て、それを見に来た体で置く。
+   人物は文字の直下に固めず、床の上に離して置く。距離が場面を作る。
+   一人ひとり位置を独立して指定できるようにする（--x が左からの位置、--y が床からの高さ）。
+   水平に並べない。高さを変えると跳ねている動きが出る。 */
+section.section .scene {
+  /* 流れから外す。塊の高さに算入されると、その分だけ章題が押し上げられる。
+     床の高さは版面に対して固定（top）。章題は章題だけで上下中央になる */
+  position: absolute; left: var(--pad-h); right: var(--pad-h); top: 604px;
+  margin: 0; padding: 0; line-height: 0; font-size: 0; height: 150px;
+}
+section.section .scene img {
+  position: absolute; bottom: var(--y, 0);
+  left: var(--x, 0);
+  width: 50px; height: 50px; image-rendering: pixelated;
+}
+
+section.section .no {
+  font-size: var(--t2);
+  font-weight: var(--w-label);
+  letter-spacing: var(--ls-num);
+  margin: 0 0 18px;
+}
+/* ── 大きな一文だけのページ ───────────────── */
+/* ── 語りかけの1行だけのページ ────────────────
+   見出しではなく「話し言葉」。章タイトルより明確に弱くする。
+   中央に置き、装飾もロゴも出さない。淡々と読ませる。 */
+section.hero {
+  justify-content: center; align-items: center; text-align: center;
+  /* 通常ページはフッターのぶん下の余白を厚くしているが、
+     このページはロゴを出さないので上下を対称に戻す */
+  padding: var(--pad-b) var(--pad-h);
+}
+section.hero::before { content: none !important; }   /* ロゴを出さない */
+section.hero h1 + h2 {
+  border: none; min-height: 0; padding: 0;
+  /* 英文は和文の0.64。見出しの0.58・本文の0.70と同じ帯に収める */
+  font-size: var(--t4); font-weight: var(--w-light);
+  margin-top: 18px; line-height: var(--lh-mid);
+}
+
+/* 2段組みの中に置く経歴表は、列が狭いのでラベル列を詰める。
+   幅は列いっぱい。狭めて中央に置くと、左端がリードとずれる */
+section.two-up .bio { max-width: none; }
+section.two-up .bio .r::before { width: 150px; }   /* 項目名の列と同じ幅 */
+/* リードと表は別の塊。罫の下（59px）と釣り合う間隔をあける */
+
+/* 2段組みの左欄は狭いので、表全体を一段小さく組む */
+/* 表の右の縦罫に文字が接しないよう、内容列に余白を残す */
+
+/* ── 2段組み（左に文・右に図） ──────────────── */
+section.two-up {
+  display: grid;
+  grid-template-columns: 1fr 0.98fr;
+  /* 最終行は中身の高さ。1fr にすると行が版面の下端まで伸び、
+     右の図が「行の中央」＝左の表より下に置かれる */
+  grid-template-rows: auto auto auto auto;
+  grid-template-areas:
+    "t  t"
+    "e  e"
+    "l  l"
+    "a  b";
+  column-gap: var(--sp-14);
+  row-gap: 0;
+  align-content: start;
+}
+/* 表と作例の2列は、あいだを一段詰めて左右に回す */
+section.two-up:has(> .bio) { column-gap: var(--sp-13); }
+/* min-height: 0 を置くと、中身が多いときにグリッドが見出しの行を潰せてしまう */
+section.two-up > h1 { grid-area: t; border-bottom: none; margin-bottom: 0; }
+section.two-up > .col-l, section.two-up > .bio { grid-area: a; align-self: start; }
+/* 表は、リードの下からフッターの上までの帯の中で上下中央に置く。
+   下端の数値を詰めるのではなく、帯の中で釣り合わせる */
+/* 表は上でそろえる。中央にすると、右の図より高いぶん上下へ均等にはみ出し、
+   下だけ版面（940）を27px超えて住人まで32pxに詰まる（右の図は93px余る）*/
+
+section.two-up > p:has(> img),
+section.two-up > .ph,
+section.two-up > .col-r {
+  grid-area: b;
+  align-self: center;
+  justify-self: center;
+  margin: 0;
+  max-height: 100%;
+}
+section.two-up > h1 + h2 {
+  grid-area: e;
+  /* 罫の位置・英題の上下は section > h1 + h2 に一本化する。
+     ここで padding を書き直すと2段組みのページだけ罫がずれる */
+  grid-column: 1 / -1;
+}
+
+/* 画像は既定でブラウザの補間にまかせる。写真・3DCG・画面写真を
+   pixelated で縮めると輪郭が階段状になり、文字は線が飛んで潰れる。
+   1ドットを四角いまま見せたいドット絵にだけ .dot を付ける */
+img { image-rendering: auto; }
+img.dot { image-rendering: pixelated; }
+/* 図を1枚だけ置いた段落。直接の子の img に限る。入れ子の img（QRなど）まで
+   拾うと、文章の段落が図の扱いになって flex に変わる */
+p:has(> img) { text-align: center; }
+section > p:has(> img) {   display: flex;
+  align-items: center; justify-content: center; margin: 0; }
+/* ── 箱に、縦横比を保って収める画像 ─────────────
+   置き場所は違っても「枠を越えず、伸び縮みさせない」という同じ約束 */
+section > p > img, section.image-main img, .cr img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+}
+
+/* ── 表 ──────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-3xl);
+  margin: 0;
+}
+th, td {
+  text-align: left;
+  padding: 19px 24px 19px 0;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+  background: none;
+}
+thead th {
+  font-size: var(--fs-xl);
+  color: var(--ja2);
+  font-weight: var(--w-label);
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 14px;
+}
+tbody tr:last-child td { border-bottom: none; }
+td:first-child, th:first-child { width: 360px; padding-right: 38px; }
+
+/* ── 順を追う3段 ─────────────────────────── */
+.steps { display: flex; flex-direction: column; gap: var(--sp-9);  min-height: 0; }
+.step { display: flex; gap: var(--sp-9); align-items: flex-start; }
+.step .n {
+  flex: none;
+  width: 65px; height: 65px;
+  border-radius: 50%;
+  background: var(--cy);
+  color: #fff;
+  font-size: var(--fs-3xl); font-weight: var(--w-bold);
+  display: flex; align-items: center; justify-content: center;
+}
+.step .w { flex: 1; }
+
+/* ── 束ねる図（pyxapp） ───────────────────── */
+/* ── P.34 pyxapp の図 ──────────────────────
+   「一式を渡す」→ package →「1つのファイル」→ play →「相手の環境で動く」。
+   箱の作りは P.36 と同じ（角丸・薄い枠）で、章の中で揃える */
+.pack {
+  /* 左右の箱は同じ幅。中央のファイルを軸にして左右対称に見せる */
+  /* 矢印の列は左右同じ幅。auto だとコマンド名の長さで中央がずれる。
+     206pxまで広げると "bundles it into one" は1行に収まるが、そのぶん
+     右の箱が狭まって「Windows・Mac・Linux 対応」が折れる。180pxに戻し、
+     英語の折り返しは .op の英語を列いっぱいに逃がして解く */
+  display: grid; grid-template-columns: 1fr 180px 1.02fr 180px 1fr;
+  align-items: stretch; gap: var(--sp-6);
+  width: 100%; flex: none; margin: 20px 0 0;
+}
+/* 白地の上に置くので、縁は #e6e8f0 では沈んで見えない */
+.pack .step-box {
+  border: var(--card-line); border-radius: var(--card-r);
+  padding: 30px 28px; display: flex; flex-direction: column; justify-content: flex-start;
+}
+.pack .step-box.before, .pack .step-box.after { background: #fff; }
+.pack .step-box.file { background: #263a63; border-color: #263a63; text-align: center; border-radius: 22px; }
+/* 見出しに番号。左右が手順の1と2であることを示す */
+.pack .bh { font-size: var(--t2); font-weight: var(--w-label); color: var(--ink-t); line-height: var(--lh-label); }
+/* 手順の丸番号。箱の見出し（.bh）とコマンド（.op）で同じ1つの部品 */
+.pack .no {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 27px; height: 27px; border-radius: 50%; background: var(--ink-t); color: #fff;
+  font-size: var(--fs-s); font-style: normal; font-weight: var(--w-label); margin-right: 10px;
+  /* line-height を切らないと、行送りのぶん数字が丸の中で上に寄る */
+  line-height: 1;
+}
+/* 丸は字より背が高いので、そのぶん持ち上げないと隣の字より下がって見える。
+   見出し（25px）とコマンド行（19px）で字の高さが違うぶん、持ち上げ量も1px違う */
+.pack .bh .no { vertical-align: 4px; }
+.pack .op .no { vertical-align: 5px; }
+/* 見出しに添える英訳。本文の添え（--t1）より一段大きく、色は英文の色 */
+.pack .bh .en, .flow .fh .ft-h .en {
+  font-size: var(--fs-sm); font-weight: var(--w-body); color: var(--en-c); margin-top: var(--pair-xs);
+}
+.pack .bh:has(.no) .en { margin-left: 37px; }
+
+.pack .step-box.file .bh .en { color: rgba(255,255,255,.72); }
+/* 正式名称は小さく添える。図の主役はファイルが1つになること */
+/* 中央はファイルそのもの。正式名称が主、拡張子は補助 */
+.pack .step-box.file .bh { color: #fff; font-size: var(--fs-xl); line-height: var(--lh-snug); }
+.pack .fn { margin-top: 10px; font-size: var(--fs-ml); color: #8fd3ff; letter-spacing: var(--ls-label); }
+/* 中身は絵で見せる。字だけの箇条書きだと、図ではなく箇条書きの列になる。
+   見出しとのあいだは実線で仕切る。デッキの罫はすべて実線で、
+   点線は素材待ちの枠だけに使っている */
+.pack .items {
+  margin: 24px 0 0; display: flex; flex-direction: column; gap: var(--sp-8);
+  border-top: var(--card-line); padding-top: 24px;
+}
+/* アイコンの座と文字を横に並べる。座の高さで中心をそろえる */
+.pack .it, section.horizon .ea .hd { display: flex; align-items: center; gap: var(--sp-3); }
+/* アイコンは角丸の座に載せる。絵が浮かず、行の頭が揃う */
+/* 中身は座の外形（枠込み48px）の2/3 */
+.pack .it img { flex: none; width: 32px; height: 32px; object-fit: contain; }
+.pack .it img.brand { transform: scale(var(--brand-fit)); }
+
+/* 座の色は中身の種類で変える。同じ色が並ぶと、絵が区別されない */
+/* ── アイコンの座 ───────────────────────
+   絵を角丸の四角に載せる。地と枠の色は番号（.cN）が決める。
+   border の一括指定を使うと border-color が字の色に戻ってしまうので、
+   ここでは太さと線種だけを指定する */
+.sq {
+  flex: none; display: flex; align-items: center; justify-content: center;
+  border-width: var(--bd-w); border-style: solid;
+}
+.pack .it .sq { width: 46px; height: 46px; border-radius: var(--r-lg); }
+/* 座の色はここだけ。番号がそのまま色（:root の --tile-cN）。
+   P.34 も P.37 も同じ番号で同じ色になる */
+.sq.c1 { background: var(--tile-bg);    border-color: var(--tile-c1-bd); }
+.sq.c2 { background: var(--tile-c2-bg); border-color: var(--tile-c2-bd); }
+.sq.c3 { background: var(--tile-c3-bg); border-color: var(--tile-c3-bd); }
+.sq.c4 { background: var(--tile-c4-bg); border-color: var(--tile-c4-bd); }
+.sq.c5 { background: var(--tile-c5-bg); border-color: var(--tile-c5-bd); }
+.sq.c6 { background: var(--tile-c6-bg); border-color: var(--tile-c6-bd); }
+.pack .it > span { font-size: var(--t1); line-height: var(--lh-snug); }
+.pack .it .en { font-size: var(--fs-s); margin-top: var(--pair-box); }
+/* 真ん中の箱は絵を大きく。ここが図の主役 */
+/* 中身は上下同じだけ空けて中央に。ロゴの下だけ空けると重心が上に寄る */
+.pack .step-box.file { align-items: center; justify-content: center; padding-top: 58px; padding-bottom: 58px; }
+.pack .big { width: 84px; height: 84px; margin-bottom: 30px; image-rendering: pixelated; }
+/* コマンド名を矢印の上に置く。何をすると次に進むのかが図の中で分かる */
+.pack .op { align-self: center; text-align: center; }
+/* 番号は「ファイルを揃える → package → play → どこでも動く」の4段階に振る。
+   箱（状態）だけに振ると、打つコマンド2つが数から漏れて 1 と 2 しか出ない。
+   中央の .pyxapp は段階ではなく②が生む物なので、番号は付けない。
+   丸は箱の①④と同じ塗り・同じ部品（.pack .no）。同じ形で並ばないと、ひと続きの順序に見えない */
+/* 打つコマンドであることが分かるよう、デッキのコードブロックと同じ黒地にする */
+/* コマンドは文字の幅ぴったりに。列いっぱいに伸ばすと黒い余白が目立つ */
+.pack .op code {
+  display: inline-block; font-size: var(--fs-sm); color: var(--code-fg);
+  background: var(--code-bg); border-radius: var(--img-r); padding: 8px 15px; white-space: nowrap;
+}
+.pack .op .ar {
+  display: block; color: var(--cy); font-size: var(--fs-4xl); line-height: var(--lh-tight);
+  margin: 14px 0 12px; font-weight: var(--w-label);
+}
+/* コマンドが「何をするか」は矢印の側に添える。箱は状態、矢印は動作。
+   ここは図の中で起きる変化そのものなので、箱の中の項目（20px）より一段大きく、
+   色も墨に上げて、通りすがりに読み落とされないようにする */
+/* 値は箱の見出し（.pack .bh）と1つずつ同じにする。①④と②③が同じ声で並ぶ */
+.pack .op .cap { display: block; font-size: var(--t2); color: var(--ink-t); font-weight: var(--w-label); line-height: var(--lh-label); margin-top: 4px; }
+/* 英語は列（180px）より少しはみ出させて1行に収める。左右の箱とのあいだは
+   gap 22px あるので、24px の張り出しでも文字同士はぶつからない */
+.pack .op .cap .en {
+  display: block; font-size: var(--fs-sm); font-weight: var(--w-body); color: var(--en-c); margin-top: var(--pair-xs);
+  width: 228px; margin-left: -24px; margin-right: -24px; white-space: nowrap;
+}
+/* ── 図の下に置く問い（P.34）─────────────────
+   図の説明ではなく「ここが問い」であることを、面の色で示す。
+   左から右へ薄く色が抜ける地にして、図と地続きに見せる */
+.issue {
+  /* 上のあき（リード→箱）と見た目で揃える。文字から測る上と、箱から測る
+     こことでは、同じ実測でもこちらが狭く見えるので4px多く取る */
+  margin-top: 53px;
+  font-size: var(--t3);
+  color: var(--ink2);
+  display: flex; align-items: stretch; overflow: hidden;
+  border-radius: var(--card-r);
+  background-image: linear-gradient(90deg,
+    color-mix(in srgb, var(--cy) 8%, #fff) 0%, var(--grad-end) 100%);
+}
+
+/* ── 年表 ──────────────────────────────── */
+.timeline { display: flex; flex-direction: column; gap: var(--sp-8);  }
+/* 年表の後ろに素材を置くページでは、余った高さを素材に回す */
+.tp { display: flex; gap: 41px; align-items: baseline; }
+.tp .y {
+  flex: none; width: 252px;
+  color: var(--cy); font-weight: var(--w-bold); font-size: var(--fs-2xl);
+  font-variant-numeric: tabular-nums;
+}
+.tp .w { flex: 1; font-size: var(--fs-2xl); }
+
+/* ── コード＋実行結果 ─────────────────────── */
+
+pre, code {
+  font-family: var(--font-mono);
+}
+section pre {
+  /* Marp 既定の 1px #d1d9e0 の枠を消す。黒い箱の周りに薄い縁が出る */
+  border: none;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  border-radius: var(--r-lg);
+  padding: 34px 36px;
+  font-size: var(--fs-xl);
+  line-height: var(--lh-code);
+  margin: 0;
+  overflow: hidden;
+}
+section pre code { font-size: inherit; background: none; color: inherit; }
+section p code{
+  background: var(--box);
+  border-radius: var(--img-r);
+  padding: 2px 10px;
+  font-size: var(--fs-code-in);
+}
+/* リードに混ぜるコード片。座布団は本文と同じものを敷き、字だけ章の色にする */
+/* 大きさは --fs-code-in ひとつ。ここだけ .94em の直値を持っていたが、
+   同じ「本文に混ぜるコード」で値を2つ持つ理由がないので寄せた*/
+section p.lead code { font-size: var(--fs-code-in); color: var(--cy); padding: 1px 9px; }
+/* 英文のほうは何も足さない。書体も座布団も変えると英語だけ賑やかになる */
+section p.lead .en code {
+  color: inherit; font-family: inherit; font-size: inherit;
+  background: none; padding: 0;
+}
+
+/* ── URLの各部と、それが何を指すかの対応（P.37）─────────
+   ラベルを URL の下に横一列で並べると、どの文字がどれを指すのか
+   分からない。文字とラベルを縦に積んだ塊を横に連ねて、真下で対応させる。
+   固定部分は灰、自分で書き換える部分は藍。色でどこを触るのかが分かる */
+.urlmap {
+  /* このページの主役。白＋枠だと3つの層が同じ面になり、目の置き場所が決まらない。
+     P.7 の1つ目のタイル・P.18 の座布団と同じ淡い青にして、主役だと分かるようにする */
+  /* 3つの層（URL帯・カード・注記）はすべて同じ幅・中央に置く。
+     版面いっぱいだとカードが2.1:1と横長になり、URLの右にも空きが残る */
+  box-sizing: border-box; width: 100%; max-width: var(--body-w); margin: 0 auto 28px;
+  background: #e8eefb; border: var(--bd-w) solid #c8d6f0; border-radius: var(--card-r);
+  padding: 26px 41px 22px;
+  display: flex; flex-wrap: wrap; align-items: flex-start;
+  font-family: var(--font-mono); font-size: var(--fs-xl); line-height: var(--lh-loose);
+}
+/* 引き出し線を URL の該当部分の幅に合わせるため、段の幅は文字（b）で決める。
+   ラベル（i）は幅0扱いにして中央からはみ出させる */
+.urlmap .sg { display: flex; flex-direction: column; align-items: center; position: relative; }
+
+/* 太さはデッキのコード・URLと同じ 400。600 はラベル用の値で、
+   長い文字列に使うとこのページだけ字面が重くなる */
+.urlmap .sg > b { display: block; font-weight: var(--w-body); color: var(--cy); }
+/* 固定部分は書き換えないところ。灰では薄すぎるので、墨に近い灰にする */
+
+/* 区切りの / は語の色を継がない。継ぐと taro/my_repo/main が繋がって見える */
+.urlmap .sg.sp > b { color: var(--sub2); padding: 0 5px; }
+/* ラベルは本文の字。inherit にすると URL のモノスペースを継承して、
+   command / user だけ字形が変わり、他ページの英語と揃わなくなる。
+   上に引き出し線と点を出して、URL のどこを指しているかを示す。
+   固定部分は長いので、線がないとラベルが中央に浮いて対応が読めない */
+.urlmap .sg > i {
+  font-style: normal; font-size: var(--fs-sm); font-weight: var(--w-title); position: relative; padding-top: 22px;
+  font-family: var(--font-ja);
+  color: var(--ja2); line-height: var(--lh-label); margin-top: 12px; text-align: center;
+}
+.urlmap .sg.fx > i { color: var(--sub); }
+/* 引き出し線と点。/ だけの塊（.sp）には出さない */
+/* 線は段の幅いっぱい。段の幅は URL の文字（b）で決まるので、
+   ラベルが文字より広くても線は該当部分だけを覆う */
+/* 線は3px・不透明。1.5pxの薄い線だと点だけが浮いて、線と点が一体に見えない。
+   左右に6pxのすき間を空けて、隣の段と繋がって見えないようにする */
+.urlmap .sg:not(.sp)::before {
+  content: ""; position: absolute; left: 6px; right: 6px;
+  top: calc(1.5em + 6px);
+  border-top: 3px solid var(--cy);
+}
+/* URL の書き換える部分は、文字・線・点・ラベルを同じ色でそろえる。
+   どの文字がどのラベルかが色でも読める。彩度はP.7の3タイルの系統に合わせ、
+   白地に置いても刺さらない濃度にする */
+.urlmap .sg.s1 { --seg: var(--seg1); }   /* コマンド */
+.urlmap .sg.s2 { --seg: var(--seg2); }   /* ユーザー */
+.urlmap .sg.s3 { --seg: var(--seg3); }   /* リポジトリ */
+.urlmap .sg.s4 { --seg: var(--seg4); }   /* ブランチ */
+.urlmap .sg.s5 { --seg: var(--seg5); }   /* パス */
+.urlmap .sg.s1 > b, .urlmap .sg.s2 > b, .urlmap .sg.s3 > b,
+.urlmap .sg.s4 > b, .urlmap .sg.s5 > b,
+.urlmap .sg.s1 > i, .urlmap .sg.s2 > i, .urlmap .sg.s3 > i,
+.urlmap .sg.s4 > i, .urlmap .sg.s5 > i { color: var(--seg); }
+.urlmap .sg.s1::before, .urlmap .sg.s2::before, .urlmap .sg.s3::before,
+.urlmap .sg.s4::before, .urlmap .sg.s5::before { border-color: var(--seg); }
+.urlmap .sg.s1 > i .en, .urlmap .sg.s2 > i .en, .urlmap .sg.s3 > i .en,
+.urlmap .sg.s4 > i .en, .urlmap .sg.s5 > i .en { color: var(--seg); opacity: var(--op-mid); }
+/* 固定部分（触らないところ）は灰。線も点も灰にして、色の付いた可変部分と分ける */
+/* 固定部分は墨。薄い灰だと読み取れない。ラベルと下線は灰のまま置いて、
+   色を変える可変部分に主役を渡す */
+.urlmap .sg.fx > b { color: var(--ink); }
+.urlmap .sg.fx::before { border-color: var(--sub); }
+.urlmap .sg.fx > i::after { background: var(--sub); }
+.urlmap .sg:not(.sp) > i::before { content: none; }
+/* 点は線の中心に乗せる。線は段（.sg）の ::before で引いていて、
+   ラベル（i）の top からは 6px 上にある。点は線の中心（-1.5px）に置く。
+   ここを i 基準で置くと、点だけ下に落ちて線と離れる */
+.urlmap .sg:not(.sp) > i::after {
+  content: ""; position: absolute; left: 50%; top: -9px; transform: translateX(-50%);
+  width: 11px; height: 11px; border-radius: 50%; background: currentColor;
+}
+.urlmap .sg > i .en { font-size: var(--fs-s); color: var(--sub); margin-top: var(--pair-xs); }
+
+/* ── P.37 の流れ ─────────────────────────────
+   P.34・P.38 と同じ型：見出し → 点線の仕切り → アイコン付きの中身。
+   アイコンは中身の側に置く。見出しの横に置くと、このページだけ型が崩れる ── */
+/* URL帯とカードの塊は版面の上下中央に置く。
+   カードを縦に伸ばすと、中身が薄いまま箱だけ大きくなって間延びする */
+.flow { box-sizing: border-box; width: 100%; max-width: var(--body-w); margin: 0 auto; display: flex; align-items: stretch; gap: var(--sp-10); }
+.flow .fb {
+  --col: 300px;
+  flex: 1 1 0; min-width: 0; text-align: left;
+  /* カードは白。地に色を付けると、上に載るアイコンの座（淡い青）や
+     灰の説明とのコントラストが落ちて、かえって読みにくくなる。
+     カードは周り（色の付いたURL帯と灰の帯）に挟まれて浮き上がる。
+     P.34 の白い箱が、紺のベタと灰の帯に挟まれて見えるのと同じ */
+  background: #fff; border: var(--card-line); border-radius: var(--card-r);
+  padding: 23px 34px 21px; display: flex; flex-direction: column;
+}
+/* 見出し。アイコンを左に添えて、何の段かを絵でも示す */
+.flow .fh {
+  font-size: var(--t2); font-weight: var(--w-label); color: var(--ink-t); line-height: var(--lh-label);
+  padding-bottom: 14px; position: relative;
+  display: flex; align-items: center; justify-content: flex-start; gap: var(--sp-3);
+  width: var(--col); margin: 0 auto;
+}
+.flow .fh::after {
+  /* 仕切り線はカードの内アキ（padding 34px）まで伸ばし、P.34・P.39〜41 の
+     カード見出しと同じ「内側いっぱいの線」にする。-11px は
+     （カード幅390.7 − 列幅300）/2 − 34 の実測。字の入り（45px）は動かさない */
+  content: ""; position: absolute; bottom: 0; left: -11px; right: -11px;
+  height: var(--bd-w); background: var(--card-bd);
+}
+.flow .fh .sq { width: 54px; height: 54px; border-radius: var(--card-r); }
+/* 座の中のアイコン。座の外形（枠込み56px）に対して2/3。
+   assets/icon/ の自作アイコンは、64の枠に「長辺52（四角い図形）／54（丸・斜め）、
+   中心32,32」で描いてある。丸は同寸だと小さく見えるぶんだけ大きい。
+   大きさは絵そのものが持つので、CSS側でアイコンごとに補正しない。
+   ★中身は座の2/3。丸座・角丸の座を問わずデッキ全体でこの1つの比率にする
+     （P.7・P.13・章扉・P.34・P.37・P.38・P.39〜41・P.42・P.46 が同じ規則）*/
+.flow .fh .sq img { width: 37px; height: 37px; object-fit: contain; }
+
+/* 見出しの字。日英を1つの塊にして、和欧間のアキ（span.aki）が
+   flex の並びに割り込まないようにする */
+.flow .fh .ft-h { min-width: 0; }
+/* 中身。P.34 の .it と同じ作り */
+/* 説明は左ぞろえ。中央だと2行に折れたとき行末が階段状にガタつく。
+   他ページのカード（P.34・P.38）も説明は左ぞろえ */
+/* 文節で折る。既定の折り返しは「ダウン／ロード」のように
+   カタカナ語の途中でも割るので、読みで引っかかる */
+.flow .ft { width: var(--col); margin: 15px auto 0; font-size: var(--t1); line-height: var(--lh-label); text-align: left;
+  word-break: auto-phrase; text-wrap: balance; }
+.flow .ft .en { font-size: var(--fs-s); margin-top: var(--pair-xs); text-wrap: balance; }
+/* 矢印は細い線。塗りの三角は箱より強く出て、流れではなく点に見える */
+.flow .fa {
+  flex: none; width: 96px; align-self: center;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--cy); font-size: var(--fs-3xl); line-height: 1;
+}
+.flow .fa::after { content: "\2192"; font-weight: var(--w-body); }
+
+/* 注記はこのページの売り。上の白い箱と面を分けて、目の置き場所を作る。
+   P.34 の「残る課題」と同じ淡い青の地。ラベルは付けない（付ける中身がない）*/
+.fnote {
+  /* 結論の帯。P.34 の「残る課題」と同じ灰の面。上の白い箱と分かれる。
+     文言は中央に置く。左ぞろえだと右に640px空いて、帯だけがら空きに見える */
+  box-sizing: border-box; width: 100%; max-width: var(--body-w); margin: 28px auto 0; font-size: var(--t3); color: var(--ink); line-height: var(--lh-mid);
+  /* 右にQRが乗るので、そのぶん右の余白を大きく取る。文言はその残りで中央になり、
+     QRに押された分だけ左に寄る（帯の全幅で中央にするとQRに近づきすぎる）*/
+  border-radius: var(--card-r); padding: 21px 179px 21px 38px; border: none; text-align: center;
+  background: var(--pale-n);
+  /* QRを右に重ねる。行に入れると文言の中央が左へずれるので、流れから外す。
+     帯の高さはQR（147px）より低いので、上下に少しはみ出して札のように載る */
+  position: relative;
+}
+.fnote .qrslot { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); display: flex; }
+
+/* QRはURLそのものなので、URLと同じ座布団の右端に置く。
+   右下だと住人とページ番号の領域に入って邪魔になる */
+/* URLは帯の全幅で中央に置く。QRは下の帯（.fnote）の右に置く */
+.urlmap { position: relative; justify-content: center; }
+/* QRは余白4モジュール込みで49モジュール四方。147px＝1モジュールちょうど3px に
+   乗せる（145px だと 2.96px で境界がにじみ、読み取りが鈍る）。
+   角丸は10px＝余白（12px）の内側なので、丸めてもコードは欠けない。
+   白地はQR自身が持っている（淡青の帯に直接置くと読めない）*/
+.qrslot img {
+  display: block; width: 147px; height: 147px; border-radius: var(--r-md);
+}
+
+/* ── 締め ──────────────────────────────── */
+section.closing { justify-content: center; align-items: center; text-align: center; }
+section.closing h1 { border: none; min-height: 0; margin: 0; padding: 0; font-size: var(--fs-8xl); font-weight: var(--w-cover); }
+section.closing h1 + h2 { border: none; min-height: 0; padding: 0; font-size: var(--fs-4xl); margin-top: 17px; }
+
+/* ══════════════════════════════════════════
+   ページ固有のかたち
+   ══════════════════════════════════════════ */
+
+/* ── 求人票（#4） ─────────────────────────── */
+.doc-h {
+  font-size: var(--fs-5xl); font-weight: var(--w-bold); text-align: center;
+  letter-spacing: .22em; margin-bottom: 24px;
+}
+.doc-h .en { letter-spacing: var(--ls-caps); }
+/* 幅・色・太さは「表の中の日英ペア」の節でまとめて指定する */
+section.mock tr:has(th:empty) th, section.mock tr:has(th:empty) td { border-top: none; }
+/* 字間は日本語にだけ掛ける。英語まで掛かると「P a y」になる。
+   英語は他の項目と同じく日本語の下に薄く小さく置く */
+
+/* 求人票は紙らしい幅に。版面いっぱいに広げると表に見える */
+
+/* ── ゲームデザインの定義（#6） ──────────────── */
+/* 組と組のあいだ。見出しとその箱の間より明らかに広くする */
+.gd {
+  display: flex; flex-direction: column; gap: 78px;  min-height: 0;
+  /* 目的と手段をひとつの塊として中央に置く。左右対称に余らせる */
+  width: 100%; max-width: var(--body-w); margin-left: auto; margin-right: auto;
+}
+/* 見出しは自分が束ねる箱と一つの組。組の外（56px）より狭く、かつ
+   束ねている箱の中身（34px）より大きくする。
+   親なので、この塊の中で一番濃い。太さはトークン（600）から採る */
+.gd .lb { display: block; font-size: var(--fs-lead); color: var(--ink); font-weight: var(--w-label); margin-bottom: 14px; }
+/* 目的の2つは「相反する2つの力」。同じ色で並べると、
+   ただの並列に見えて綱引きの関係が伝わらない。
+   自由＝冷たい藍、報酬＝暖かい山吹で対にし、あいだに ↔ を置く */
+.gd-goal { display: grid; grid-template-columns: 1fr auto 1fr; column-gap: var(--sp-6); row-gap: 0; align-items: center;
+ }
+.gd-goal .lb, .gd-means .lb { grid-column: 1 / -1; }
+/* ベタ塗りではなく、淡い地に色の枠。塗りつぶすと字が地に乗ってしまい、
+   2つの色が主張し合う。枠なら「対の2枚」であることは保ったまま字が浮く */
+/* 「目的」の2枚と「手段」の3枚は、同じ淡い地のカードが2群並ぶ形。
+   中身の量は違うが、内側の余白は同じにする（違うと2群が別の作りに見える）*/
+.gd-goal .b, .gd-means .g { padding: var(--sp-8) var(--sp-9); }
+
+.gd-goal .b {
+  border-radius: var(--card-r); text-align: left;
+  display: flex; align-items: center; gap: var(--sp-13);
+  /* 38pxに600は重い。大きい字ほど細く（--w-title=500） */
+  font-weight: var(--w-title);
+}
+.gd-goal .b-free   { background: #e3e7fe; border: var(--bd-w) solid #b5c0f8; color: var(--ink); }
+.gd-goal .b-reward { background: #fef3d9; border: var(--bd-w) solid #f6c783; color: var(--ink); }
+.gd-goal .b .tx { min-width: 0; }
+/* アイコンは丸い座に載せる。座は地よりさらに淡くして、絵だけが色を持つ */
+.gd-goal .b .ic {
+  flex: none; width: 125px; height: 125px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+/* 絵は座の直径の2/3（丸座共通） */
+.gd-goal .b .ic svg { width: 83px; height: 83px; }
+.gd-goal .b-free   .ic { background: #f0f4fe; color: #4a5fd0; }
+.gd-goal .b-reward .ic { background: #fffaf0; color: #d98b1c; }
+/* 英文は白地の上ならデッキ共通の --en-c */
+.gd-goal .b .en { color: var(--en-c); }
+.gd-goal .vs { font-size: var(--fs-7xl); color: var(--ja2); text-align: center; line-height: 1; }
+.gd-means { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: var(--sp-8); row-gap: 0; }
+/* 3つの手段は並列だが、灰一色だと3枚が1枚の帯に見える。
+   地はほぼ白のまま、わずかに色相だけ変えて separate する。
+   枠は同じ色相のタイル枠トークンから採る（薄い枠だと白地で輪郭が消える）。
+   目的の箱（#b5c0f8 等）より一段淡く、目的＞手段の序列は保つ */
+.gd-means .g { background: var(--box); border: var(--bd-w) solid transparent;
+  border-radius: var(--card-r); }
+.gd-means .g:nth-of-type(1) { background: #f4f7fe; border-color: var(--tile-c1-bd); }
+.gd-means .g:nth-of-type(2) { background: #f7f6fc; border-color: var(--tile-c3-bd); }
+.gd-means .g:nth-of-type(3) { background: #f4f8f4; border-color: var(--tile-c6-bd); }
+/* 「手段：」の子。親より濃くも太くもしない */
+.gd-means .gh {
+  font-size: var(--fs-2xl); font-weight: var(--w-label); color: var(--ink2); margin-bottom: 14px;
+  display: flex; align-items: center; gap: var(--sp-6);
+}
+.gd-means .gh .ic {
+  flex: none; width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.gd-means .gh .ic svg { width: 48px; height: 48px; }
+.gd-means .gh .tx { min-width: 0; }
+.gd-means .g:nth-of-type(1) .gh .ic { background: #e3eafb; color: #4a73c9; }
+.gd-means .g:nth-of-type(2) .gh .ic { background: var(--seg2-bg); color: var(--seg5); }
+.gd-means .g:nth-of-type(3) .gh .ic { background: #e2f0e6; color: var(--seg3); }
+/* フィードバックの吹き出しは2つ重なる。手前を丸の地色で塗りつぶし、
+   奥の輪郭を隠す。塗らないと奥の線が手前を突き抜けて絵が壊れる。
+   地色は1つ上の background と同じ値。片方だけ変えると隠れなくなる */
+.gd-means .g:nth-of-type(2) .gh .ic .knock { fill: var(--seg2-bg); }
+/* 3語は等幅。中身の長さで幅が変わると、箱の並びががたつく */
+.gd-means .gi { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-2); }
+/* 見出しの英語は短いので、日本語と地続きに同じ行へ置く。
+   前を四分より広く空け、太らせない */
+.gd .lb .en, .agenda-h .en { margin-left: .5em; font-weight: var(--w-body); }
+
+/* 枠を付けるのはチップ本体だけ。中の英語（.en）に付けると枠が二重になる */
+.gd-means .gi > span {
+  background: #fff;
+  border: var(--bd-w) solid var(--tile-bd);
+  border-radius: var(--img-r);
+  padding: 7px 17px;
+  font-size: var(--fs-xl);
+  text-align: center;
+}
+
+/* ── アジェンダ（#12） ───────────────────── */
+/* 本タイトルを掲げるページ（アジェンダ）。副題まで1行に収めるため和題を48pxに。
+   行の高さは 60×1.2＝72px 相当を保ち、罫の位置を他ページ（211）から動かさない */
+section:has(.agenda) > h1 { font-size: var(--fs-5xl); line-height: 1.575; }
+section > h1 .t2 {
+  margin-left: .7em;
+  font-size: var(--fs-2xl); font-weight: var(--w-light); color: var(--ja2);
+}
+/* アジェンダの見出し。P.7の「目的：／手段：」と同じ体裁。
+   上端が文字なので、行の高さの余白ぶんを戻して罫からの間隔を揃える */
+/* 章は3つ。1つずつを帯にして版面の幅と高さを使い切る */
+/* 章番号は章扉の CHAPTER 表記と同じ体裁 */
+.agenda .a b {
+  flex: none; font-size: var(--t3); font-weight: var(--w-label);
+  letter-spacing: var(--ls-tag); white-space: nowrap;
+}
+
+/* ── 自己紹介 ──────────────────────────────
+   分類名（過去・現在・個人活動・著書）で束ねる。枠は引かず、
+   分類ごとの細い横罫だけで区切る。太字は分類名だけに使う */
+/* 上端が文字なので、行の高さの余白ぶんを戻して罫からの間隔を59pxに揃える */
+.who {
+  /* 表と左端を揃える。名前と表で一つの塊にする */
+  /* 名前の上端は次ページ（P.11）のリードと同じ位置に置く。
+     表の位置は動かさないよう、上を詰めた分だけ名前の下を広げる */
+  flex: none; width: 100%; max-width: var(--body-w); margin: -8px auto 36px;
+  /* ページ見出し（60px）より小さくする。ページ内の見出しが
+     ページ見出しを上回ってはいけない */
+  font-size: var(--fs-4-5xl); font-weight: var(--w-title);
+  line-height: var(--lh-title);
+}
+.who .rd { font-size: var(--t3); font-weight: var(--w-body); color: var(--ja2); margin-left: 20px; }
+.who .en { font-size: var(--t3); color: var(--en-c); margin-left: 20px; }
+
+/* 横罫が行き止まりにならないよう、左右に縦罫を立てて表を閉じる */
+.bio {
+  /* 表紙を重ねるための基準 */
+  position: relative;
+  /* 名前とセットで中央に置く。片側だけ余ると「届いていない」に見えるが、
+     左右対称に余ると「意図して詰めた」に見える。
+     折り返しの限界は1440px（それ以下で英文の肩書きが折り返す） */
+  width: 100%; max-width: var(--body-w); margin-left: auto; margin-right: auto;
+  flex: none; display: flex; flex-direction: column;
+  border-left: var(--tbl-line); border-right: var(--tbl-line);
+}
+/* 分類名の列は薄く塗って、4つの分類があることを一目で示す。
+   列は語の幅に詰める。広いまま塗ると、帯の右半分が空白の色になる */
+.bio .r::before {
+  /* 帯の左端は版面（131）に揃える。外にはみ出すと名前だけ右にずれて見える。
+     縦罫もこの帯の右端として引く。セル（.k）に付けると、行の上下パディングの
+     ぶんだけ途切れて、行ごとのぶつ切りになる。帯は行の高さいっぱいなので通る。
+     幅は項目名の列（grid-template-columns の1つめ）と必ず同じにすること */
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+  box-sizing: border-box;
+  width: 206px; background: var(--box);
+  border-right: var(--tbl-line);
+}
+/* 2枚目の自己紹介で、Pyxelの行だけを立てる。
+   面は塗らず、文言の色だけで示す（P.5の注記と同じ赤） */
+/* ══════════════════════════════════════════
+   経歴表（.bio）のセルの中 ── 縦方向はここが唯一の指定。
+   セルには2階層ある。
+     主 … その行の値（墨・基準の大きさ）
+     従 … 主にぶら下がる補足。.cr＝作品名 / .ymean＝言い換え・例示
+   日本語と英訳はどちらの階層でも対になる。
+   段は「大きさ・色・左の位置・上のアキ」だけで示し、同じ関係には同じ値を使う。
+   ══════════════════════════════════════════ */
+
+/* 字の大きさは行が持ち、中身は全部そこから引く。
+   1段組み（P.9/P.10）と 2段組み（P.11）の違いは この2行だけ */
+.bio .r                { --bio-ja: var(--fs-l); --bio-en: var(--fs-sm); }
+section.two-up .bio .r { --bio-ja: var(--fs-m); --bio-en: var(--fs-s);  }
+
+/* 行送りが字の上下に作る余白の、片側ぶん（の割合）。
+   アキから これ×字の大きさ を引くと、残りが目で見たアキになる。
+   引く相手は「上の行の字」と「下の行の字」の両方 */
+.bio .r { --half: calc((var(--lh-en) - 1) * .5); }
+
+.bio .v                { font-size: var(--bio-ja); }
+.bio .v > .en          { font-size: var(--bio-en); }
+/* ぶら下がり。主を そのまま --bio-sub 倍に縮めるので、
+   日本語と英訳の大きさの比は 主と同じまま保たれる */
+.bio .v .cr > .en,
+.bio .v .ymean > .en   { font-size: calc(var(--bio-en) * var(--bio-sub)); }
+
+/* 対になる英訳 */
+.bio .v > .en {
+  display: block;
+  margin-top: calc(var(--bio-pair) - var(--half) * (var(--bio-ja) + var(--bio-en)));
+}
+.bio .v .cr > .en,
+.bio .v .ymean > .en {
+  display: block;
+  margin-top: calc(var(--bio-pair)
+                   - var(--half) * var(--bio-sub) * (var(--bio-ja) + var(--bio-en)));
+}
+/* ぶら下がり。主より一段小さく・薄く・右へ寄せる */
+.bio .cr, .bio .v .ymean {
+  display: block;
+  font-size: calc(var(--bio-ja) * var(--bio-sub));
+  color: var(--ja2);
+  /* 字下げで「主にぶら下がる項目」だと示す。記号（・や -）は面が汚れるので付けない */
+  padding-left: 1.1em;
+  /* 上は主の英訳（--bio-en）か、隣のぶら下がりの英訳。
+     大きさの差は0.06倍ぶんで0.2px未満なので、同じ式でよい */
+  margin-top: calc(var(--bio-hang)
+                   - var(--half) * (var(--bio-en) + var(--bio-sub) * var(--bio-ja)));
+}
+/* 鉤括弧のぶら下げ（.hang）は継いだ先で悪さをする。
+   括弧で始まらない補足まで左へ出て、同じ段の英訳とそろわなくなる */
+.bio .v.hang > .ymean:not(.hang) { text-indent: 0; }
+
+.bio .r.hl .v { color: var(--p8); }
+.bio .r.hl .v .en { color: var(--p8); opacity: .78; }
+.bio .r:last-child { border-bottom: var(--tbl-line); }
+/* ラベルは控えめに。主役は右の主行。塗った面の縁に文字を接しさせない。
+   項目名と値のあいだは、灰の地だけでなく縦罫でも分ける。
+   横罫と同じ太さ・同じ色にして、表として四方が閉じる（P.4・P.5 の求人票と同じ扱い）*/
+.bio .k {
+  padding-left: 24px;
+  /* 地の上に載るので、太さは落として色は墨まで上げる。
+     600の灰だと地に沈んで「ぼてっと」見える */
+  font-weight: var(--w-title); color: var(--ink);
+}
+/* 主行が表の中で一番大きい。補足（26px）との段差をはっきりさせる */
+.bio .v {  color: var(--ink);  }
+/* 作品ごとの役割。作品名を太らせず色で立て、役割を続けて書く */
+.bio .cr b { color: var(--ink); font-weight: var(--w-body); margin-right: .55em; }
+
+/* ── 図を2枚／3枚ならべる ─────────────────── */
+/* 動画を2本並べるページは、境目をはっきりさせるため間隔を広く取る */
+.pair.gap-wide { gap: 96px; }
+/* 絵の実寸に合わせて図を詰める。箱を半分ずつに割ると、絵が箱より細いときに
+   その余白まで間隔に足されて、2枚が離れて見える */
+.pair.fit { gap: 60px; }
+.pair.fit figure { flex: 0 1 auto; }
+.pair.fit figure > img { width: auto; max-width: 100%; }
+/* ── 図の並び（画像・動画・素材待ちの仮枠を同じ規則で組む） ──
+   figure が箱、中身はその箱に収まる。縦横比は object-fit / aspect-ratio が守る */
+.pair figure, .trio figure {
+  position: relative; margin: 0;
+  flex: 1 1 0; min-width: 0; height: 100%;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.pair figure > img, .pair figure > video,
+.trio figure > img, .trio figure > video {
+  flex: 1 1 auto; min-height: 0;
+  width: 100%; height: 100%; object-fit: contain;
+}
+/* 動画には controls を付ける。バーが無いと、あとでスライドだけ見た人が動画だと
+   気づかない。止まっているあいだは画面の下端に重なるが、
+   カーソルを外せば消えるので許容する */
+.pair figcaption, .trio figcaption {
+  position: static; flex: none; margin-top: 16px;
+}
+figcaption {  color: var(--ja2); text-align: center; }
+/* 作品名の下に、それが何かを添える */
+/* 作品名とその説明は1行に続けて置く */
+figcaption .sub { display: inline; font-size: var(--fs-m); color: var(--ja2); margin-left: .7em; }
+
+/* ── 作品をしきつめた壁（P.31・1章の締め）───────────
+   数そのものを見せる画なので、版面いっぱいに広げて下端まで使う */
+.wall {
+  flex: 1 1 auto; min-height: 0; margin: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.wall video { max-width: 100%; max-height: 100%; width: auto; height: auto; border-radius: var(--img-r); }
+/* 壁は版面の高さで頭打ちになる。リードとの間を少し詰めて、その分を画にまわす */
+/* 壁は数を見せる画なので、このページだけ版面の下端を住人の手前まで下げる */
+section:has(.wall) { padding-bottom: 120px; }
+/* リードの左端は壁に合わせる。壁は版面の高さいっぱいに伸ばした結果、
+   幅が版面より少し狭くなって中央に寄るので、リードもその分だけ右へ */
+section:has(.wall) > .lead { margin-bottom: 28px; padding-left: 34px; }
+/* 作品名の下に、それが何をするものかを数行そえる（P.31）。
+   作品名は中央ぞろえのまま、説明は折り返すので左ぞろえにする */
+.trio figure > .w {
+  flex: none; margin-top: 10px;
+  font-size: var(--fs-ml); line-height: var(--lh-body); color: var(--ink); text-align: left;
+}
+.trio figure > .w .en { font-size: var(--fs-sm); }
+/* 画面のスクショを3枚ならべるときは、高さでそろえる。
+   縦横比が違うと（16:9 と 16:10 など）幅でそろえたときに高さがばらつく */
+.trio.shots figure > img, .trio.shots figure > video {
+  flex: none; align-self: center;
+  height: var(--shot-h, 261px); width: auto; max-width: 100%;
+}
+/* 画の高さは列の幅で頭打ちになるので、余る縦は要素の間隔にまわす。
+   作品名は画と解説にはさまれるので、上下の空きを見た目でそろえる。
+   字の大きさが違うぶん行の余白も違うので、指定値は 24px と 23px でずれる */
+/* 作品名は解説より一段強く。ただし © の作者名は地のまま（継承させない） */
+
+/* 絵の幅は縦横比で決まるので、列いっぱいとは限らない。
+   3枚のうち中央だけ 16:10 で、高さを揃えると列より46px狭く、中央に置かれる。
+   作品名と説明を列幅のままにすると、この列だけ文字が絵より左に出る。
+   絵と同じ幅の箱に入れて中央に置き、文字の左端を絵の左端にそろえる。
+   --ar は絵の縦横比（slides.md 側の figure に書く）*/
+/* 作品名は解説より一段強く。ただし © の作者名は地のまま（継承させない）。
+   色はピンク。藍（--cy）はリンクとラベルの色で見出しの紺とも近く、
+   ページ全体で見ると題や本文の層に沈む。作品名はこのページの主語なので、
+   絵のすぐ下で見つかる強さが要る。© の作者名は灰に置いて、名前と作者を分ける */
+.trio.shots figcaption { margin-top: 24px; font-weight: var(--w-label); color: var(--p8); }
+.trio.shots figcaption .sub { font-weight: var(--w-body); color: var(--ja2); }
+.trio.shots figure > .w { margin-top: 23px; }
+/* 説明の幅は3列とも列幅でそろえる。絵の幅（縦横比で決まる）に合わせると、
+   狭い列だけ行数が増えて3列の高さがばらつく。文字の横幅がそろっていることを優先する */
+
+/* ── コード＋実行結果 ─────────────────────── */
+/* 中身の幅はデッキ共通の1500px（.who / .bio / P.21の表 / .pair と同じ）。
+   版面いっぱい（1658）にすると、上のリード（1500で中央）と左端がずれる */
+/* align-content:start は、行が版面の高さまで引き伸ばされるのを止めるためのもの。
+   行の高さが中身なり（＝コードと画面の高い方）になるので、下の中央ぞろえが
+   「コードの高さに対しての中央」として効く*/
+.cr { display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: start;
+      align-content: start;
+      width: 100%; max-width: var(--body-w); margin-left: auto; margin-right: auto; }
+/* 中身は版面の上端（268）から始める。中央寄せだと、コードが短いページや
+   リードの無いページで上が空き、他ページと基準線が揃わない */
+.cr > div { min-width: 0; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+
+/* ── 順を追う段（#15） ───────────────────── */
+/* 章の結論の帯。P.37 の結論の帯と同じ地・同じ角丸にする。
+   文字は36pxのまま置く。ここは章の締めなので、注記より強くていい */
+.goal {
+  margin: 31px 0 0; font-size: var(--fs-body); font-weight: var(--w-bold);
+  background: var(--pale-n); border-radius: var(--card-r); padding: 26px 31px;
+}
+/* 日本語のすぐ下に行として置き、太らせない。値の大きさは段（上の節）が決める */
+.goal .en, .map .lb .en, section.horizon .en { display: block; font-weight: var(--w-body); }
+
+/* ── Pyxelを作った理由（#14）──────────────
+   左半分に1つ目の動機、右半分に2つ目。それぞれ縦に「動機 →▼→ そこから出た判断」。
+   2つがそろったところで、下段の帯に合流する */
+.why .c { position: relative; display: flex; flex-direction: column; padding-left: 32px; }
+/* ── 群の頭に立てる色の柱 ──────────────────
+   「ここからひとかたまり」を示す部品。使う場所が増えたらここに足す。
+   P.15 の動機の列／P.39・P.40 の札／P.44 の主張／
+   P.48 のノード見出し／P.50 の群。
+   棒は border ではなく擬似要素で引く。border-left だと行送りの余りまで
+   伸びて、上は字に接しているのに下だけ余る（上下が揃わない） */
+.why .c::before,
+section.demo > .col-l > .nt::before,
+section.aipage .vs .hd::before,
+section.nodetree .th::before,
+section.wrapup .grp::before {
+  content: ""; position: absolute; left: 0; top: 4px; bottom: 4px;
+  width: 6px; border-radius: var(--r-xs); background: var(--cy);
+}
+/* 列の見出し。本文より大きくして、列の頭であることを先に読ませる */
+.why .c > b {
+  margin-top: -6px; margin-bottom: 26px; padding-bottom: 15px; border-bottom: var(--card-line);
+  color: var(--cy); font-size: var(--fs-3xl); font-weight: var(--w-label); letter-spacing: var(--ls-caps);
+}
+.why .c > b .en {
+  margin-left: .7em; font-size: var(--fs-m); font-weight: var(--w-body); letter-spacing: var(--ls-en);
+}
+.why .c .a, .why .c .b {   color: var(--ink); }
+/* 動機と、そこから出た判断のあいだの矢印。
+   色は図の線と同じ var(--line-fig)（P.48 のツリー線）。--title-rule の濃紺だと、
+   面で塗る記号なので本文より重く見えて、先に目が行ってしまう。
+   矢印は「導く」しるしであって内容ではないので、罫線と同じ格に落とす */
+.why .c .ar, section.wrapup .grp .ar {
+  align-self: center; margin: 46px 0; width: 0; height: 0;
+  border-left: 14px solid transparent; border-right: 14px solid transparent;
+  border-top: 18px solid var(--line-fig);
+}
+/* 結論。ページで唯一の濃い面にして、視線の着地点にする */
+/* 結論。地は淡く、文字を濃紺にして落ち着かせる。
+   ページで唯一の色の面なので、これだけで着地点になる */
+.why .goal {
+  grid-column: 1 / -1; align-self: end;
+  position: relative; margin: 0; text-align: center;
+  background: var(--pale-n); font-weight: var(--w-title);   /* 文字色は下の「まとめ」の節で --ink */
+   padding: 30px 36px;
+}
+.why .goal .en { color: var(--en-c); font-weight: var(--w-body); }
+/* 左右それぞれの列から帯に降りる矢印。各列の中央に立てる。
+   P.15（.why）と P.50（section.wrapup）は同じ型なので同じ値を使う */
+.why .goal::before, .why .goal::after,
+section.wrapup .concl::before, section.wrapup .concl::after {
+  content: ""; position: absolute; top: -40px; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 15px solid transparent; border-right: 15px solid transparent;
+  border-top: 18px solid var(--line-fig);   /* 列の中の矢印と同じ色 */
+}
+/* 列の中の矢印と縦一直線に並ぶ位置（列の内側の中央） */
+.why .goal::before, section.wrapup .concl::before { left: 24.88%; }
+.why .goal::after,  section.wrapup .concl::after  { left: 77.05%; }
+
+/* ── 2軸の分類図（欲しかった環境が無かった）──────
+   横：複雑⇔手軽　縦：Lua/その他⇔Python。右上が空いていたことを示す */
+.map {
+  flex: 1 1 auto; min-height: 0; position: relative;
+  margin: 26px 0 0; padding: 54px 176px 58px;
+}
+/* 軸の名前 */
+.map .lb {
+  position: absolute; font-size: var(--fs-l); font-weight: var(--w-label); color: var(--ja2);
+  white-space: nowrap; text-align: center;
+}
+/* 軸の代償を添える行。主の語より軽くして、主従を保つ */
+.map .lb .q { display: block; font-size: var(--fs-m); font-weight: var(--w-body); margin-top: 1px; }
+/* 上下の軸の例示。括弧の中は補足なので、左右と同じく一段小さく */
+.map .lb .ex { font-size: var(--fs-m); font-weight: var(--w-body); }
+.map .lb.t { top: 0; left: 50%; transform: translateX(-50%); }
+.map .lb.b { bottom: 0; left: 50%; transform: translateX(-50%); }
+/* 左右は外側に貼りつけず、図の端から測る。
+   ラベルの幅が左右で違っても、図とのすき間が同じになる */
+.map .lb.l { top: 50%; transform: translateY(-50%);
+             right: calc(100% - var(--map-pad-x) + var(--map-gap-x)); }
+.map .lb.r { top: 50%; transform: translateY(-50%);
+             left:  calc(100% - var(--map-pad-x) + var(--map-gap-x)); }
+/* 各エンジンの点 */
+/* 座標に合わせるのは「点」。ラベルは点からぶら下げる。
+   要素全体を中央合わせにすると、注記の長い点ほど上にずれてしまう */
+.map .p {
+  position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%);
+  font-size: var(--fs-xl); color: var(--ja2); white-space: nowrap; text-align: center;
+}
+
+/* 空いていた区画。ここには当時なにも無かった */
+.map .gap {
+  position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%);
+  width: 300px; height: 220px; border: 3px dashed var(--p8); border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--p8); text-align: center;
+}
+.map .gap b { font-size: var(--fs-2xl); font-weight: var(--w-label); line-height: var(--lh-mid); }
+.map .gap .en { font-size: var(--fs-m); font-weight: var(--w-body); margin-top: var(--pair-xs); }
+
+/* 呼びかけ。墨だと塊が重いので、藍にして太らせない */
+section.closing .msg { margin: 34px 0 0; font-size: var(--fs-6xl); font-weight: var(--w-title);
+  color: var(--cy); line-height: var(--lh-loose); }
+/* 呼びかけは字が大きいので、併記の段より広く取る（例外） */
+section.closing .msg .en { display: block; margin-top: 16px; font-size: var(--fs-ml);
+  color: var(--sub); font-weight: var(--w-body); line-height: var(--lh-mid); }
+/* リンクは1件ずつ札にする。丸いアイコン → 区切り線 → 宛先 → 説明 の順 */
+section.closing .links { display: flex; flex-direction: column; gap: var(--sp-5);
+  /* 幅は中身に必要なぶんだけ。1100px では右に77pxの余りが出て、
+     上のメッセージ（971px）より札のほうが目立つ（実測）*/
+  width: 100%; max-width: 1040px; margin: 92px auto 0; }
+section.closing .links > a {
+  display: flex; align-items: stretch; gap: var(--sp-9); text-align: left; color: inherit;
+  background: #fff; border: var(--card-line); border-radius: var(--card-r); padding: 18px 30px;
+}
+/* 縦棒を札の高さいっぱいにするため、両脇は伸ばしたうえで中身を上下中央に置く */
+
+section.closing .links i { align-self: center;
+  flex: none; width: 58px; height: 58px; border-radius: 50%; background: var(--pale-n);
+  /* 中身は丸座の2/3。ただし X と GitHub は他社ロゴなので --brand-fit を掛ける
+     （58 * 2/3 * .8 = 31）。P.38〜41 のロゴと同じ詰め方 */
+  background-repeat: no-repeat; background-position: center; background-size: 31px 31px;
+}
+section.closing .links .x i  { background-image: var(--icon-x); }
+section.closing .links .gh i { background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%234a4a52%22%3E%3Cpath%20d%3D%22M12%20.297c-6.63%200-12%205.373-12%2012%200%205.303%203.438%209.8%208.205%2011.385.6.113.82-.258.82-.577%200-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422%2018.07%203.633%2017.7%203.633%2017.7c-1.087-.744.084-.729.084-.729%201.205.084%201.838%201.236%201.838%201.236%201.07%201.835%202.809%201.305%203.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93%200-1.31.465-2.38%201.235-3.22-.135-.303-.54-1.523.105-3.176%200%200%201.005-.322%203.3%201.23.96-.267%201.98-.399%203-.405%201.02.006%202.04.138%203%20.405%202.28-1.552%203.285-1.23%203.285-1.23.645%201.653.24%202.873.12%203.176.765.84%201.23%201.91%201.23%203.22%200%204.61-2.805%205.625-5.475%205.92.42.36.81%201.096.81%202.22%200%201.606-.015%202.896-.015%203.286%200%20.315.21.69.825.57C20.565%2022.092%2024%2017.592%2024%2012.297c0-6.627-5.373-12-12-12%22%2F%3E%3C%2Fsvg%3E"); }
+/* 区切りの縦棒は札の上下いっぱいに伸ばす。
+   文字1行ぶん（34px）では行の高さ67pxの半分で寸足らずに見える */
+section.closing .links b {
+  /* 2つの札で説明文の左端を揃えるため、宛先の欄は固定幅にする。
+     幅は長い方（https://github.com/kitao/pyxel）が1行で収まる量。
+     余らせると短い方（@kitao）の右が間延びする（実測）*/
+  flex: none; width: 386px; padding-left: 26px; border-left: var(--card-line);
+  display: flex; flex-direction: column; justify-content: center;
+  /* 宛先はリンクの色。デッキの押せるものは全部 --cy で、同じ作りの
+     P.39〜41（札の中のアプリ名 .applink .nm）もこの色*/
+  font-size: var(--fs-ml); font-weight: var(--w-title); color: var(--cy); line-height: var(--lh-label);
+}
+section.closing .links em { flex: 1 1 auto; font-style: normal; font-size: var(--fs-m);
+  color: var(--ink2); line-height: var(--lh-en); }
+/* 行頭に立つ和欧間アキの打ち消しは、.aki の節にまとめてある */
+section.closing .links em .en { display: block; margin-top: var(--pair-box);
+  font-size: var(--fs-sm); color: var(--sub); }
+/* 札まるごとが a なので、a:hover の下線が説明文と英文にまで伝わり、札の中に
+   下線が4本出ていた。下線は宛先の1行だけに出す*/
+/* ここの b はブロックなので border だと欄の幅いっぱいに伸びる。
+   宛先は ASCII だけで和欧間アキが入らないため、text-decoration で切れない */
+/* 打ち消しは none ではなく札自身の枠線に戻す。none だと a:hover の下線と
+   一緒に札の下辺の枠線まで消えていた */
+section.closing .links > a:hover { border-bottom: var(--card-line); }
+section.closing .links > a:hover b { text-decoration: underline; text-underline-offset: .16em; }
+
+/* ── 素材枠の置き方 ───────────────────────
+   高さを先に決めて、幅は縦横比から決まるようにする。
+   幅を100%にすると、縦横比のぶんだけ高さが伸びて他を押し潰す。
+   縦横比は使う3ページ（P.39〜41 の画面写真）共通の16:10 */
+.ph.wide { flex: 1 1 auto; aspect-ratio: 16 / 10; }
+.cap { font-size: var(--fs-l); color: var(--ja2); margin: 17px 0 0; text-align: center; }
+
+/* ── 詰め気味（中身の多いページに付ける） ──────
+   スライド.md 側で <!-- _class: dense --> と書く。
+   two-up などと併記できる： <!-- _class: two-up dense --> */
+section.dense {
+  --fs-body: 31px;
+  --fs-en:   23px;
+}
+section.dense pre { font-size: var(--t2); padding: 24px 29px; line-height: var(--lh-body); }
+section.dense th, section.dense td { padding-top: 13px; padding-bottom: 13px; }
+section.dense table { font-size: var(--fs-xl); }
+/* このページは中身が少なく下が大きく空くので、dense でも詰めない。
+   組と組のあいだを広く取り、見出しは自分の箱に寄せる */
+/* 定義・目的・手段は同じ階層の3つの塊。あいだの間隔を揃える */
+section.dense .gd { gap: var(--sp-6); }
+section.dense .gd-goal .b { padding: 24px 32px; font-size: var(--fs-h2); }
+/* 上は見出しの行の高さぶん余白が乗るので、その分だけ薄くする */
+section.dense .gd-means .g { padding: 17px 26px 15px; }
+section.dense .gd-means .gh { font-size: var(--fs-xl); margin-bottom: 14px; }
+section.dense .gd-means .gi > span { font-size: var(--fs-l); padding: 12px 13px; }
+section.dense .doc-h { font-size: var(--fs-h2); margin-bottom: 14px; }
+
+/* 右側に図とQRを縦に積むとき */
+.col-r { display: flex; flex-direction: column; gap: var(--sp-8); align-items: center;
+         min-height: 0; max-height: 100%; }
+.col-r > .ph { flex: 0 1 auto; }
+
+/* 同じ格の絵を2枚積むとき（P.42 の Nuit du Code と Scientific Game Jam）。
+   上の既定は「大きい図＋小さいQR」用で、中身の量で枠の大きさが変わってしまう。
+   ここでは2枚を同じ大きさにしたいので、本文の帯を高さの基準に置き、
+   すき間を引いた残りを等分する。670px＝枠の上端y270から版面の下端y940まで */
+.col-r.even { height: 670px; justify-content: center; }
+/* 枠は段の幅いっぱい。縦横比を指定すると幅が縮んで右だけ内側に寄る */
+.col-r.even > .ph { flex: 1 1 0; min-height: 0; width: 100%; }
+/* 素材が入ったら仮枠は消す。点線・地・内アキは「素材待ち」の印なので、
+   実物が入ったあとも残っていると枠だけが浮く */
+.col-r > .ph:has(img), section.demo > .ph:has(img) {
+  border: none; background: none; padding: 0; border-radius: 0;
+}
+/* 枠いっぱいに、縦横比を保って収める */
+.col-r > .ph > img, section.demo > .ph > img {
+  display: block; width: 100%; height: 100%; object-fit: contain;
+}
+/* 地が白に近い絵（サイトの画面写真）は、白地のスライドだと輪郭が消える。
+   デッキの罫と同じ色で囲む。border-box なので外寸は785x322のまま＝
+   左右の版面と段間は動かない（絵は内寸782x319に合わせて切ってある）*/
+.col-r.even > .ph:has(img) { border: var(--card-line); box-sizing: border-box; }
+
+/* ── P.42 左「どこに広がったか」のカード2枚 ────────────────
+   丸座のアイコンは P.7・P.39〜41 と同じ淡い青。縦罫は P.13・P.15 の棒と
+   同じ役目で、座と文章の読み始めを分ける。高さは右の枠2つと同じ670pxを
+   等分するので、左右の上端・下端がそろう */
+.adopt { display: flex; flex-direction: column; gap: var(--sp-8); height: 670px; }
+.adopt .ad {
+  display: flex; align-items: center; gap: var(--sp-10);
+  flex: 1 1 0; min-height: 0;
+  background: #fff; border: var(--card-line); border-radius: var(--card-r);
+  padding: 24px 34px;
+}
+/* 丸座は P.39〜41 の .applink より一回り小さくする。あちらは座＋名前の1行だが、
+   ここは座の右に4行入るので、同寸だと座が場所を取りすぎて文章が折り返す */
+.adopt .badge {
+  flex: none; width: 84px; height: 84px; border-radius: 50%;
+  background: var(--tile-bg); color: var(--cy);
+  display: flex; align-items: center; justify-content: center;
+}
+/* 座を小さくしたぶん中身も連れて縮める。丸座共通の2/3 */
+.adopt .badge > svg { width: 56px; height: 56px; }
+/* 文章の側。縦罫は字面に合わせる（棒を外に出すと文章だけ左へはみ出して見える）*/
+.adopt .b { min-width: 0; padding-left: 34px; border-left: var(--card-line); }
+/* 見出し・本文・英文の目盛りは .cards .card（P.38）と同じ */
+.adopt b { display: block; font-size: var(--t3); font-weight: var(--w-label); color: var(--cy); line-height: var(--lh-label); margin-bottom: 16px; }
+/* 見出しの英文。カードの見出しに英文を添えるのは .cards.left .card > .y .en と同じ */
+/* サブ項目。1行の羅列にすると読点で区切りを探すことになるので、
+   名前と中身を項目ごとに立てる。頭の丸はデッキの箇条書きと同じ扱い */
+.adopt .it { display: block; position: relative; padding-left: 24px; font-size: var(--t2); line-height: var(--lh-mid); }
+.adopt .it + .it { margin-top: 13px; }
+.adopt .it::before {
+  content: ""; position: absolute; left: 3px; top: .52em;
+  width: 8px; height: 8px; border-radius: 50%; background: var(--card-bd);
+}
+.adopt .it > .n { font-weight: var(--w-label); }
+
+/* 詰め気味の追い込み（検査で残った分） */
+/* コードは auto-scaling を切ってあるので、字の大きさは行数と行の長さからページごとに決める。
+   値は slides.md の <div class="cr" style="--code: ..."> にある */
+section.dense .cr pre { font-size: var(--code, 23px); line-height: var(--lh-mid); padding: 22px 26px; }
+section .cr { max-height: 100%; }
+section .cr > div { min-height: 0; max-height: 100%; }
+section .cr pre { max-height: 100%; }
+
+/* リード文は塊のひとつ。目的・手段のあいだと同じ間隔にする */
+section.dense .lead { margin-bottom: var(--lead-gap); }
+
+/* 年表と素材が同居するページは、素材を細めの帯にする */
+
+/* ── 縮み方の約束 ────────────────────────
+   文字の入った箱は縮めない（縮めると文字だけが箱の外にあふれる）。
+   余った高さ・足りない高さは、図（.ph / figure / img）が引き受ける。 */
+.steps, .agenda, .gd, .timeline { flex: none; }
+.steps .step { min-height: 0; }
+section > .ph, section > p:has(> img), .pair, .trio, .cr, .eras { flex: 1 1 auto; min-height: 0; }
+section.dense .timeline { gap: var(--sp-3); }
+section.dense .tp .w, section.dense .tp .y { font-size: var(--fs-xl); }
+
+/* ── 素材枠と図は、空いている場所いっぱいに置く ──
+   （縦横比は保つ。小さく浮かせない） */
+.ph {
+  border: 2px dashed var(--rule-wait);
+  border-radius: var(--r-md);
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #7a7a80;
+  padding: 24px;
+  box-sizing: border-box;
+  overflow: hidden;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
+  align-self: center;
+}
+/* ── P.23〜27「ゲームを作ってみよう」の実行画面 ──────────────
+   Pyxelの画面は160x120。ドットの大きさを均一にするため、4倍の640x480で撮って
+   そのまま原寸で置く。段の幅は686pxなので入る。CSSで伸縮させると
+   1ドットが4pxと5pxで混ざって、拡大時にガタつく。
+   素材が入った枠は、P.39〜41（.col-r）と同じく点線・地・内アキを外す */
+.cr .ph:has(img.scr), .cr .ph:has(video.scr) {
+  border: none; background: none; padding: 0; border-radius: 0;
+  flex: none; align-self: center; width: auto; max-width: none;
+}
+.cr .ph > img.scr, .cr .ph > video.scr { display: block; width: 640px; height: 480px; }
+/* P.27 の完成画面は MP4。GIFはループ再生になるうえ音が乗らないので使わない
+  。地を黒にしておくと、読み込み前でもここが動画の枠だと分かる */
+.cr .ph > video.scr { background: #000; }
+/* 画面は高さが固定なので、隣のコードの高さに対して上下中央に置く。
+   上ぞろえだと、コードが長いページ（P.27）で下が大きく空く。
+   .cr は align-items:start なので、段の高さは中身なり＝画面の高さのまま。
+   まず align-self:stretch で段をコードと同じ高さに伸ばさないと、中央ぞろえが効かない
+   （これが無いと P.27 の画面が上に寄る）*/
+.cr > div:has(> .ph > img.scr), .cr > div:has(> .ph > video.scr) {
+  align-self: stretch;
+  justify-content: center;
+}
+/* P.26 の Pyxel Editor は 240x180。3倍(720x540)だとキャプションまで入れて
+   下端が967pxになり版面(940)を割る。2倍だと画面の文字が読めない。
+   そこで5倍(1200x900)で撮って、ちょうど半分の600x450で置く。
+   2:1 の縮小なので、image-rendering: auto でもドットが割れない
+   （P.34の写真と同じ扱い。pixelated のまま縮めるとドット幅が2pxと3pxで混ざる）。
+   中身は MP4。GIF はループ再生になるうえ音が乗らない */
+.pair .ph:has(video.scr) {
+  border: none; background: none; padding: 0; border-radius: 0;
+  flex: none; width: auto; height: auto; max-width: none; max-height: none;
+}
+
+/* 動画も静止画と同じ大きさで置く。地を黒にしておくと、読み込み前でも
+   ここが動画の枠だと分かる */
+.pair .ph > video.scr {
+  /* 素材は原寸の高倍率で撮っておき、ここでは版面の都合で大きさを決める
+     （600→720。左右の余白91はそのまま、あいだが狭まる）*/
+  display: block; width: 636px; height: 477px; background: #000;
+}
+/* 図は指定した縦横比のまま描く。高さを先に決めて幅を比から出す。
+   逆（幅を100%にしてから高さを止める）だと比が崩れる */
+.pair figure > .ph{
+  max-height: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  align-self: center;
+}
+/* 出典。2枚まとめての表示なので、図の並び全体の下・中央に置く。
+   流れから外すので図の高さを削らない */
+.pair, .trio {
+  display: flex;
+  gap: var(--sp-13);
+  align-items: stretch;
+  justify-content: center;
+  position: relative;
+}
+.credit {
+  position: absolute; left: 0; right: 0; top: 100%; margin: 10px 0 0;
+  /* 説明の行がある場合はその下に */
+  font-size: var(--t1); color: var(--sub3); text-align: center;
+}
+/* 図の出典。クレジットよりさらに小さく、図の邪魔をしない。
+   P.44 のグラフの出典と、P.47 の写真の出所で共通に使う */
+.src { display: block; font-size: var(--fs-xs); color: var(--sub); line-height: var(--lh-loose); }
+/* 版面の外に置く出所（P.47 の写真）。本文の塊の下に付けると、直前の箱の
+   注記に見える。ページ番号・住人と同じ高さに下ろして、フッターの一列にする。
+   右端は住人（右から131px・幅230px）の手前で止める */
+section > .src {
+  position: absolute; margin: 0;
+  right: calc(var(--pad-h) + 230px + 40px); bottom: 31px;
+  text-align: right;
+}
+/* クレジットは三次情報。上にあるものから常に同じだけ離す。
+   .pair 直下なら2枚共通の注記として下端に、figure の中なら
+   その図のキャプションに続けて流す */
+.pair:has(figcaption) .credit { margin-top: 1px; }
+/* 説明や出典の場所を空けておく */
+.pair:has(figcaption) + .msg, .pair:has(.credit) + .msg { margin-top: 118px; }
+/* 最下段の1行メッセージ。ページの締めの言葉なので中央に置く。
+   リード（ページの答えを1行で言う要素）と同じ役割なので大きさを揃える */
+.msg {
+  flex: none; margin: 62px 0 0; text-align: center;
+  font-size: var(--fs-lead); font-weight: var(--w-title); color: var(--ink);
+}
+/* .cr の右側は「列の幅」が基準。既定の .ph は高さから幅を出すので、
+   隣のコードの行数が変わると箱の幅も変わり、送ったときに跳ねて見える。
+   幅を列いっぱいに固定し、高さは aspect-ratio から決まるようにする */
+.cr .ph { width: 100%; height: auto; max-height: none; flex: 0 0 auto; align-self: start; }
+
+/* 見出し行に添える補足（作品名・コマンドなど） */
+.sub { display: block; font-size: var(--fs-xl); color: var(--ja2); margin-top: 5px; }
+section.dense .steps { gap: var(--sp-5); }
+section.dense .step .n { width: 55px; height: 55px; font-size: var(--fs-xl); }
+section.dense .step { gap: var(--sp-7); }
+section.dense .goal { font-size: var(--fs-2xl); padding: 19px 24px; margin-top: 22px; }
+/* 既定テーマの縞模様を確実に消す（縞は情報を持たないので使わない） */
+section table tr, section table td, section table th { background: transparent !important; }
+
+/* 求人票は6行＋報酬が入る。行を詰めて枠内に収める */
+
+/* ══════ 求人票（#4） ═══════════════════════
+   紙として見せる。表は「ラベル列＋内容列」の2列で、報酬も最終行として同じ軸に乗せる。
+   紙の中の文字（46/28/27/21px）は実物の書式の再現なので、デッキの段（--t*）には乗せない。 */
+section.mock .doc {
+  min-height: 0;
+  /* 紙として見せる。黒い枠だと図版の囲みになるので、紙の縁の色にする */
+  flex: none;
+  /* 紙は中身の幅に合わせる。全幅に伸ばすと右に空白の帯ができる */
+  width: fit-content;
+  max-width: 100%;
+  /* 罫→紙＝紙→住人帯＝59px の実測合わせ。
+     上の基準は罫線で descender が無いので単純均等 */
+  margin: -1px auto 0;
+  /* 縁→最初のインク（募集の字）と最後のインク→縁を同じに見せる配分。
+     見出しの行が上に約13pxの余白を持つぶん、上のpaddingは下より薄い */
+  padding: 24px 80px 25px;
+  display: flex;
+  flex-direction: column;
+  border: var(--bd-w) solid var(--paper-bd);
+  background: var(--paper-bg);
+  box-shadow: 0 8px 26px rgba(60, 52, 30, .13);
+}
+section.mock .doc-h {
+  font-size: 46px; font-weight: var(--w-cover); text-align: center;
+  /* 表とくっつかないよう、日英の組より明らかに広くあける */
+  letter-spacing: .16em; margin-bottom: 26px; color: var(--ink);
+}
+/* 書類を模したページ（P.4・P.5）は、本物の求人票に見せるため独自の目盛りを持つ。
+   デッキの段には寄せない*/
+/* 求人票を模すため独自の目盛り。デッキの段には寄せない（例外）*/
+section.mock .doc-h .en { font-size: 27px; letter-spacing: var(--ls-caps); margin-top: var(--pair-xs); }
+
+/* 求人票なので、罫で欄として四方を閉じる。上下だけだと表題の下に
+   文章が並んでいるだけに見えて「用紙に記入された欄」にならない */
+section.mock table { flex: none; display: table; width: auto; font-size: 28px;
+  border: var(--paper-line); }
+section.mock .doc tbody { display: table-row-group; }
+section.mock th, section.mock td {
+  padding-top: 6px; padding-bottom: 6px; line-height: var(--lh-body);
+  border-bottom: var(--paper-line); vertical-align: top; text-align: left;
+}
+/* ラベル列は中身の幅に合わせる。固定幅だと右に空白の帯ができる。
+   縦罫を入れて「欄の名前」と「記入欄」を分ける。罫の左右は同じアキ */
+section.mock th { width: 1%; white-space: nowrap; padding-right: 30px;
+  border-right: var(--paper-line);
+  color: var(--ja2); font-weight: var(--w-label); }
+/* 内容列は右端に余白を残す */
+section.mock td { padding-left: 30px; padding-right: 80px; }
+/* 各項目の日英も「一つの組」。行の箱ではなく実際の文字の見え方で詰める */
+section.mock .en { font-size: 21px; display: block; margin-top: var(--pair-lead); }
+
+/* 報酬は表の最終行。表の外に別組みにすると左端が揃わない */
+section.mock tr:has(+ tr.pay) th, section.mock tr:has(+ tr.pay) td { border-bottom: none; }
+section.mock tr.pay th, section.mock tr.pay td {
+  /* 合計の上のいちばん強い罫。通常の罫（--paper-line 2px）より太く、色も濃い */
+  border-top: 3px solid var(--paper-hr);
+  border-bottom: var(--paper-line);   /* 上が閉じているので下も閉じる */
+  padding-top: 14px;
+  /* 英文の行の高さを20pxに固定したぶん行間の余裕が消えるので、
+     文字の下端から罫までを他の行（10〜11px）に合わせる */
+  padding-bottom: 12px;
+}
+/* 種明かしの書き込み。求人票の本文とは別のものなので、
+   Pyxelパレット8の赤で、赤ペンの注記として置く */
+/* 金額と注記を横並びの別の段にする。注記を同じ行の箱に入れると、
+   2行ぶんの高さが箱を押し広げて「4,900 yen」だけ下がる */
+section.mock .payrow { display: flex; align-items: flex-start; gap: var(--sp-10); }
+section.mock .payrow .amt b { display: block; }
+section.mock .note {
+  /* 矢印を外に出し、和文と英文を同じ左端に揃える。
+     矢印にも本文と同じ行の高さを与えないと、短い箱の中で上に寄る */
+  display: flex; align-items: flex-start; gap: var(--sp-2);
+  color: var(--p8);
+  font-size: var(--fs-l); font-weight: var(--w-strong); line-height: var(--lh-snug);
+  letter-spacing: normal;
+}
+section.mock .note .tx { display: block; }
+/* 矢印は数式の軸に乗る字なので、仮想ボディいっぱいに描かれる和文より
+   字面の中心が上にくる。実測ぶん（5px）下げて中心を合わせる */
+section.mock .note .ar { position: relative; top: 5px; }
+section.mock .note .en { display: block; color: var(--p8); opacity: .8; }
+/* 報酬の行は、和文の大きさが 28／38／27 とばらばらなので、
+   行の高さを1つに固定して、3つの英文が同じ高さに並ぶようにする */
+section.mock tr.pay th,
+section.mock tr.pay b,
+section.mock tr.pay .note .tx { line-height: 44px; }
+section.mock tr.pay b { font-size: var(--fs-h2); color: var(--cy); font-weight: var(--w-strong); }
+/* 報酬の行の英文は3つとも同じ大きさ・同じ位置に揃える */
+section.mock tr.pay .en {
+  font-size: var(--t1); line-height: 20px; margin-top: var(--pair-xs);
+  font-weight: var(--w-body); letter-spacing: normal;
+}
+
+/* 下の余白は他ページと同じ。ここだけ切り詰めると、余白に住む住人に紙がぶつかる */
+section.mock { padding-bottom: var(--pad-b); }
+
+/* 章扉・表紙・hero の英題。ここだけ彩度の高い青（--p12）だと、
+   周りから青が減ったときに浮くので、本文の英文と同じ色系にそろえる */
+section.section h1 + h2,
+section.hero h1 + h2,
+section.cover .en-title { color: var(--en-c); }
+
+/* 大きな見出しは黒ではなくロゴの紺。太い字で真っ黒だと悪目立ちする。
+   hero（大きな一文だけの型）は見出しではなく本文の一文なので、墨のまま */
+section > h1,
+section.cover h1, section.closing h1,
+.who { color: var(--ink-t); }
+section.hero h1 {
+  border: none;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  font-size: var(--t6);
+  font-weight: var(--w-body);
+  line-height: var(--lh-en);
+  letter-spacing: var(--ls-tight);
+  color: var(--ink);
+}
+
+/* コードの行ハイライト（scripts/hl.py が行を <span class="cl"> で包む）。
+   リードで言っている「この工程で足したもの」を、コードの上で示す。
+   地は var(--code-bg) なので、白をごく薄く重ねる */
+section pre code .cl { display: block; }
+/* 空行は中身が無いと高さ0になる。行送りぶんの高さを持たせて「塊の区切り」を残す */
+section pre code .cl:empty::before { content: "\200b"; }
+/* 帯は黒地の左端から右端まで。pre の左右の余白ぶん外へ張り出させ、overflow: hidden で切る */
+section .cr pre code .cl { padding: 0 26px; margin: 0 -26px; }
+section pre code .cl.hl { background: #7a1f42; }
+
+/* ── コードの配色 ────────────────────────────────
+   Marp の既定は GitHub の「明るい地」用のシンタックス色で、
+   このデッキの黒地（var(--code-bg)）に載せると数値が 2.25:1、キーワードが 3.2:1 しかない。
+   数値だらけのコードで一番読ませたい部分が読めないので、VSCode Dark+ の配色に差し替える。
+   Marp 側が id セレクタで指定しているため !important が要る */
+section pre .hljs-keyword  { color: #c586c0 !important; }   /* import if for while */
+section pre .hljs-literal  { color: #569cd6 !important; }   /* True False None */
+section pre .hljs-number   { color: #b5cea8 !important; }   /* 数値 */
+section pre .hljs-string   { color: #ce9178 !important; }   /* 文字列 */
+section pre .hljs-built_in { color: var(--code-fn) !important; }
+
+/* highlight.js が知らない Pyxel のトークン（scripts/hl.py が付ける） */
+section pre .pm { color: #9cdcfe; }   /* モジュール名 pyxel */
+section pre .pf { color: var(--code-fn); }   /* 関数 init blt btn … */
+section pre .pk { color: #4fc1ff; }   /* 定数 KEY_LEFT … */
+
+/* ── P.21 の制約表 ────────────────────────────────
+   .bio（P.9・P.11・P.12）と同じ組み方に揃える。
+   ・ラベル列だけを薄く塗って、表の骨格を先に見せる
+     （語の幅に詰める。広いまま塗ると帯の右半分が空白の色になる）
+   ・行罫も --card-line。左右に縦罫を立てて、横罫が行き止まりにならないようにする
+   ・このページの主役は Pyxel の列。面は塗らず、文字色（紺）だけで立てる
+     （.bio の「面は塗らず、文言の色だけで示す」と同じ流儀） */
+section.spec table {
+  /* .bio と同じ。版面いっぱいに広げると3列が横に間延びする */
+  width: 100%; max-width: var(--body-w); margin-left: auto; margin-right: auto;
+  /* 罫の下と住人の上を見た目で揃える */
+  margin-top: 6px;
+  /* 四辺を同じ罫で閉じる。上を指定しないと Marp 既定の 1px #d1d9e0 が残り、
+     そこだけ細くて色も違う線になる */
+  border: var(--tbl-line);
+}
+section.spec th, section.spec td {
+  /* Marp の既定の 1px #d1d9e0 を、デッキのカードの線（--card-line）に置き換える。
+     縦罫は列の境。P.5 の求人票・P.9〜11 の経歴表と同じ扱いで、表として閉じる */
+  border-left: none; border-top: none;
+  border-right: var(--tbl-line);
+  border-bottom: var(--tbl-line);
+  /* 上下19pxだと、行の頭（日本語）の上に行送りが9px乗り、下は1pxしか乗らない。
+     合計を変えずに4pxずつ振り分けて、目で見たアキを揃える */
+  padding: 15px 28px 23px;
+}
+/* 最終行の下・最終列の右は表自身の border が閉じる。ここで重ねて指定すると4pxになる */
+section.spec th:last-child, section.spec td:last-child { border-right: none; }
+/* ラベル列は語の幅ちょうどに。width:1% は「中身に詰める」の定石（求人票と同じ手） */
+section.spec th:first-child, section.spec td:first-child {
+  width: 1%; white-space: nowrap;
+  /* 1087行の background: transparent !important を上書きする（1088行の .hl と同じやり方） */
+  background: var(--box) !important;
+}
+/* 列の見出し（一般的なゲームエンジン／Pyxel）は、共通指定だと29pxで本文（34px）より
+   小さくなる。このページの主題が一番小さい字になるので、本文と同じ大きさに上げる。
+   下の罫は共通指定だと墨2pxで、ページ内で一番濃い線になって視線を奪う。
+   他の罫と同じ濃さに落とす。見出し行はラベル列が空であることで区別が付く */
+section.spec thead th {
+  font-size: var(--fs-3xl);
+  /* th の既定（600）が漏れると、列見出しがページ内で一番太い字になり、
+     主役の Pyxel の値（500）より強く出る。デッキの太さ3段のうち見出しの500に落とす */
+  font-weight: var(--w-title);
+  border-bottom: var(--tbl-line);
+  /* ラベル列と合わせてL字に塗り、表の骨格を先に見せる。
+     濃い地に白文字（反転）は、左上のセルだけラベル列の色が残って帯が欠けるうえ、
+     英文（--sub の灰）が沈むので採らない */
+  background: var(--box) !important;
+}
+/* ラベル（色・音・画像・描画命令）は .bio と同じ作りにする。
+   .bio のコメント「ラベルは控えめに。主役は右の主行」は、色を落とすのではなく
+   太字にしないことで実現している。灰の太字は色が弱いのに形が強く、落ち着かない。
+   色はラベルではなく Pyxel の値に置く */
+section.spec td:first-child strong { color: var(--ink); font-weight: var(--w-title); }
+/* Pyxel の列は色（紺）だけで立てる。太さも足すと、左右で同じ役割の値が違う組みになり、
+   値そのものの比較ではなく「右のほうが大事」という別の意味が入る。
+   .bio も値は 400 で、太さを持つのはラベルだけ */
+section.spec td:last-child { color: var(--ink-t); }
+section.spec thead th:last-child { color: var(--ink-t); }
+
+/* 見出し行の英文は灰の帯の上に灰で乗るため、白地のとき（3.8:1）より落ちて 3.2:1 になる。
+   ここだけ一段濃くする */
+/* --ja2 は補助の日本語の色。英文は --en-c*/
+section.spec thead th .en { color: var(--en-c); }
+/* ── P.22 の描画命令の一覧 ────────────────────────────
+   絵1枚だけのページ。命令名を客席から読ませたいので目一杯大きくする。
+   絵は縦で詰まるので、上下のあきをそのまま罫と住人までの距離が決める。
+   上下40pxずつに揃える。片側に寄せると下だけ住人に張り付く。
+   絵は上下80pxを差し引いた945×709で、命令名の読みやすさは保たれる。
+   絵は中央にあるので、住人（x=1559〜）ともページ番号（x=132〜162）とも横に離れている */
+/* 罫の下と住人の上を同じあきにする。図は帯の中で上下中央なので、
+   下の余白を6px減らすと図が3px下がり、40/46 が 43/43 でそろう（実測）*/
+section.cmds { padding-bottom: 115px; }
+section.cmds > h1 + h2 { margin-bottom: 39px; }
+/* 絵の左右に、その命令が何をするのかを添える。
+   絵の中の命令名と同じ高さに置くので、線で結ばなくても対応が読める。
+   --t は絵の高さに対する位置（命令名の縦の中心）。絵の大きさが変わっても付いてくる。
+   pal は解説を付けない（画面でも淡く落としてある） */
+.cmdfig {
+  position: relative; width: fit-content; height: 100%;
+  margin: 0 auto; flex: 1 1 auto; min-height: 0;
+}
+.cmdfig > img { display: block; height: 100%; width: auto; max-width: 100%; }
+.cmdfig .cmt {
+  position: absolute; top: var(--t); transform: translateY(-50%);
+  margin: 0; width: 320px; font-size: var(--fs-m); line-height: var(--lh-label); color: var(--cy);
+}
+/* 絵にいちばん近い端をそろえる。左は右ぞろえ、右は左ぞろえ */
+.cmdfig .cmt.l { right: 100%; margin-right: 26px; text-align: right; }
+.cmdfig .cmt.r { left: 100%;  margin-left: 26px;  text-align: left;  }
+.cmdfig .cmt .en { font-size: var(--fs-s); color: var(--sub); margin-top: var(--pair-box); }
+
+/* ── P.29 制約の外し方を遊びにする ────────────────
+   リードと2段組みのあきが41pxで、リード内の日英のあき（6px）との差が足りず、
+   リードが下の段にくっついて見える。段の側は伸び縮みするので、
+   ここを広げたぶんは中の図が縮んで吸収される */
+section.relax > .lead { margin-bottom: 39px; }
+
+/* ── リンク ────────────────────────────
+   投影では見た目を変えず、HTMLで開いたときだけ押せるようにする。
+   下線や青文字にすると、スライド上で1箇所だけ浮く */
+/* リンクは見た目でそれと分かるようにする。示すのは色だけ。
+   下線は英字のディセンダで途切れて破線に見えるうえ、リードでは日英の間隔
+   （--pair-lead）が狭く、下の英文にぶつかる */
+/* 和文と欧文のあいだの四分アキ（scripts/hl.py が挿入する空の span） */
+/* 和欧間の四分アキ。inline-block で幅を持たせる。
+   inline + margin にすると、行の高さと和欧の空きが変わって年表（P.35）が崩れる。
+   リンクの下線がここで切れる問題は、下線を border で引くことで解いている */
+.aki { display: inline-block; width: .25em; }
+/* hl.py が要素の中身の先頭に入れたアキ（.lead）は、その要素が行になると
+   ただの字下げになるので消す。同じ行の中で語をまたぐ .tm（道具の名前）と
+   .pn（人の名前）だけ残す（P.35「コアエンジンのRust」「2018年10月 jahodfra」）。
+   ※:first-child はテキストを数えないので使えない。文中のアキまで巻き込む */
+.aki.lead { display: none; }
+.tm > .aki.lead, .pn > .aki.lead { display: inline-block; }
+/* ただし、その .tm / .pn が親の先頭にあるときは行頭になるので消す。
+   残すと「jahodfra 氏が…」の行だけ字下げされて、日英の左端がずれる（P.35）*/
+.tm:first-child > .aki.lead, .pn:first-child > .aki.lead { display: none; }
+/* 開きタグ直後のアキが行頭に立つ場所は、ページ型ごとにここへ足す。
+   放っておくと、その行だけ約5px右にずれて日英の左端が揃わない */
+section.closing .links em > .aki:first-child, section.closing .links em .en > .aki:first-child,
+section.closing .msg > .aki:first-child,
+section.aipage .en > .aki:first-child,
+section.trialpage .en > .aki:first-child, section.trialpage .ft i > .aki:first-child,
+section.trialpage .bd i > .aki:first-child, section.trialpage .d > .aki:first-child,
+section.trialpage .ft b > .aki:first-child, section.trialpage .ft em > .aki:first-child,
+section.trialpage .plug em > .aki:first-child,
+section.nodetree .en > .aki:first-child, section.nodetree .note > .aki:first-child,
+section.wrapup .en > .aki:first-child, section.wrapup .concl > .aki:first-child { display: none; }
+
+a { color: var(--cy); text-decoration: none; }
+/* 下線は border で引く。text-decoration だと、和欧間アキ（中身が空の .aki）の
+   ところで線が切れる（P.36「HTMLファイルを開く」の中黒の位置で切れる）*/
+a:hover {
+  border-bottom: 2px solid currentColor;
+  /* Marp 既定の section a:hover が下線を引くので、打ち消す。
+     残すと border と合わせて二重線になる */
+  text-decoration: none;
+}
+
+/* ── 経歴表に重ねる書影 ──────────────────
+   上下のアキを同じに見せる位置。上は書影に重なる英文（"...Sony"）の
+   y のディセンダまで、下は表の最下の罫まで、どちらも10.5px。
+   高さ265pxと行の位置から決まる実測値なので、表の縦を動かしたら測り直す */
+.bio .cover {
+  position: absolute; right: 52px; bottom: 10.5px;
+  height: 265px; width: auto;
+  box-shadow: 0 6px 22px rgba(34, 34, 43, .20);
+}
+
+/* 2段組みの表は列が狭く行数が多い。セル内の行間を詰めて、
+   「セルの余白 > セル内の行間」の向きを保つ */
+
+/* 版面の下端は、右下の住人（頭が y=999）の上に59pxを空ける決まりで940にしている。
+   ただし住人は右下、中身が左にあるページでは当たらない。
+   その場合はページ番号（y=1030）の手前まで使ってよい */
+section.low { padding-bottom: 82px; }
+
+/* ══════════════════════════════════════════
+   日英ペアは4段だけ。英文の大きさと日本語との間隔は、
+   段ごとに実際に描いて目で決めた値。比例計算はしない。
+   （小さい段ほど英文を相対的に大きく、間隔を相対的に広くする）
+   ══════════════════════════════════════════ */
+
+/* 大 ── リード・章タイトル */
+.lead .en, .agenda .a .en { font-size: var(--fs-l);  }
+
+/* 中 ── 本文・カードの中身・結論の帯 */
+.why .en.block, .gd-goal .b .en,
+.msg .en, .goal .en { font-size: var(--fs-ml); margin-top: var(--pair-box); }
+
+/* 添え ── 図の中の名前・小さな注記・カードの一行。デッキ最小の段。
+   本文ではなく添え物なので、色を落とし太らせない。
+   ここに並べる。ページごとに同じことを書き直さない */
+.fnote .en,
+.adopt b .en, .adopt .en,
+.keys .keys-h .en, .keys .ki .w b .en, .keys .ki .w .en, .keys .ki .sc .en,
+.cards .card > .w .en, .cards:has(.card > .y > .ic) .card > .y .en,
+section:has(> .pack) > .issue .tx .en,
+.applink .ttl .en, .applink .tt .en, .nt .en,
+section.aipage .vs .en, section.aipage > .concl .en,
+section.horizon .ea .en, section.nodetree .th .en {
+  display: block;
+  font-size: var(--t1);
+  font-weight: var(--w-body);
+  color: var(--sub);
+  margin-top: var(--pair-box);
+}
+/* 添えの段の、場所ごとの上乗せ。段そのものは上で決まっている */
+.adopt .en { line-height: var(--lh-mid); }              /* 2行になるので行間をゆるめる */
+.keys .keys-h .en { letter-spacing: 0; }                /* 見出しの字間を継がない */
+/* P.45・P.46 はページの中の英文をすべてこの段にする。ただし規則は各節の末尾に
+   置いて「後勝ちの既定」として効かせており、ここへ移して統合してはいけない
+   （Marp の詳細度底上げにより順序勝負になる。冒頭「読み方」3を見よ） */
+
+/* 小 ── キャプション・図の注記。
+   表の値（.bio .v）は同じ段だが、ぶら下がりが入れ子で縮むので
+   行が持つ --bio-ja / --bio-en から引く（経歴表の節を見よ） */
+figcaption{ font-size: var(--fs-l); }
+figcaption .en, .map .lb .en { font-size: var(--fs-sm); margin-top: var(--pair-s); }
+
+/* ── 行間 ──────────────────────────────
+   大きい文字ほど詰め、小さい文字ほど空ける。
+   1行の物理的な長さが同じでも、文字が小さいほど行を追いにくいため */
+.agenda .a .w { font-size: var(--fs-lead); line-height: var(--lh-mid); }
+.why .c .a, .why .c .b, .why .goal, .gd-goal .b { font-size: var(--fs-2xl); line-height: var(--lh-body); }
+/* 表は1セルに複数行が入るので、行送りは詰める。
+   行を分けているのは罫であって行間ではない */
+.bio .k, .bio .v { position: relative; line-height: var(--lh-en); }
+figcaption{ line-height: var(--lh-loose); }
+.lead .en, .agenda .a .en,
+.why .en.block, .gd-goal .b .en,
+.bio .en, figcaption .en { line-height: var(--lh-en); }
+
+/* ── 要素間の余白 ───────────────────────
+   8の倍数の段階から採る。生の数値を書かない */
+/* P.15 と P.50 は「2列＋締めの帯」の同じ型。幅は「版面の中央に置く塊の幅」に従う。
+   列の区切りが画面の中央(x960)に来る。
+   一番長い行は P.15 右 B の「レトロゲーム向けのものはLuaが主流だった」で、余りは約15px。
+   文言はこの幅に収まる長さで書く */
+/* 「2列 ＋ 下に締めの帯」の型。P.15（.why）と P.50（.wu）で同じ組み方 */
+.why, section.wrapup > .wu {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  column-gap: var(--sp-14);
+  row-gap: var(--sp-12);
+}
+
+.why .c > b .en { margin-top: var(--pair-s); }
+
+/* ══════════════════════════════════════════
+   日英ペアの間隔は、要素ごとに実測して合わせた値。
+   同じ変数を当てても、行送り・字形・並べ方で見た目の隙間が変わるため、
+   ひとつの値では揃わない。目標は「日英の隙間 ≒ 12px、
+   そのペアと次の行の隙間はそれより明確に広い」。
+   ══════════════════════════════════════════ */
+.lead .en { display: block; margin-top: var(--pair-lead); }   /* 実測 8px → 12px へ */
+.msg .en { display: block; margin-top: calc(var(--pair-lead) - 1px); }   /* 実測19px → 12px へ */
+.agenda .a .en { display: block; margin-top: calc(var(--pair-lead) + 1px); }   /* 実測 7px → 12px へ */
+/* ── 2段組みの表（P.11）──────────────────
+   列が狭く行数が多いので、文字は小の段から一段下げる。
+   値の側の大きさは --bio-ja / --bio-en（経歴表の節）で切り替わる。
+   ここが唯一の指定。同じセレクタを他所に書かないこと */
+section.two-up .bio .v { padding-right: 24px; }
+section.two-up .bio .k { padding-left: 18px; }
+/* 項目名の列は、いちばん長い項目名（Bundled tools＝114px）に
+   左右同じアキを付けた幅。1段組みと同じ考え方 */
+section.two-up .bio .r { grid-template-columns: 150px 1fr; gap: var(--sp-5);
+  /* 6行あるので、1段組みと同じ18pxだと版面の下端を越える */
+  --tbl-row-pad: 13px; }
+section.two-up > .lead { grid-area: l; margin-bottom: var(--lead-gap); }
+/* P.11 だけリード下が31pxで、他の two-up（P.39〜41 は57px）より詰まっていた。
+   section.low は下の余白が82px（＝下端998）で余っているので、その分を上に回す */
+/* 表の上下を釣り合わせる。48pxだと表が下に寄り、住人まで11pxしか残らない */
+section.two-up.low > .lead { margin-bottom: 26px; }
+section.two-up:has(> .bio) { padding-bottom: 86px; }
+
+/* 表の項目名は「案内」であって主役ではない。値より大きいと、
+   目が先にラベルへ行き、中身が従に見える。地の色と文字色で
+   区別できているので、大きさは値に合わせる */
+.bio .k { font-size: var(--bio-ja); }
+.bio .k > .en {
+  display: block;
+  font-weight: var(--w-body);
+  font-size: var(--bio-en);
+  /* 日英の組の間隔は値と同じ --bio-pair。同じ表の中で組の間隔は1つ */
+  margin-top: calc(var(--bio-pair) - var(--half) * (var(--bio-ja) + var(--bio-en)));
+}
+
+/* リード（見出しの下の一行）と、メッセージ（ページ下の一行）は
+   どちらも「そのページを一行で言う」同じ役割。色と太さを揃える */
+.lead {
+  font-size: var(--fs-lead);
+  line-height: var(--lh-mid);
+  margin: -9px 0 32px;
+  flex: none;
+  color: var(--ink);
+  font-weight: var(--w-title);
+}
+
+/* アジェンダの一行。ここでは骨格だけを決める。
+   見た目（帯の地・角丸・高さ・左のタイル）は後段の「アジェンダの帯（P.13）」に
+   まとめてある */
+.agenda .a {
+  display: flex;
+}
+.agenda {
+  /* 箱の中の余白（20px）より、箱どうしのすき間を広く取る。
+     逆になると3枚のカードではなく1枚の縞模様に見える。
+     30pxだと3つ目が版面を7px超え、住人まで52pxに詰まった。
+     22pxまで詰めると今度は下が68pxになり、上（56px）より広くなる。
+     リードの下は他ページ並みなので触らず、箱の間で上下を釣り合わせる */
+  display: flex;
+  flex-direction: column;
+  /* 見出しの一行とセットで中央に置く。左右対称に余らせて、
+     詰めたことが意図に見えるようにする */
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  gap: var(--sp-8);
+}
+
+/* 結論の帯は本文であって見出しではない。紺は見出しの色なので、
+   本文の墨にする。強調は地の色が担う */
+.why .goal { color: var(--ink); }
+
+/* 表の行の上下。1段組みも2段組みも同じ */
+.bio .r {
+  position: relative;
+  /* 項目名は地の左端から24px。値も仕切りから同じ24pxにして、
+     左右で入り方を揃える（40pxだと値だけ奥まって見える）。
+     項目名の列は、いちばん長い項目名（Personal project＝154px）に
+     左右同じアキを付けた幅。広く取ると、仕切りの左だけ空いて見える */
+  display: grid;
+  grid-template-columns: 206px 1fr;
+  gap: var(--sp-7);
+  border-top: var(--tbl-line);
+  /* 行の頭は日本語（大きい字）、末尾は英訳（小さい字）で、
+     行送りが字の外に作る余白の量が違う。上下それぞれの字で引いてから
+     同じ --tbl-row-pad を残す。こうすると上下が同じに見える */
+  padding: calc(var(--tbl-row-pad) - var(--half) * var(--bio-ja)) 0
+           calc(var(--tbl-row-pad) - var(--half) * var(--bio-en));
+}
+
+/* P.13 の一行も、他ページのリードと同じ役割。色と太さを揃える */
+.agenda-h {
+  /* 座布団と左端を揃える */
+  width: 100%;
+  max-width: 1400px;
+  /* 見出しではなく本文の説明文なので、太字にせずリードと同じ扱いにする */
+  margin: -9px auto 54px;
+  line-height: var(--lh-loose);
+  color: var(--ink);
+  font-weight: var(--w-title);
+}
+
+/* 図の中の Pyxel。ここだけ強調する */
+.map .p.me { color: var(--p8); font-weight: var(--w-bold); font-size: var(--fs-body); }
+
+/* ── 分類図の地と軸 ────────────────────────
+   地色が無いと図の範囲が分からず、線が2本引いてあるだけに見える。
+   軸は両端に矢羽根を付けて「どちらへ行くほどどうなるか」を示す */
+/* 図の下地。角を落として細い縁を回すと、ベタ塗りの面ではなく
+   「一枚のボード」として立ち、上に置いたロゴが乗り物として読める */
+.map .plot {
+  position: relative; width: 100%; height: 100%;
+  background: #f7f7f9; border: 1px solid #e6e6ea; border-radius: var(--card-r);
+}
+.map .axis-x, .map .axis-y { position: absolute; background: var(--axis); }
+.map .axis-x { left: 22px; right: 22px; top: 50%; height: 2px; margin-top: -1px; }
+.map .axis-y { top: 22px; bottom: 22px; left: 50%; width: 2px; margin-left: -1px; }
+.map .axis-x::before, .map .axis-x::after,
+.map .axis-y::before, .map .axis-y::after { content: ""; position: absolute; width: 0; height: 0; }
+.map .axis-x::before { left: -20px; top: -7px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-right: 20px solid var(--axis); }
+.map .axis-x::after  { right: -20px; top: -7px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 20px solid var(--axis); }
+.map .axis-y::before { top: -20px; left: -7px; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 20px solid var(--axis); }
+.map .axis-y::after  { bottom: -20px; left: -7px; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 20px solid var(--axis); }
+
+/* ── 分布図のページ ─────────────────────
+   図が主役のページなので、本文の版面の規則（罫+59、下端940）に縛られない。
+   軸ラベルが図の地に食い込まないよう、左右の余地を広く取る */
+section:has(.map) > h1 + h2 { margin-bottom: 26px; }   /* 図を上へ寄せる */
+/* 下へも伸ばすが、住人の頭（999）には当たらないところで止める。
+   64px だと下端が1014になり、版面の規則（237行）が言う「住人には当たらない」を
+   破っていた。85px なら995で収まる*/
+section:has(.map) { padding-bottom: 85px; }
+/* 上下の軸ラベル（2行）が図の地に食い込まないよう、内側に寄せる */
+section:has(.map) .map {
+  --map-pad-x: 254px;   /* 左右の軸ラベルの居場所（いちばん長いラベルの幅＋すき間） */
+  --map-gap-x:  26px;   /* ラベルと図のすき間。横は文字が端まで詰まるので上下より広く取る */
+  margin-top: 0; padding: 86px var(--map-pad-x) 81px;
+}
+
+/* 分布図の各点はロゴで示す。高さを揃えて、下に却下の理由を添える */
+/* max-width:100% は「図の右端までの残り幅」と解釈されるため、
+   右寄りに置いたロゴが横に潰れる。ここでは解除する */
+.map .p img { display: block; height: 46px; width: auto; max-width: none; margin: 0 auto; }
+.map .p.me img { height: 88px; }            /* Pyxel だけ大きく */
+
+/* ロゴは版型も縦横比も違うので、高さを揃えても見た目の重さは揃わない。
+   外接の大きさと実際のインク量の両方から「見た目の重さ」を出し、
+   6つが同じくらいの重さに見える高さを1つずつ決めた（Pyxel だけ主役なので重く） */
+.map .p img[alt="Unreal Engine"] { height: 127px; }
+.map .p img[alt="Unity"]         { height: 75px; }
+.map .p img[alt="Godot"]         { height: 98px; }
+.map .p img[alt="Pygame"]        { height: 64px; }
+.map .p img[alt="LÖVE"]          { height: 139px; }
+/* LÖVE は吹き出しが右上、球が左下という斜めの構成。外接の中心では球が座標から外れるので、
+   球（外円）の中心が座標に来るようにずらす。値は love.png の実測（球の中心 87,203 ／ 画像の中心 186.5,145）*/
+.map .p:has(img[alt="LÖVE"]) { transform: translate(calc(-50% + 48px), calc(-50% - 28px)); }
+/* PICO-8 も TIC-80 と同じ作り。板ごと1枚の画像にして、余白の比率も揃えてある。
+   公式ロゴ下段の「fantasy console」は、この大きさでは読めない滲みになり
+   板の重心も狂うので外してある */
+.map .p img[alt="PICO-8"] {
+  height: 58px; image-rendering: pixelated;
+  border-radius: var(--r-md); margin-bottom: 0;
+}
+/* TIC-80 も濃紺の地ごと。角を丸めて PICO-8 と扱いを揃える */
+.map .p img[alt="TIC-80"] {
+  height: 62px; image-rendering: pixelated;
+  border-radius: var(--r-md); margin-bottom: 0;
+}
+
+/* ── P.18「これならできそう」と思わせる仕掛け ─────────────
+   4つは対等な並列。左に4つの項目、右に同梱ツールの画面を2枚置く。
+   4つ目だけ中身を書かない（次のパートで明かす）ので、色で「ここは別」と示す。
+   紫は章タイトルの「〜奇妙なアルバイト〜」と同じ色で、引っかかりの意味を既に持っている */
+.doable { display: flex; gap: var(--sp-13); flex: 1 1 auto; min-height: 0; align-items: stretch; }
+.doable .steps { flex: 1 1 auto; min-width: 0; justify-content: space-between; gap: 0; }
+.doable .step { align-items: flex-start; }
+/* 4項目はアジェンダの3項目と同じ役割（ページの骨格を並べる）。
+   ただし1ページに4つ入るので、リード級（39px）から一段落として36pxにする。
+   日英ペアの間隔は、リードと同じ「見た目12px」に合わせる */
+.doable .step > .w { font-size: var(--fs-body); line-height: var(--lh-mid); }
+.doable .step > .w > .en { font-size: var(--t2); margin-top: 0; }
+/* 見出しペアと解説ペアは同じ項目なので近づける（12px）。
+   項目どうしは space-between で離れるが、それだけでは差がつかないので
+   .steps 側で下余白も持たせる */
+/* 補足は淡い青の座布団に入れて、見出しの一段下だと目で分かるようにする。
+   字も藍に振る。墨のままだと見出しと同じ声に聞こえ、主従がつかない */
+.doable .step .d {
+  display: block; font-size: var(--fs-l); margin-top: 10px;
+  background: var(--note-bg); border-radius: var(--img-r); padding: 11px 22px;
+  color: var(--cy);
+  /* 文が終わったところで切る。右端まで伸ばすと、字のない青地が広く残る。
+     空いた右は Python ロゴの居場所になる */
+  max-width: 850px;
+}
+.doable .step .d .en { font-size: var(--t1); margin-top: var(--pair-xs); }
+/* 丸は65px、見出しの1行目は約45px。上端で揃えると丸だけ下に張り出すので、
+   丸の中心を見出しの1行目の中心に合わせる */
+.doable .step .n { margin-top: 0; }
+.doable .step.hint .w { color: var(--odd); }
+.doable .step.hint .n { background: var(--odd); }
+/* 画面は2枚で版面の高さに収める。4:3 なので 430px 幅なら 2枚＋すき間で 667px */
+.doable .tools {
+  /* 2枚の上下端を左の4項目（罫の下59・住人の上62）と揃える。
+     高さは幅から決まるので、幅で合わせる */
+  flex: none; width: 427px; min-height: 0;
+  display: flex; flex-direction: column; justify-content: center; gap: var(--sp-9);
+}
+/* Python ロゴは項目1の座布団と、右のツール画面のあいだに単独で置く。
+   どちらかに寄せると接して窮屈になるので、左右の空きを均等にする */
+.doable .step { position: relative; }
+.doable .step .pylogo {
+  position: absolute; right: -39px; top: 88px;
+  width: 210px; height: auto;
+}
+.doable .tools img {
+  display: block; width: 100%; height: auto; border-radius: var(--img-r);
+  box-shadow: 0 4px 16px rgba(34, 34, 43, .16);
+}
+
+/* ── P.19・P.20 の指定 ──────────────────────────────
+   同じ見出しで2枚続くページ。絵・キャプション・クレジットを縦に詰めて置く。
+   共通の .pair を書き換えると P.6/P.8/P.12/P.19 が動くので、専用クラスに閉じる */
+.pair.snug {
+  --art-h: 512px;    /* 2枚に共通の絵の高さ。幅ではなく高さを揃えると、
+                        送っても絵の上下端とキャプションの位置が動かない */
+  /* 罫の下は .pair.fit（P.6・P.8）と同じ +8px。
+     ここだけ広げる根拠はなく、広げると P.19・P.20 の空きだけ広く見える */
+  margin-top: 8px;
+}
+.pair.snug figure > img {
+  width: auto; height: var(--art-h); max-width: 100%;
+  align-self: center; flex: none;                   /* 枠の余白（レターボックス）を作らない */
+}
+.pair.snug figure > .credit {
+  position: static; margin-top: 14px;               /* キャプションに続けて流す */
+}
+
+/* ── P.20 だけの指定 ────────────────────────────────
+   上にイラスト（sample.pyxres のイメージバンク1）、下に住人キャラを並べる。
+   ドット絵の指定は .dot（デッキ共通）*/
+/* 絵の大きさが左右で違うので、枠を中身の幅に合わせ、間隔を指定して中央に置く */
+/* 左右で絵の幅が違う（左596 / 右486）。外側の余白を揃えると絵の重心が
+   版面の中心から等距離にならず、不安定に見える。幅の差の半分だけ全体を
+   左に寄せて、2枚の中心を中央から等距離（366px）にする */
+.pair.art { gap: 190px; margin-right: 55px; }
+/* 中身の高さを固定して上端を揃える。中央揃えだと、クレジットの有無で塊の高さが変わり
+   キャプションの開始位置がずれる */
+.pair.art figure { flex: 0 1 auto; justify-content: flex-start; }
+/* 絵の高さは .pair.snug の --art-h（P.19 と共通） */
+.pair.art .pyxart { height: var(--art-h); flex: none; }
+.pair .pyxart {
+  flex: 1 1 auto; min-height: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--sp-5);
+}
+/* 424 は --art-h(512) から住人の列(70)とあき(18)を引いた残り。
+   440 だと中身が528pxになって枠を16px超え、上下に8pxずつあふれて
+   左の絵と上下端がずれる（justify-content: center なので両側に出る）。
+   住人の列の幅（5*70 + 4*34 = 486px）は変わらないので、左右の重心は動かない */
+.pair .pyxart > img.dots { width: 424px; height: 424px; flex: none; }
+.pair .chars-big { margin: 0; display: flex; align-items: center; gap: var(--sp-10); }
+.pair .chars-big img { width: 70px; height: 70px; image-rendering: pixelated; }
+
+/* ── 段を横に並べる型（P.29）──
+   1段の中に「見出し → 説明 → コード → 実行結果」を縦に積む。
+   列数は --cols で決める（既定3。P.29 は2列で使っている） */
+.eras {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), 1fr); gap: var(--sp-13);
+  width: 100%; max-width: var(--body-w); margin: 0 auto;
+}
+/* 縦に積む箱。中身がはみ出さないよう min-width を切る */
+.era, section.nodetree .tree, section.nodetree .code { display: flex; flex-direction: column; min-width: 0; }
+/* 年の下に罫。写真は下端でそろえる（本文の長さに引きずられない） */
+.era .y {
+  /* 罫は見出しの側に寄せる。16pxだと英文の行送りが2px乗って見えるあきが18pxになり、
+     説明文の下（12px）より広かった。12px＝見えるあき14px。
+     ここで詰めたぶんは、中身が下端でそろう組みなので、そのまま説明文の下のあきに回る */
+  padding-bottom: 12px;
+  border-bottom: var(--card-line);
+  /* 31px に 700 は重い。デッキの「大きい文字ほど細く」に合わせて 600 */
+  font-size: var(--t3); font-weight: var(--w-label); color: var(--cy);
+}
+/* 説明文の下は、コード枠や画面（箱）との境目。文字どうしの行間（11px）と
+   同じでは段落の切れ目に見えないので、罫からのあきより広く取る。
+   下は pre・.strip の margin-top:auto が受けるので、ここで詰めたぶんが下に回る */
+.era .w { margin-top: 14px; font-size: var(--fs-l); line-height: var(--lh-mid); }
+.era .w .en { font-size: var(--fs-m); }
+
+/* 列の中のコードは、隣の列の図と高さをそろえる */
+/* 字を小さくして使うので、共通の padding（34px）では上下が厚すぎる */
+.era > pre { margin: auto 0 0; font-size: var(--code, 24px); padding: 20px 26px; }
+.era > pre code { width: 100%; }
+
+/* コードの下に、その実行結果を並べる（P.29 の①） */
+.era > pre + .strip, .era > .strip.shot + .strip.shot { margin: 12px 0 0; }
+.era > .strip { margin: auto 0 0; }
+.era > .strip img { display: block; width: 100%; height: auto; border-radius: var(--img-r); }
+/* 画面のスクショは列いっぱいに広げる。縦横比は画像のまま（P.29 の②）。
+   2枚を続けて置くと、隣の列のコード枠とパレット帯と同じ 12px の隙間で並ぶ */
+.era > .strip.shot img { width: 100%; height: auto; }
+
+/* 行頭の鉤括弧をぶら下げる（印は scripts/hl.py が付ける）。
+   括弧の左が空くぶん頭が内側に入り、罫や本文の左端と揃わないため */
+.hang { text-indent: -.61em; }
+/* 中央ぞろえの行は、行頭の括弧の空きが左右のアキの差として出る。
+   左ぞろえと同じだけ下げると今度は左へ出すぎるので、半分だけ戻す */
+.hang.mid { text-indent: -.3em; }
+/* 英文の行は入れ子のブロックなので text-indent を受け継いでしまう。ここで打ち消す */
+.hang .en{ text-indent: 0; }
+
+/* P.21 の「色」の行に、16色の実物を置く。文字で「16色」と言うだけでなく見せる */
+section.spec td img.pal {
+  display: block; width: 360px; height: auto; margin-top: 14px;
+  border-radius: var(--r-xs);
+}
+
+/* ── P.34 ── 左に円環の図（SVG）、右に対比の座布団と結論 */
+.cyc {
+  display: grid; grid-template-columns: 753px max-content; gap: 140px; align-items: center;
+  /* 右の文章は短く、1fr にすると箱だけ右端まで伸びて中身が左に取り残される。
+     中身の幅で組んで、図と文章の塊ごと版面の中央に置く */
+  justify-content: center;
+  width: 100%; max-width: var(--body-w); margin: 0 auto; flex: 1 1 auto; min-height: 0;
+}
+/* 輪はこのページの主役。図そのものを太いリングにして立たせる（箱で囲まない） */
+/* 図の SVG は箱の幅いっぱいに置き、高さは縦横比にまかせる */
+.cyc > .ring > svg, section.trialpage .plug svg { display: block; width: 100%; height: auto; }
+.cyc svg text { font-family: inherit; }
+/* 輪のうち、この章の鍵になる2つ（見せて遊んでもらう／感想が返ってくる）を
+   赤系2色で示し、右にその実現条件を2つずつ置く */
+/* --key は旧カードが個別に持っていた。囲みをやめたので、ここで章の色を持つ */
+/* P.16 と同じ型：見出し → グレーの罫 → 子要素、それを1本の縦棒が貫く */
+.keys {
+  display: flex; flex-direction: column; gap: var(--sp-9); --key: var(--p8);
+  position: relative; padding-left: 32px;
+}
+.keys::before {
+  content: ""; position: absolute; left: 0; top: 4px; bottom: 1px;
+  width: 6px; border-radius: var(--r-xs); background: var(--cy);
+}
+/* 左の輪は一般論、右はPyxelが打った手。そのことを親見出しで宣言する。
+   枠の見出し（--key色）より上位なので、色は地の文の墨にして階層を分ける */
+.keys .keys-h {
+  margin: 0; padding-bottom: 15px; font-size: var(--t3); font-weight: var(--w-label);
+  color: var(--cy); line-height: var(--lh-label); letter-spacing: var(--ls-caps);
+  border-bottom: var(--card-line);
+}
+
+/* 仕掛けの実物を2枚。高さを揃えて横に並べ、字だけの面に密度を与える。
+   1枚目は Alt+3 で録った GIF そのもの、2枚目は作品が集まる場所 */
+/* 仕掛けは1つずつカードにする。実物と説明が同じ箱に入るので、
+   どの画像がどの話か迷わない。3つ目だけ実物がないのは、次のページで見せるから */
+/* 3つが並列だと一目で分かるよう番号を振り、左端を揃える。
+   座布団で囲むと箱の大小に目が行って並列が崩れるので、囲まない */
+/* まとまりは左の縦棒が受け持つ。項目ごとの記号を足すと二重に区切ることになる */
+.keys .ki { position: relative; }
+/* 実物と操作は1つの座布団にまとめる。何を押すと何が撮れるかが、
+   箱の中だけを見れば分かる */
+.keys .ki .shot {
+  display: flex; gap: var(--sp-5); align-items: center; margin-top: 12px;
+  background: var(--box); border-radius: var(--card-r); padding: 13px 20px;
+}
+.keys .ki .shot img { width: 130px; flex: none; display: block; }
+.keys .ki .w { font-size: var(--t2); line-height: var(--lh-label); min-width: 0; }
+/* 機能の名前をまず立て、その下に説明・ショートカットを段で置く。
+   名前は章の色、説明は地の文の墨で、視線の順を作る */
+.keys .ki .w b { font-weight: var(--w-label); color: var(--key); }
+/* 次のページで扱う名前は章の色で置く。「次のページで詳細」とは書き添えない */
+
+/* GIF録画はこのページで唯一「実物を見せる」仕掛け。画像を大きく取り、
+   ショートカットまで書いて、他の2枚より厚くする */
+
+.keys .ki .sc { display: block; font-size: var(--t1); color: var(--ja2); line-height: var(--lh-en); }
+.keys .ki .sc > span { display: flex; align-items: baseline; margin-top: 5px; }
+/* 英語をキーの右端から始める。キーの下に潜ると次の行と混ざって読めない */
+.keys .ki .sc .tx { display: block; }
+/* キーは白地で拾う。カードの地（--box）に沈ませない */
+.keys .ki kbd {
+  font-family: inherit; font-size: .92em; background: #fff; color: var(--ink);
+  border: var(--card-line); border-radius: var(--img-r); padding: 3px 9px; margin-right: 6px;
+  line-height: var(--lh-loose);
+}
+
+/* ── 3つ並びのカード（P.38）── 座布団の中にラベル・説明・画面。
+   デッキの座布団は角を落とさない。地は --box、中の画面だけ白 */
+.cards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-10);
+  width: 100%; max-width: var(--body-w); margin: 0 auto; flex: 1 1 auto; min-height: 0;
+}
+.cards .card { background: var(--box); padding: 27px; display: flex; flex-direction: column; min-width: 0; text-align: center; }
+/* 説明が長い型は左そろえ。年代のラベルの下に罫を引いて、見出しと本文を分ける */
+/* 説明が長い型は白いカードに細い枠。灰の座布団だと地に沈んで3つの塊が立たない */
+.cards.left .card {
+  text-align: left;
+  /* 紙の見せ方は P.4 の求人票と同じ仕様にそろえる（枠3px・地・影・角は落とさない） */
+  border: var(--bd-w) solid var(--paper-bd); border-radius: 0;
+  box-shadow: 0 8px 26px rgba(60, 52, 30, .13);
+  background: var(--paper-bg);
+}
+/* 古びたカードに藍は浮くので、年代は焦茶にする。罫も同系に */
+/* ノスタルジーの回。年代は太らせない。31px に 600 は、このページで一番太い字になってしまう */
+.cards.left .card > .y { padding-bottom: 14px; border-bottom: 2px solid var(--paper-rule2); color: var(--paper-ink); font-weight: var(--w-title); }
+.cards.left .card > .y .en { font-size: var(--t1); font-weight: var(--w-body); margin-top: var(--pair-box); }
+/* 地が暖色なので、文字も暖色の濃淡でそろえる。寒色の黒が混ざると古い紙に見えない */
+.cards.left .card > .w { margin-top: 18px; color: var(--paper-ink); }
+
+/* 古びたカードに冷たい灰は合わない。英文は暖色寄りの灰にする */
+.cards.left .card > .y .en, .cards.left .card > .w .en { color: var(--paper-sub); }
+/* 年の意味は日本語でも書く。英語だけに情報を置くと併記にならない */
+/* 既存の .sub は display:block なので別名にする。年と意味は1行に並べる */
+.cards.left .card > .y .ymean { display: inline; font-size: var(--t1); font-weight: var(--w-body); color: var(--paper-ink2); margin-left: 14px; }
+.cards .card > .y { font-size: var(--t3); font-weight: var(--w-label); color: var(--cy); line-height: var(--lh-label); }
+.cards .card > .w { margin-top: 16px; font-size: var(--t2); line-height: var(--lh-body); }
+
+/* リードとカードのあき。カードの高さは中身で決まって縮まないので、
+   上を広げた分はそのまま下に出る。上下の合計96pxを半分ずつ分け合って
+   リードの下も住人の上も48pxにする */
+section:has(.card > .y > .ic) > .lead { margin-bottom: 55px; }
+
+/* ── P.38 の3枚 ─────────────────────────────
+   地はデッキ共通の淡い青1系統。カードごとに色を変えない。
+   このデッキで面を3色に塗り分けているのは P.7 の手段3つだけで、
+   しかも画面の下半分に小さく置かれている。ここで3色にすると
+   P.38 だけ色数の多いページになり、同じ3つを1枚ずつ見せる次の
+   P.39〜41（色分けなし）とも繋がらない。区別はアイコンが担う ── */
+.cards:has(.card > .y > .ic) { flex: 0 0 auto; }
+
+/* img は既定で inline。行の下に余白が出て、下アキが26pxのはずが34pxになる */
+.cards:has(.card > .y > .ic) .card > .ph img { display: block; }
+.cards:has(.card > .y > .ic) .card {
+  /* 左右の内アキは24px。中身の一番長い行（カード2の英語352px）に対して
+     内側426pxで、右に大きく余らない。中身は文字も罫も写真も同じ幅で揃う */
+  /* 送り量。人は座ではなくタイトルの文字で中央を感じるので、
+     「タイトルが札の中央に来る」ように決める。3枚のタイトルは 235/250/232px、
+     内側425pxなら座の送りは 13/6/15px なので一律11px。説明は 52/37/56px で一律52px */
+  --y-indent: 11px;   /* 見出し（座＋タイトル）。座とアイコンが同じ値で動く */
+  --w-indent: 43px;   /* 説明。座の中心（11 + 64/2）にそろえる */
+  --col: 418px;   /* 写真の幅。仕切り線（内アキいっぱい426px）より8px内側に置く */
+  /* カードの中のアキは上下同じ。丸座（64px）で上の中身が重いので、
+     上だけ詰めると座が枠に近づく */
+  text-align: left; border-radius: var(--card-r); padding: 23px 24px 24px;
+  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd);
+}
+/* 名前とアイコン。名前は3つ並ぶ項目名なので、ページの大見出し（P.33 の 31px/紺）ほど
+   強くしない。大きさを1段落とし、色はデッキの「効かせたい語」の藍にする。
+   アイコンは名前の横（P.37 のカードと同じ置き方）*/
+/* 座と名前は横に並べる。P.39〜41 の .applink .hd と同じ組み方にして、
+   一覧の小さい札と詳細の大きい札が同じ部品に見えるようにする。
+   座と名前のアキは径に比例させる（96:26 = 64:17）*/
+.cards:has(.card > .y > .ic) .card > .y {
+  font-size: var(--t2); color: var(--cy);
+  display: flex; align-items: center; gap: var(--sp-4);
+  width: 100%; margin-inline: 0; position: relative;
+}
+.cards:has(.card > .y > .ic) .card > .y::after {
+  content: ""; position: absolute; left: 0;
+  /* 区切りはデッキの罫の色。ここだけ淡い青（#d3ddf0）だと、同じ型の札（P.39〜41）と色が違う */
+  bottom: -23px; width: 100%; height: var(--bd-w); background: var(--card-bd);
+}
+.cards:has(.card > .y > .ic) .card > .y::before {
+  content: ""; flex: none; width: 64px; height: 64px;
+  border-radius: 50%; background: var(--badge);
+  /* 座＋タイトルを右へ送って、左ぞろえのままタイトルが中央に見えるようにする */
+  margin-left: var(--y-indent);
+}
+/* アイコンは座の中央に重ねる。座の送り量 + (64-43)/2 = 10.5。
+   絶対配置なので、座を送ったらここも必ず一緒に動かす */
+.cards:has(.card > .y > .ic) .card > .y > .ic {
+  position: absolute; left: calc(var(--y-indent) + 10.5px); top: 50%; transform: translateY(-50%);
+  width: 43px; height: 43px; object-fit: contain;
+}
+/* 他社ロゴ（.brand）は自作アイコンの見え方まで詰める。
+   枠は36pxのまま拡縮するので、名前の左端は3枚でずれない */
+.cards:has(.card > .y > .ic) .card > .y > .ic.brand { transform: translateY(-50%) scale(var(--brand-fit)); }
+/* 名前と英語を1つの塊にして、英語がアイコンの真下に落ちないようにする */
+.cards:has(.card > .y > .ic) .card > .y .tt { min-width: 0; }
+/* 先頭がカタカナの行は、字面の左アキぶん右に出て、下の英文とずれて見える。
+   その分だけ戻す（実測：P.38の23pxで3px、P.39の31pxで6px）。
+   英文は自分の位置が正しいので打ち消す */
+.cards:has(.card > .y > .ic) .card > .w .tt.kn { text-indent: -3px; }
+.applink .tt.kn { text-indent: -6px; }
+.tt.kn .en { text-indent: 0; }
+
+/* 説明も左ぞろえ。頭は見出しの塊と同じ位置に送って、1本の線に揃える。
+   説明を中央にするのに要る左マージンは3枚で 52 / 37 / 56px なので、
+   見出しと同じ52pxにしても3枚とも大きくは外れない */
+.cards:has(.card > .y > .ic) .card > .w .tt { display: block; width: auto; margin-inline: 0; }
+
+.cards:has(.card > .y > .ic) .card .tt { text-align: left; }
+/* 説明は名前より一段小さく。名前(25px)と同じだと階層が消える */
+.cards:has(.card > .y > .ic) .card > .w { padding-left: var(--w-indent);
+  font-size: var(--fs-m);
+  width: 100%; margin: 43px 0 0;
+}
+/* 素材枠。ラベルは置かない。3枚とも同じ「画面」では何も分からない */
+/* 素材枠。中身が入るまでは点線の箱。ラベルは置かない
+   （3枚とも同じ「画面」では何も分からない）。
+   .ph 自身を箱にする。::after で作ると .cards .card > .ph の指定と
+   flex がぶつかって幅が出ず、縦線1本になる */
+.cards:has(.card > .y > .ic) .card > .ph {
+  margin: 25px auto 0; flex: 1 1 auto; height: auto; min-height: 0;
+  display: block; padding: 0;
+  border: 2px dashed var(--rule-wait); border-radius: var(--img-r); background: var(--slide);
+  /* .ph の素は width:auto / align-self:center。中身が空だと幅が0になり、
+     枠が縦線1本になる。ここでは幅をカードいっぱいに固定する */
+  width: var(--col); max-width: none; align-self: center;
+}
+/* 写真が入ったら箱の角丸も外す。overflow:hidden なので、
+   箱に角丸が残ると写真の角がそこで切られる */
+.cards:has(.card > .y > .ic) .card > .ph:has(img) { border: none; background: none; border-radius: 0; }
+.cards:has(.card > .y > .ic) .card > .ph img {
+  /* 画面そのものなので角は丸めない。ウィンドウの角を切ったように見える */
+  width: 100%; height: 100%; object-fit: contain; border-radius: 0;
+}
+
+/* P.28 はノスタルジーの特別ページ。カードを版面の下端（940）より下へ伸ばし、
+   住人の頭（999）の手前まで使う。すき間は31px残す */
+section.recall { padding-bottom: 112px; }
+
+/* ── アジェンダの帯（P.13）──
+   べた塗りの灰だと板に見える。章の色をごく薄く左に置き、右へ白へ抜く。
+   左端に章を表すアイコンのタイルを付ける */
+/* 左のタイルを帯の高さいっぱいにするため上下パディングを持たせず、高さを直接決める */
+.agenda .a { position: relative; padding: 0 44px 0 0; gap: var(--sp-11); overflow: hidden; align-items: stretch; min-height: 146px;
+  border-radius: var(--card-r); }   /* 帯はカードの仲間なので、カードと同じ角丸を持つ */
+/* 章の色の割り当て。目次の帯（.agenda .a）と章扉の番号（section.section .no）は
+   同じ対応を使う——目次で見た並びがそのまま扉に出る */
+.agenda .a.c1, section.section .no.ch1n { --ch: var(--ch1); }
+.agenda .a.c2, section.section .no.ch2n { --ch: var(--ch2); }
+.agenda .a.c3, section.section .no.ch3n { --ch: var(--ch3); }
+.agenda .a {
+  background-color: transparent;
+  /* 帯は平坦に。左だけ色を置くと縞に見える */
+  background-image: linear-gradient(90deg,
+    color-mix(in srgb, var(--ch) 8%, #fff) 0%,
+    var(--grad-end) 100%);
+}
+.agenda .a .ic {
+  /* 帯の左角（--card-r）に合わせて内側も丸める。直角のままだと丸めた角から直角がのぞく */
+  border-radius: var(--card-r) 0 0 var(--card-r);
+  flex: none; width: 150px;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--ch) 13%, #fff);
+  color: var(--ch);
+}
+/* 中身は座の短辺（帯の高さ146px）の2/3。章扉の座と同じ規則 */
+.agenda .a .ic svg { width: 97px; height: 97px; }
+/* 章番号と見出しがくっつかないよう、番号の幅を実測どおり確保する */
+.agenda .a b { color: var(--ch); width: 250px; align-self: center; }
+.agenda .a .w { align-self: center; }
+
+/* 説明文は帯より一段落とし、左に縦棒を立てて読み始めの位置を作る（P.13） */
+/* 特例ページ。段（31/39）の中間を使う */
+
+/* 棒は帯の左端にそろえ、文字を内側に入れる。棒を外に出すと説明文だけ左へはみ出して見える */
+.agenda-h { position: relative; font-size: var(--fs-3xl); padding-left: 31px; box-sizing: border-box; }
+.agenda-h::before {
+  /* 棒は字面に合わせる（デッキの縦棒は P.15・P.33 とも字面ぴったり）。
+     .32em だと英文の行送りの余りぶん、下だけ10px内側に入っていた */
+  content: ""; position: absolute; left: 0; top: .18em; bottom: .03em;
+  /* 太さはデッキの縦棒と同じ6px（P.15・P.33・P.44 と共通） */
+  width: 6px; background: var(--cy); border-radius: var(--r-xs);
+}
+
+/* ── 章扉に、目次（P.13）と同じアイコンのタイルと章の色を出す ──
+   目次で見た並びがそのまま出るので、いまどの章かが絵で分かる */
+/* 序章だけ暖色にする。1〜3章（藍・青緑・紫）と色相の系統を変えることで、
+   番号の付く章ではないことが色でも分かる */
+section.section .no.ch0n { --ch: #b4682c; }
+/* 1〜3章の割り当ては目次の帯と共通（.agenda の節を見よ） */
+/* 締めの扉。ここは通過点ではなく到達点なので、章の4色とも別の色を持たせる。
+   同じページの宝石と同じ色（--p8）＝たどり着いた宝の色で締める */
+section.section .no.chclosen { --ch: var(--p8); }
+section.section .no {
+  display: flex; align-items: center; gap: var(--sp-8); color: var(--ch, var(--cy));
+}
+section.section .no .ic {
+  flex: none; width: 92px; height: 92px; border-radius: var(--card-r);
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--ch) 12%, #fff);
+}
+/* 中身は座の2/3（デッキ共通）*/
+section.section .no .ic svg { width: 61px; height: 61px; }
+
+/* 章扉の見出しは、他の見出しと違って墨にする。
+   すぐ上にアイコンと章の色が立つので、見出しまで紺だと色が二つ競合する。
+   特に1章の藍は紺と近く、章の色が見出しに埋もれてしまう */
+section.section h1 { color: var(--ink); }
+
+/* P.28 の機種写真。背景を抜いた透明PNGなので、枠も座布団も付けずカードの地に直接置く。
+   高さではなく塗りの面積で揃える（同じ高さにすると、平たい機械ほど小さく見える）。
+   --z で1枚ずつ微調整する。
+   置き方は底ではなく上下中央。底を揃えると、背の低い機械ほど重心が下がって
+   その1枚だけ沈んで見える（底ぞろえだとMSX2に20px差が出る） */
+.cards.left .card > .shot {
+  display: block; width: calc(100% * var(--z, 1)); height: auto;
+  /* 上下中央から、ごくわずかに下へ。写真は上が空いて見えるので、
+     幾何学的な中央だと少し浮いて見える */
+  margin: auto; align-self: center; position: relative; top: 8px;
+}
+
+/* 罫の下の空きを8px足す。この4枚は紙・写真という「面」が上に来るので、
+   同じ56pxでも字が始まるページより近く見える。上下の空きが均等になる量 */
+.pair.fit { margin-top: 8px; }
+/* リードのあるページ（P.26）は、リードの下と住人の上を同じアキにする。
+   絵は残りの高さいっぱいに伸びるので、上はマージン、下はページの下端で決める。
+   gap はエディタ2画面の境目。動画2本の96pxより広い204px（意図のある例外） */
+section:has(> .lead) > .pair.fit { margin-top: 15px; gap: 204px; }
+section:has(> .lead):has(> .pair.fit) { padding-bottom: 133px; }
+/* P.12 はクレジットが入って下に伸びたので、罫の下は既定のまま */
+
+/* 輪の図は面が大きいので、リードとの間を本文ページの既定より広く取る。
+   .cyc 側の margin-top では中央揃えに吸われて上端が動かないため、リード側で開ける */
+section:has(> .cyc) > .lead { margin-bottom: 52px; }
+
+/* ── P.35 年表＋用語（左2/3・右1/3）─────────────
+   年表に出る固有名（Brython・WASM・Pyodide…）は、知らない人には
+   ただの記号になる。同じ画面の右で短く受ける */
+.chron {
+  /* 行の上から丸の中心までの距離。丸（.tp::before）と軸が同じ値を見るので、
+     どちらかを動かしてももう一方がついてくる */
+  --node-c: 34px;
+  display: grid; grid-template-columns: 1fr max-content; gap: var(--sp-13);
+  /* 年表＋用語の2列は two-up と同じ扱い。版面（1658）をいっぱいに使う */
+  width: 100%; flex: 1 1 auto; min-height: 0;
+}
+/* 年表も右と同じ座布団に入れる。左端に縦の軸を通し、各項目に丸い印を打つ。
+   項目のあいだは薄い線で仕切る（右の用語欄と同じ作り） */
+.chron .timeline {
+  gap: 0; justify-content: center; position: relative;
+  background: #fff; border: var(--card-line); border-radius: var(--card-r);
+  /* 枠は中身の幅に合わせる。右だけ大きく余ると左右が非対称に見える */
+  padding: 0 30px 0 0;
+}
+
+/* 縦の軸。行そのものに引く。札を基準にすると、札の中で行が上下中央に寄る
+   （.timeline の justify-content:center）ぶんだけ軸が行からずれ、最初の丸の
+   上に軸の先が突き出す。行を基準にすれば、行の高さが変わっても丸の中心から
+   丸の中心まで通る。
+   色は札の枠と同じ --card-bd。軸は行と行を貫く構造線なので、中の区切り
+   （--rule）やタイルの枠（--tile-bd）と同じ段では弱い。#dfe3ee は差1.31、
+   --tile-bd は1.61 で、どちらもほとんど見えなかった*/
+.chron .tp { gap: var(--sp-4); align-items: baseline; padding: 13px 0 19px 66px; position: relative;
+  background-image: linear-gradient(var(--card-bd), var(--card-bd));
+  background-repeat: no-repeat;
+  background-position: 38px 0;
+  background-size: 2px 100%;
+}
+/* 上端は最初の丸の中心から、下端は最後の丸の中心まで */
+.chron .tp:first-child {
+  background-position: 38px var(--node-c);
+  background-size: 2px calc(100% - var(--node-c));
+}
+.chron .tp:last-child { background-size: 2px var(--node-c); }
+/* 区切り線は軸の右から。軸と十字に交差すると線の主従が壊れる */
+/* 年表の行と用語欄の区切りは同じ線（P.35 の中で作りを揃える） */
+.chron .tp + .tp, .gloss .g + .g { border-top: var(--tbl-line); }
+.chron .tp + .tp::after {
+  /* 覆いの寸法は区切り線（--card-line＝--bd-w）に追従させる。
+     固定値のままだと線を太くしたときに覆いから溢れ、軸の上に線が透ける */
+  content: ""; position: absolute; left: 0; right: auto; top: calc(-1 * var(--tbl-w));
+  width: 56px; height: var(--tbl-w);
+  /* 軸が通る 38〜40px だけは軸の色で埋める。ここまで白で塗ると、行の境目ごとに
+     軸が1pxずつ欠けて点線に見える。border-top のぶん軸の背景が1px下がる欠けも
+     同時に塞がる */
+  background: linear-gradient(90deg,
+    #fff 0 38px, var(--card-bd) 38px 40px, #fff 40px);
+}
+/* 各項目の丸い印。行の1行目の中心に来る高さ。
+   --node-c（行の上から丸の中心まで）を軸と共有するので、丸を動かせば軸も追う */
+.chron .tp::before {
+  content: ""; position: absolute; left: 30px; top: calc(var(--node-c) - 8px);
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--cy); box-shadow: 0 0 0 4px #fff, 0 0 0 6px #cfd8ea;
+}
+/* 「2018年10月」が折り返さない幅。左端を揃えたいので左寄せのまま、
+   月の数字だけ固定幅にして「月」の字を縦に揃える */
+/* 年は骨格。700はデッキの太さの段（600/500）に無く、本文より重すぎた。
+   色も道具の名前（藍）と分けて、構造と内容を取り違えないようにする */
+.chron .tp .y {
+  width: 166px; font-size: var(--t2); white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--w-label); color: var(--ink-t);
+}
+/* 固有名の色分け。道具の名前（右の用語欄に説明がある語）は藍＋一段太く、
+   人の名前はこの章の色（青緑）。人と道具を取り違えずに読める */
+.chron .tm { color: var(--cy); font-weight: var(--w-title); }
+.chron .pn { color: var(--p8); }
+/* 英語は補助。ここに色や太さを持ち込むと、1行の中に装飾が二段重なって散らかる */
+.chron .en .tm { color: inherit; font-weight: inherit; }
+.chron .tp .w { font-size: var(--t2); line-height: var(--lh-label); }
+.chron .tp .w .en { font-size: var(--fs-sm); }
+/* 用語は年表の従。地を敷いて塊にし、字は一段落とす */
+/* 用語は年表の従。角丸の座布団に入れ、1件ずつ薄い線で区切る。
+   左にロゴ（公式ロゴがある3つは本物、無い3つは線画）を添える */
+.gloss {
+  background: #f7f8fb; border: var(--card-line); border-radius: var(--card-r);
+  padding: 6px 22px; align-self: center;
+}
+.gloss .g { display: flex; align-items: center; gap: var(--sp-4); padding: 6px 0 12px; }
+.gloss .g > img { flex: none; width: 40px; height: 40px; object-fit: contain; }
+.gloss .g > div { min-width: 0; }
+.gloss .g b { display: block; font-size: var(--t1); font-weight: var(--w-label); color: var(--cy); }
+.gloss .g > div > span { display: block; font-size: var(--fs-s); line-height: var(--lh-label); color: var(--ja2); margin-top: 3px; }
+.gloss .g .en { font-size: var(--fs-xs); color: var(--en-c); }
+
+/* 年表＋用語のページは中身が版面いっぱい（two-up と同じ扱い）。
+   リードだけ1500pxの塊に寄せると、同じページに本文の左端が二つできる */
+/* 年表は枠が縦に長い。罫の下を詰めて全体を上げ、枠の下と住人のあきを他ページ並みにする。
+   年表は残りの高さいっぱいに伸びるので、上はリードの下、下はページの下端で決まる。
+   上下のあきは、字面の下端ではなく英文のベースラインから測ってそろえる。
+   ディセンダで測ると、上だけ5pxほど広く見える */
+/* リードの上端を他ページと同じ268にそろえる。
+   引き上げ量を -21→-8 にした13pxぶんは、年表の各行の下パディングで取り戻す */
+/* リードの下と住人の上を同じにする。年表は残りの高さいっぱいに伸びるので、
+   ページの下端（padding-bottom）で中身の下端を決める */
+section:has(> .chron) > .lead { max-width: none; margin-top: -8px; margin-bottom: 34px; }
+section:has(> .chron) { padding-bottom: 133px; }
+
+/* P.34 の課題は添え物。次ページ（Web対応）への引き渡しなので、図より控えめに */
+
+/* P.34 の「残る課題」。ラベルを小さな座布団にして、限界の話だと一目で分かるようにする */
+/* P.13 のアジェンダと同じ作り。左端に色の濃いタイル、帯は左から右へ淡くする。
+   デッキの中で「ラベル＋本文の帯」の形が揃う */
+section:has(> .pack) > .issue b {
+  flex: none; width: 190px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-radius: var(--card-r) 0 0 var(--card-r);   /* 帯の左角（--card-r）に合わせる。P.13 のタイルと同じ */
+  background: color-mix(in srgb, var(--cy) 13%, #fff);
+  /* 大きさは段（--t1〜）から採る。24px・22px は段に無い */
+  color: var(--cy); font-size: var(--t2); font-weight: var(--w-label); letter-spacing: var(--ls-label);
+  line-height: var(--lh-label);
+}
+section:has(> .pack) > .issue b .en {
+  font-size: var(--t1); font-weight: var(--w-body); letter-spacing: 0;
+  /* 英文は --en-c。藍を薄めた色にすると日本語と同系になり、添え字として引かない
+     （P.18 の同じ型の座布団は --en-c）*/
+  color: var(--en-c); margin-top: var(--pair-box);
+}
+/* 本文は帯の中で中央に置く。他の帯（P.15・P.37・P.44・P.50）が中央ぞろえなので
+   それに合わせる。左のラベルは幅190pxで固定なので、残りの領域の中央になる
+   （ラベルは残す）*/
+/* 本文は帯の中で中央に置く（他の帯と同じ）。flex にすると文中の語が
+   ひとつずつ別の行に分解されるので、text-align と align-self で寄せる */
+/* 本文は帯の全幅に対して中央に置く。ラベル（190px）のぶんを差し引いた
+   残り領域で中央にすると、版面の中央より右に寄って見える。
+   箱をラベルのぶん左へ広げて、中央が版面の中央（960）に来るようにする */
+section:has(> .pack) > .issue .tx {
+  /* 文言の中心は、帯の全幅の中央(960)と、ラベル面より右の領域の中央(1054)の
+     あいだ。全幅中央だとラベルに押されて左に寄り、右領域の中央だと右に寄って見える */
+  padding: 22px 30px; flex: 1 1 auto; align-self: center; text-align: center;
+  margin-left: -142px; position: relative; pointer-events: none;
+}
+
+/* 縦のリズムを1つにする。リードの下・3つの層のあいだ・住人の上をすべて27pxにする。
+   帯はQRが収まる高さ（195px）が要るので、そのぶん中身の下端が940を越える。
+   写真や図が主役のページ（P.28）と同じ扱いで、下の余白を詰めて中身に回す */
+section:has(> .urlmap) { padding-bottom: 109px; }
+section:has(> .urlmap) > .lead { margin-bottom: 29px; }
+
+/* P.7 はリードの下と住人の上を同じに見せる。中身（.gd）の高さは決まっているので
+   余りを上下で分ける。下の節の「実測が同じでも上のあきは広く見える」に合わせ、
+   実測で上54px/下61pxになる値にする */
+section:has(> .gd) > .lead { margin-bottom: 41px; }
+section:has(> .gd) { padding-bottom: 133px; }
+
+/* 図が版面いっぱいのページは、リードも版面いっぱいに（左端を図と揃える） */
+/* 上のあき（リード→箱）は文字の descender から測るので、実測が同じでも
+   字面（x-height の帯）で見ると下のあき（箱→課題）より広く見える。
+   実測 52/50 だと課題が上に寄って見え、45/57 だと下が広く見えた。
+   その間を採って 49/53 にする。合計は変えないのでページの下端は動かない */
+section:has(> .pack) > .lead { max-width: none; margin-bottom: 27px; }
+
+/* ── P.36 Web版Pyxelの仕組み ─────────────────
+   左に3つの仕掛け、右に実物のHTML。コードは根拠として添えるものなので、
+   左を広く取り、右は読める大きさに留める */
+.webw {
+  display: grid; grid-template-columns: 1fr 660px; gap: var(--sp-13);
+  width: 100%; flex: 1 1 auto; min-height: 0; align-items: stretch;
+}
+/* 左右とも版面の中で上下中央に置く。左は3段、右はコードとリンク。
+   左は右カラム（コード520 + あき28 + リンク53 = 601）と上下端を揃える。
+   42px のままだと左が546pxで上端が28px ずれるが、gap だけで55px 足すと
+   項目間が78px 空いて3段がばらける。gap と項目内（.d の margin-top）で
+   分けて負担し、間隔の比を 3:1 に保つ */
+
+.webw .steps { justify-content: center; gap: var(--sp-13); min-width: 0; }
+.webw .step { gap: var(--sp-6); align-items: flex-start; }
+.webw .step .n { width: 46px; height: 46px; font-size: var(--t2); }
+/* 見出しは1行に収める大きさ。補足はその下に一段落として置く */
+.webw .step > .w { font-size: var(--fs-xl); line-height: var(--lh-en); min-width: 0; }
+.webw .step > .w > .en { font-size: var(--fs-m); margin-top: var(--pair-box); }
+/* 補足は見出しの字の下にそろえる（丸番号のぶん右に寄る）。
+   .w の中にあるので、左端はもともと揃っている */
+/* 補足は P.18（.doable .step .d）と同じ型：淡い青の座布団に入れ、字を藍に。
+   地の文のままだと項目名と同じ声に聞こえ、主従がつかない */
+.webw .step .d {
+  display: block; font-size: var(--fs-m); line-height: var(--lh-body); margin-top: 19px;
+  /* 座布団の内側余白は P.18（.doable .step .d）と同じ */
+  background: var(--note-bg); border-radius: var(--img-r); padding: 11px 22px;
+  color: var(--cy);
+}
+/* 英文は --en-c。P.18（.doable .step .d）と同じ型なので色も同じにする*/
+.webw .step .d .en { display: block; font-size: var(--fs-s); margin-top: var(--pair-xs); color: var(--en-c); }
+/* コードの箱は左の3段と高さを釣り合わせる。行間で伸ばす */
+/* コードと、その書き方で動く実例へのリンク。縦は左の3段と釣り合わせる */
+
+.webcode pre { margin: 0; font-size: var(--t2); line-height: 1.68; padding: 28px 32px; }
+/* 長いURLは箱の幅で折り返す。ソースを手で折るとハイライトの
+   文字列トークンが行をまたいで壊れるので、折るのは表示だけ。
+   折り返した行は2文字ぶら下げて、論理行の頭と見分ける */
+.webcode { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.webcode pre, .webcode pre code, .webcode pre code .cl {
+  white-space: pre-wrap; word-break: normal; overflow-wrap: normal;
+}
+/* コードの下に置く「試してみる」への誘い。読み物ではなく行き先なので、
+   本文（--fs-m）より一段上げて、押せるものだと分かる大きさにする */
+.webtry { margin: 22px 0 0; font-size: var(--fs-l); text-align: center; }
+/* 行き先の一行。地の文と同じ太さだと押せるものに見えないので、見出しの段の太さにする */
+.webtry a { font-weight: var(--w-title); }
+.webtry .en { font-size: var(--fs-s); color: var(--en-c); margin-top: var(--pair-box); }
+
+/* ── P.39〜41 左に情報・右に画面 ──────────────────
+   左は白いカードに「丸座のアイコン → アプリ名 → 一行説明」を縦に積む。
+   右は画面を大きく見せる。two-up の骨格をそのまま使う */
+/* 左の段は 79px の内アキ + カード641px。
+   カード641 + 画像866（高さ542と16:10で決まる）で、版面1658に配れる残りは151px。
+   これを「左79 + 段間72」に割る。左右0にして151pxを全部段間に回すと、
+   ・リードが x131 に出て、リードのあるページ17枚の x210 とずれる
+   ・中央に151pxの空き channel ができて、左右が分断されて見える
+   カードを段いっぱい（720px）に広げるのも、中身が左半分に寄って間延びする。
+   3つとも実際に試して却下した。
+   右は画像が版面の右端まで抜ける。文字は文字の段（210）、絵は版面いっぱい */
+section.demo { grid-template-columns: 720px 1fr; }
+section.demo > .lead { margin-left: 79px; }
+/* P.41 の左列（札＋説明）は、右の画像に対して上下中央にそろえる。
+   リードの下を広げて位置を作ると、右の画像まで下がって他ページとずれる */
+section.two-up:has(> .col-l) > .col-l { align-self: center; }
+/* 左の塊の基準は画像との上ぞろえ。P.41 はカードが画像とほぼ同じ高さ（531 対 542）
+   なので、これで左右の上下端がそろう */
+section.demo > .applink { grid-area: a; align-self: start; justify-self: stretch; margin: 29px 0 0 79px; }
+/* P.41 は札の下に「MMLとは何か」の一般論が続く。アプリの札の中身ではないので
+   別の箱に分けて縦に積む。札そのものは P.39・P.40 と同じ形になる */
+section.demo > .col-l {
+  grid-area: a; align-self: start; justify-self: stretch;
+  margin: 29px 0 0 79px; display: flex; flex-direction: column; gap: var(--sp-8);
+}
+section.demo > .col-l > .applink { margin: 0; }
+/* MMLの説明は「MMLとは何か」の一般論で、アプリの札ではない。
+   同じ淡い青の箱にするとアプリがもう1つあるように見えるので、箱にしない。
+   左に細い棒を立てて、札とは別の性質の段だと示す（P.13・P.15 の棒と同じ役目）*/
+section.demo > .col-l > .nt {
+  /* 棒の右の文字は、札の丸座の左端（x251）と札の外枠（x210）の中間あたりに置く。
+     丸座の左端ぴったり（9px）だと寄りすぎ、札の内アキと同じ（30px）だと離れすぎた */
+  margin: 0 0 0 20px; padding-left: 30px; position: relative;
+}
+/* section 直下の札＝P.39・P.40（P.41 は .col-l の中）。
+   上ぞろえのままだと下に285pxの空白が丸ごと残るので、余りを上下 1:2 に配る。
+   1:2 は目には中央と映る割合で、画像の高さの真ん中に置くより落ち着く。
+   画像542px − カード257px = 285px、その1/3が95px。29 + 95 = 124px */
+section.demo > .applink { margin-top: 124px; }
+/* 右の画面写真は版面の右端にぴったり付いていて、左の文章より外に張り出して見えた。
+   右に余白を作って少し内側へ寄せる。3ページ共通の型なのでここで一度に効かせる */
+/* 右の画面写真は版面の右端にぴったり付いていて、左の文章より外に張り出して見えた。
+   大きさは変えずに、位置だけ内側へ寄せる。
+   3ページ共通の型なので、ここで一度に効かせる */
+section.demo > .ph { margin-top: 29px; transform: translateX(calc(-1 * var(--sp-6))); }
+
+section.demo > p.applink, .applink {
+  display: block; width: auto; max-width: none; text-align: left;
+  /* 地は P.38 の3枚と同じ。同じアプリの札は、一覧でも詳細でも同じ見た目にする */
+  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); border-radius: var(--card-r);
+  padding: 24px 40px;
+  font-size: var(--t3); line-height: var(--lh-label);
+}
+/* 丸座のアイコン。P.7・P.37 と同じ淡い青。名前は座の右に置く */
+.applink .hd { display: flex; align-items: center; gap: var(--sp-8); }
+.applink .badge {
+  flex: none; width: 96px; height: 96px; border-radius: 50%;
+  /* 札が淡い青になったので、座は一段濃くする。白にすると札との差が
+     1.073 まで落ちて投影で消える（濃い青なら1.161で、白札のときの1.127より強い）*/
+  background: var(--badge); display: flex; align-items: center; justify-content: center;
+}
+.applink .badge > .ic { width: 64px; height: 64px; object-fit: contain; }
+.applink .nm { font-size: var(--t4); font-weight: var(--w-title); color: var(--cy); line-height: var(--lh-snug); }
+/* 名前の下の短い罫。名前の左端から引いて、下の説明と段を分ける */
+.applink .ttl { min-width: 0; }
+/* 名前の英文。P.38 のカード名（.cards .card > .y .en）と同じ扱いにそろえる。
+   丸座96pxのほうが高いので、この1行が増えても札の高さは変わらない */
+/* 見出しと説明を分ける罫。カードの内アキいっぱいに引く */
+.applink .hd { padding-bottom: 20px; border-bottom: var(--card-line); }
+/* 一行説明。左端は丸座の中心（座の左0 + 96/2 = 48px）にそろえる。
+   P.38 のカード（座64px・送り11px → 中心43px）と同じ考え方 */
+.applink .tt { display: block; margin-top: 18px; margin-left: 48px; font-size: var(--t3); line-height: var(--lh-mid); font-weight: var(--w-title); }
+/* 補足（P.41 の MML の用語説明）。一行説明より一段落として、地の文の扱いにする */
+.nt { display: block; font-size: var(--t2); line-height: var(--lh-loose); color: var(--ja2); }
+.nt > b { display: block; font-weight: var(--w-label); color: var(--cy); margin-bottom: 4px; }
+/* 書き方の例。等幅で1行、その下に何を指定しているかを添える */
+.nt .ex { display: block; margin-top: 14px; }
+.nt .ex > code {
+  /* 実際に打つ文字列なので、デッキの「打つもの」（.pack .op code）と同じ
+     黒地・白文字にする。コードブロック（section pre）と同じ var(--code-bg) 系統 */
+  display: inline-block; font-family: var(--font-mono); font-size: var(--fs-sm);
+  color: var(--code-fg); background: var(--code-bg); border-radius: var(--img-r); padding: 8px 15px; white-space: nowrap;
+}
+.nt .ex .cm { display: block; margin-top: 8px; font-size: var(--t1); color: var(--ja2); line-height: var(--lh-mid); }
+.nt .ex .cm .en { display: block; font-size: var(--fs-s); color: var(--sub); margin-top: var(--pair-xs); }
+/* 丸座の中でも、他社ロゴだけ自作アイコンの見え方に合わせて詰める（P.38 と同じ） */
+.applink .badge > .ic.brand { transform: scale(var(--brand-fit)); }
+
+/* ── P.44 AI時代の「楽しく作る」─────────────────
+   左半分にAIの現状と懸念、右半分に自分の捉え方。左右の対比で読ませる。
+   札の中の見出しは、縦棒ではなく紺の色と太さで示す（P.38 の .card > .y と同じ）。
+   デッキの縦棒は列や段の全体を束ねる印で、見出しの飾りではない。
+   .vs は P.7 の「↔」（.gd-goal .vs）と同じクラス名なので、必ず section.aipage 配下に閉じる */
+section.aipage .vs { display: flex; gap: var(--sp-11); flex: 1 1 auto; min-height: 0;
+      width: 100%; max-width: var(--body-w); margin: 0 auto 0; align-items: stretch; }
+section.aipage .vs .side { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
+      border-radius: var(--card-r); padding: 18px 22px 16px; }
+/* 左＝世の中の事実と声は灰、右＝自分の側は淡い青。デッキの原則どおり */
+section.aipage .vs .world, section.aipage .vs .mine { background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); }
+/* 数字は本文に埋めず立てる。P.4 の「4,900円」と同じ扱い */
+/* 数字はグラフで見せる。文字だけより上がり方が伝わる。
+   左右で同じ形の棒グラフにして、上がっている中身が正反対だと読み比べさせる */
+/* グラフは札の幅いっぱい・高さも取る。小さく置くと数字が読めず、ただの飾りになる */
+/* 札の先頭は主張の一行（.hd）。グラフの軸名と出典は .lb としてグラフの左に置く。
+   軸名を上に積むと縦を食うので、左に回して縦を稼ぐ*/
+section.aipage .vs .hd { position: relative;
+      font-size: var(--t3); font-weight: var(--w-label); color: var(--ink2);
+      line-height: var(--lh-label); padding-left: 26px; }   /* 柱6px ＋ アキ20px */
+section.aipage .vs .fig { display: flex; align-items: center; gap: var(--sp-1); padding-left: 26px; flex: 1 1 auto; min-height: 0; margin-top: 14px; }
+/* ラベルは2行で収まる幅を確保する。狭いと「Google の／新しい／コードのうち」と細切れに折れる */
+section.aipage .vs .lb { flex: 0 0 232px; min-width: 0; }
+section.aipage .vs .t { font-size: var(--t2); font-weight: var(--w-title); color: var(--ink2); line-height: var(--lh-label); }
+section.aipage .vs .src { margin-top: 12px; }
+/* グラフは札の残り全部を使う。下に空きを残すと図が浮いて見える */
+section.aipage .vs .g { flex: 1 1 auto; min-width: 0; width: auto; height: 100%; max-height: 100%; align-self: stretch; }
+section.aipage .vs .msg {
+  margin: 14px 0 0; padding-top: 14px; border-top: var(--card-line);
+  font-size: var(--t3); font-weight: var(--w-title); color: var(--cy); line-height: var(--lh-label);
+}
+section.aipage .vs .world .msg { color: var(--g-world); }
+section.aipage .vs .world .hd::before { background: var(--g-world); }
+section.aipage .vs .mine .msg  { color: var(--g-mine); }
+section.aipage .vs .mine .hd::before  { background: var(--g-mine); }
+/* 語の途中や助詞の前で折り返さない。短い文を2〜3行に組む箱はすべてこれ */
+section.aipage .vs .t, section.aipage .vs .msg,
+section.rolepage .hd .w, section.rolepage .d,
+section.trialpage .ch, section.trialpage .d { word-break: auto-phrase; text-wrap: balance; }
+section.aipage .vs .src .en { font-size: var(--fs-xs); }
+/* このページのリードは2行になる。図が主役なので一段小さくして高さを図に回す */
+/* 結論は上のリードではなく、左右2つの解釈を受けて札の下に置く。
+   帯は P.15（.goal）・P.50（.concl）と同じ地・角丸・内側余白 */
+section.aipage > .concl {
+  box-sizing: border-box; width: 100%; max-width: var(--body-w); margin: 22px auto 0;
+  font-size: var(--t3); font-weight: var(--w-title); color: var(--ink); line-height: var(--lh-en);
+  border-radius: var(--card-r); padding: 19px 24px; text-align: center; background: var(--pale-n);
+  word-break: auto-phrase; text-wrap: balance;
+}
+
+/* ── P.45 「楽しく作る」ための、AI の2つの立ち位置 ──────────
+   1枚目で出した答えを、2つの立ち位置に分けて具体で見せる。
+   各カードは「番号＋見出し → 一行説明 → 絵 → 何を助けるかの動詞」の順。
+   動詞は作る作業そのものの言葉にする（効能の説明にすると抽象度が上がる）*/
+/* リード下と住人上の余白を均等に。カードの高さは変えず、下パディングで位置だけ下げる */
+section.rolepage { padding-bottom: 130px; }   /* P.46（.trialpage）と札の高さをそろえる */
+section.rolepage > .roles {
+  display: flex; gap: var(--sp-13); flex: 1 1 auto; min-height: 0;
+  width: 100%; max-width: var(--body-w); margin: 15px auto 0; align-items: stretch;
+}
+section.rolepage .role {
+  flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
+  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); border-radius: var(--card-r); padding: 22px 26px 20px;
+}
+section.rolepage .hd { display: flex; align-items: center; gap: var(--sp-5); }
+section.rolepage .n {
+  flex: none; width: 46px; height: 46px; border-radius: 50%; background: var(--cy); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: var(--t2); font-weight: var(--w-label);
+}
+section.rolepage .hd .w { font-size: var(--t3); font-weight: var(--w-label); color: var(--cy); line-height: var(--lh-snug); }
+
+/* 図。左右のカードで上端が揃うよう、説明の高さを2行ぶんで固定する */
+section.rolepage .d { margin-top: 14px; padding-left: 23px; font-size: var(--t2); line-height: var(--lh-body); min-height: calc(var(--t2) * 1.45 + var(--t1) * 1.4); }
+section.rolepage .fig { margin: 16px 0 0; flex: 1 1 auto; min-height: 0; overflow: hidden;
+      box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--pale-b); border-radius: var(--img-r); padding: 10px 14px; }
+
+/* 何を助けるか。作業の動詞を横に並べる */
+/* 図はデッキのドット絵住人で模式化する。主人公＝Human、宝石＝AI。
+   線画のイラストより、デッキの世界と地続きで分かりやすい */
+section.rolepage .fig .dia { display: flex; align-items: flex-end; justify-content: center;
+      gap: var(--sp-6); width: 100%; height: 100%; }
+section.rolepage .fig .ch { display: flex; flex-direction: column; align-items: center;
+      gap: var(--sp-1); margin: 0; }
+section.rolepage .fig .ch img { width: 104px; height: 104px; }
+section.rolepage .fig .ch figcaption { font-size: var(--t1); font-weight: var(--w-label);
+      color: var(--cy); line-height: 1; }
+
+/* 画面は作っているもの。人のとなりに置いて、作業のかたまりに見せる */
+/* ①はチーム＝大勢。1体を小さくして6体並べる。②は3体なので大きさで差が出る */
+
+/* 吹き出しの帯は固定高。中身の有無に関わらず絵の位置がそろう */
+section.rolepage .fig .dia .ch > .bub { height: 46px; box-sizing: border-box;
+      display: flex; flex-direction: column; justify-content: center; }
+section.rolepage .fig .bub.none { visibility: hidden; border: none; background: none; }
+section.rolepage .fig .dia.team .ch { flex: 1 1 0; min-width: 0; }
+section.rolepage .fig .dia.bridge .ch { flex: none; }
+section.rolepage .fig .dia .ch img { width: 68px; height: 68px; }
+/* 担当名を主、英語と担い手をその下に小さく積む */
+section.rolepage .fig .dia .ch figcaption { font-size: var(--fs-xs); line-height: var(--lh-title);
+      white-space: nowrap; }
+/* 図に添える一行の注記。担い手の絵にも、群の見出しにも同じものを使う */
+section.rolepage .fig .dia .ch figcaption i,
+section.rolepage .fig .gcap i { display: block; font-style: normal;
+      font-size: var(--fs-xs); font-weight: var(--w-body); color: var(--sub); line-height: var(--lh-title); margin-top: 1px; }
+/* 担い手はバッジで示す。AIだけ色を変えて、人と一目で見分けられるようにする */
+section.rolepage .fig .dia .ch figcaption b { display: inline-block; margin-top: 7px;
+      padding: 2px 11px 3px; border-radius: var(--r-md); font-size: var(--fs-xs);
+      font-weight: var(--w-label); line-height: var(--lh-title); }
+section.rolepage .fig .ch figcaption b.hu { background: var(--hu-bg); color: var(--hu-fg); }
+section.rolepage .fig .ch figcaption b.ai { background: var(--cy); color: #fff; }
+section.rolepage .fig .dia .bub { font-size: var(--fs-xs); padding: 5px 10px 6px; }
+section.rolepage .fig .dia .bub i { font-size: var(--fs-xs); }
+
+/* 言語の違いは吹き出しの言葉で示す。国旗は使わない */
+section.rolepage .fig .bub { position: relative; margin-bottom: 11px; display: block; text-align: center;
+      /* 枠は同じページの白いタイルと同じ --tile-bd。直値だと、しっぽ（::before）と
+         色が食い違う（直値だと枠としっぽが #c3cbdd と #d3d9e8 に割れる）*/
+      padding: 6px 16px 7px; border-radius: var(--r-lg); background: #fff; border: var(--bd-w) solid var(--tile-bd);
+      font-size: var(--t1); color: var(--ink2); line-height: var(--lh-snug); white-space: nowrap; }
+section.rolepage .fig .bub i { display: block; font-style: normal; font-size: var(--fs-xs);
+      color: var(--sub); line-height: var(--lh-title); margin-top: 1px; }
+section.rolepage .fig .bub::before, section.rolepage .fig .bub::after {
+  content: ""; position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
+  width: 0; height: 0; border-style: solid; }
+section.rolepage .fig .bub::before { border-width: 12px 9px 0 9px;
+  /* 吹き出しの枠と一続きに見せる。枠と同じ色にする */
+  border-color: var(--tile-bd) transparent transparent transparent; }
+section.rolepage .fig .bub::after { margin-top: -2px; border-width: 10px 7px 0 7px;
+  border-color: #fff transparent transparent transparent; }
+/* ②も①と同じ部品で組む。矢印は縦に語・記号・英語を積む。
+   ①（.team）と違い、吹き出しが上に付くので上ぞろえで組む */
+section.rolepage .fig .dia.bridge { display: flex;
+      justify-content: center; width: 100%;
+      padding: 0 18px; box-sizing: border-box; gap: var(--sp-2);
+      height: auto; align-items: flex-start; }
+section.rolepage .fig .arw { flex: none; width: 78px; display: flex;
+      flex-direction: column; align-items: center; }
+section.rolepage .fig .arw b { margin-top: 85px; font-size: var(--fs-s); font-weight: var(--w-label);
+      color: var(--cy); line-height: var(--lh-title); white-space: nowrap; }
+section.rolepage .fig .arw span { font-size: var(--fs-3xl); line-height: 36px; color: var(--cy); }
+section.rolepage .fig .arw i { font-style: normal; font-size: var(--fs-xs); color: var(--sub);
+      line-height: var(--lh-title); margin-top: 2px; }
+section.rolepage .fig .grp { display: flex; flex-direction: column; align-items: center; gap: var(--sp-1); }
+section.rolepage .fig .grp .row2 { display: flex; gap: var(--sp-4); align-items: flex-end; }
+
+section.rolepage .fig .gcap { margin-top: 0; text-align: center; font-size: var(--fs-xs);
+      font-weight: var(--w-label); color: var(--cy); line-height: var(--lh-title); }
+section.rolepage .fig .gcap b { display: inline-block; margin-top: 7px; padding: 2px 11px 3px;
+      border-radius: var(--r-md); font-size: var(--fs-xs); font-weight: var(--w-label); line-height: var(--lh-title);
+      background: var(--hu-bg); color: var(--hu-fg); }
+/* 図は面の中央に置く。上に寄せると下が空いて重心がずれる */
+section.rolepage .fig .dia.team { align-items: center; padding: 0 18px; box-sizing: border-box;
+      justify-content: center; gap: 6px; }
+section.rolepage .acts { display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: var(--sp-1); margin-top: 14px; }
+/* タグは縦積みの箱にする。span をインラインのままにして中に block を入れると、
+   インラインが分割されて空の枠が並ぶ。
+   子セレクタ必須。hl.py が和欧間アキの <span class="aki"> を字の間に入れるので、
+   子孫セレクタにすると空の白い座布団が並ぶ */
+section.rolepage .acts > span {
+  display: flex; flex-direction: column; align-items: center;
+  background: #fff; border: var(--bd-w) solid var(--tile-bd); border-radius: var(--r-lg);
+  padding: 7px 12px; font-size: var(--fs-s); color: var(--ink2); font-weight: var(--w-title);
+  line-height: var(--lh-snug);
+}
+section.rolepage .acts i { font-style: normal; font-size: var(--fs-xs);
+  color: var(--sub); font-weight: var(--w-body); margin-top: 1px; }
+
+/* ページの英文の後勝ち既定（値は「添え」の節と同じ）。
+   末尾に置く順序が仕様。「添え」の節へ移して統合してはいけない（同節の注記を見よ）*/
+section.rolepage .en {
+  display: block; font-size: var(--t1); font-weight: var(--w-body);
+  color: var(--sub); margin-top: var(--pair-box);
+}
+
+/* ── P.46 AI時代へのPyxelの対応 ────────────────────
+   左＝pyxel-mcp（AI用Pyxel操作ツールキット）／右＝pyxel-skill（AI用Pyxel作業手順書）。
+   リードで「何をしたか」を答え、具体は左右の2枚に投げる。
+   見た目は P.45 と同じ型（カード＋見出し＋説明＋図）で、章の中でそろえる。
+   番号の丸は付けず、名前を見出しにして P.45 と型を分ける。
+   左の機能タイルは6つ（動かす3・調べる3）*/
+section.trialpage { padding-bottom: 130px; }
+section.trialpage > .cols {
+  display: flex; gap: var(--sp-13); flex: 1 1 auto; min-height: 0; height: 100%;
+  width: 100%; max-width: var(--body-w); margin: 15px auto 0; align-items: stretch;
+}
+section.trialpage .col {
+  flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-self: stretch;
+  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); overflow: hidden;
+  /* 札の内側余白は P.45（.role）と同じ */
+  border-radius: var(--card-r); padding: 22px 26px 20px;
+}
+section.trialpage .ch { display: flex; align-items: flex-start; gap: var(--sp-4);
+  font-size: var(--t3); font-weight: var(--w-label); color: var(--cy); line-height: var(--lh-snug); }
+section.trialpage .ch .nm, section.trialpage .ft .tx { flex: 1 1 auto; min-width: 0; }
+/* 名前の左の丸座。作りは P.39〜41 の .applink .badge と同じ（淡い青の丸に線画）。
+   名前のついた道具にはデッキ全体でアイコンが付いているので、ここにも付ける。
+   径は P.38 のカード（64px）より一回り小さい 56px、アキも 20→16px。
+   ここは .applink と違って名前の右にも図が入るので、座を同寸にすると
+   「Agent Skill形式 / An Agent Skill」が入り切らず、行頭がスラッシュで折れる。
+   図（.plug 268px）は縮めない ── 縮めると今度は図のキャプションが3行になって、
+   左右のカードで下の説明の位置がずれる */
+section.trialpage .ch .badge > .ic { width: 37px; height: 37px; object-fit: contain; }
+section.trialpage .ch .badge {
+  flex: none; width: 56px; height: 56px; border-radius: 50%;
+  background: var(--badge); display: flex; align-items: center; justify-content: center;
+}
+/* MCP が標準の差込口であることを USB のメタファーで示す */
+/* 図が札の白地に溶けて見えるので、淡い面を敷く*/
+section.trialpage .plug { flex: none; width: 268px; text-align: center;
+  background: var(--pale-b); border-radius: var(--r-lg); padding: 8px 0;
+  display: flex; flex-direction: column; justify-content: center; }
+section.trialpage .plug .pl rect { fill: #fff; stroke: var(--line-fig); stroke-width: 2.5; }
+section.trialpage .plug .hub { fill: var(--tile-bg); stroke: var(--cy); stroke-width: 2.5; }
+/* 右の図（AI←SKILL）だけ、AI の箱を脇役の線にする */
+section.trialpage .col:last-child .plug .hub { stroke: var(--line-fig); }
+section.trialpage .plug .pt rect { fill: var(--cy); opacity: .5; }
+section.trialpage .plug .hb { font-size: var(--t1); font-weight: var(--w-bold); fill: var(--cy);
+  font-family: var(--font-mono); }
+section.trialpage .plug .sd { font-size: var(--fs-s); font-weight: var(--w-label); fill: var(--ink2); }
+/* 主役は SKILL の書類のほう。左の図で MCP を濃紺にしているのと同じ扱い。
+   AI の箱を濃紺にすると強弱が逆になる */
+section.trialpage .plug .bk path { fill: #fff; stroke: var(--cy); stroke-width: 2.5; }
+section.trialpage .plug .bk .spine { fill: var(--tile-bg); }
+section.trialpage .plug .bk .ttl { fill: var(--tile-bg); stroke: var(--tile-c1-bd); stroke-width: 2; }
+/* 本の中の罫。直値 #c3cbdd は --tile-bd とほぼ同じ色で、デッキに同じ色を2つ持つ理由がない */
+section.trialpage .plug .bk .ln path { fill: none; stroke: var(--tile-bd); stroke-width: 3; stroke-linecap: round; }
+section.trialpage .plug .ct { font-size: var(--fs-s); font-weight: var(--w-bold); fill: var(--cy);
+  font-family: var(--font-mono); }
+section.trialpage .plug em { display: block; margin-top: var(--pair-s); font-style: normal;
+  font-size: var(--fs-xs); font-weight: var(--w-body); color: var(--ink2); line-height: var(--lh-label); }
+section.trialpage .plug em i { display: block; font-style: normal; font-size: var(--fs-xs);
+  /* 色を書かないと親（日本語のキャプション）の --ink2 を継いで、英文が
+     日本語と同じ濃さで出る。英文は --en-c*/
+  color: var(--en-c); margin-top: var(--pair-box); }
+/* 説明文の左端は丸座の中心（座の50%）にそろえる。デッキ共通の規則。
+   座は 56px なので、その半分の 28px を左に足す */
+/* 説明文の左端は丸座の中心（座の50%＝28px）にそろえる。デッキ共通の規則。
+   上マージンは負にして、名前の行の高さ（右の挿絵で決まる）に引きずられず上へ寄せる。
+   下が詰まって見えたので、その空きを下に回した*/
+section.trialpage .d { margin: -20px 0 var(--sp-8) 28px; font-size: var(--t2); line-height: var(--lh-body); }
+/* 左右それぞれを1つの絵にし、左右で見た目を変える。
+   左＝機械のための道具なので数字、右＝人と同じ手引きなので文書の体裁 */
+/* 左右とも説明文の直後から始めて、下端までいっぱいに使う。
+   margin-top:auto だと右の板だけ下に押されて、左のカードと上下がずれていた */
+section.trialpage .figL, section.trialpage .figR { margin: 0; flex: 1 1 auto;
+  display: flex; align-items: stretch; }
+section.trialpage .figL > *, section.trialpage .figR > * { width: 100%; }
+/* 色は意味に紐づける。動かす系／調べる系で座の色を分け、差し色 --p8 は1つだけ */
+/* 箱の中（上下20px）より、箱と箱の間（6px）が狭く、3枚が1つの塊に見えていた。
+   間を広げ、そのぶん中を詰める*/
+section.trialpage .fts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-5) var(--sp-3); width: 100%; grid-auto-rows: 1fr; height: 100%; }
+
+/* 枠の色を群に合わせる。塗りつぶすと字が読みにくくなるので、線だけで示す。
+   アイコンの座の枠と同じ色なので、座とカードが対になる */
+section.trialpage .ft { display: flex; align-items: center; gap: var(--sp-2);
+  background: #fff; border: var(--bd-w) solid var(--run-bd); border-radius: var(--r-lg); padding: 7px 14px 7px 12px; }
+/* アイコンの座は P.34・P.42 と同じ淡青のタイル */
+section.trialpage .ft .ic { flex: none; width: 46px; height: 46px; border-radius: var(--r-lg);
+  background: var(--tile-bg); border: var(--bd-w) solid var(--run-bd); color: var(--run-fg);
+  display: flex; align-items: center; justify-content: center; }
+section.trialpage .ft .ic svg { width: 32px; height: 32px; display: block; }
+section.trialpage .ft b { display: block; font-size: var(--fs-s); font-weight: var(--w-label);
+  color: var(--cy); line-height: var(--lh-title); }
+/* 調べる系（.chk）は枠・字を青緑の組に差し替える */
+section.trialpage .ft.chk { border-color: var(--chk-bd); }
+section.trialpage .ft.chk .ic { background: #e2f3f5; border-color: var(--chk-bd); color: var(--chk-fg); }
+section.trialpage .ft.chk b { color: var(--chk-fg); }
+section.trialpage .ft em { display: block; margin-top: 8px; font-style: normal;
+  font-size: var(--fs-xs); color: var(--ink2); line-height: var(--lh-snug); }
+section.trialpage .ft i { display: block; font-style: normal; font-size: var(--fs-xs);
+  font-weight: var(--w-body); color: var(--sub); line-height: var(--lh-title); margin-top: var(--pair-box); }
+/* 右：手引きの実物。ファイル名を付けて、人に渡す文書と同じ体裁だと見せる */
+section.trialpage .paper { background: var(--code-bg); border: none; border-radius: var(--r-lg); overflow: hidden;
+  display: flex; flex-direction: column; }
+section.trialpage .fn { padding: 8px 18px; background: #2a2a34; font-size: var(--fs-xs);
+  font-family: var(--font-mono);
+  font-weight: var(--w-label); color: #b9b9c6; line-height: var(--lh-title); }
+/* 手順を5つ載せるため、項目の間と下のアキを詰めた*/
+/* 手順は板いっぱいに散らす。詰めると上下に大きな空きが残る*/
+/* 行間は詰めて、板が札の下の余白を突き抜けないようにする。
+   左のカードの並びと下端をそろえる*/
+section.trialpage .bd { padding: 12px 18px 12px; display: flex; flex-direction: column;
+  gap: var(--sp-2); flex: 1 1 auto; justify-content: center; overflow: hidden; }
+section.trialpage .bd .h { font-size: var(--fs-s); font-weight: var(--w-label); color: #7ea9f0; line-height: var(--lh-label); }
+section.trialpage .bd .h + .li { margin-top: 1px; }
+section.trialpage .bd .li { font-size: var(--fs-s); color: var(--code-fg); line-height: var(--lh-body); }
+/* 英文は同じ行に続ける。上下に積むと1項目が2行になり、字を小さくしないと入らず
+   板の中が間延びして見えた*/
+section.trialpage .bd .li i { display: inline; font-style: normal; font-size: var(--fs-xs);
+  color: var(--sub2); margin-left: .6em; }
+section.trialpage .bd .li code { font-family: var(--font-mono);
+  font-size: var(--fs-xs); color: #e08a5f; }
+section.trialpage .bd .h i { font-style: normal; font-size: var(--fs-xs); font-weight: var(--w-body);
+  color: var(--sub3); margin-left: 8px; }
+
+/* ページの英文の後勝ち既定（値は「添え」の節と同じ）。
+   末尾に置く順序が仕様。「添え」の節へ移して統合してはいけない（同節の注記を見よ）*/
+section.trialpage .en {
+  display: block; font-size: var(--t1); font-weight: var(--w-body);
+  color: var(--sub); margin-top: var(--pair-box);
+}
+
+/* 写真と当時の画面が主役のページ。罫の下と住人の上の余白を詰めて、
+   そのぶんを中身の余白に回す（P.28 と同じ特例）*/
+section.horizon { padding-bottom: 130px; }
+
+/* ── P.47 「新しいレトロ」への挑戦 ─────────────────
+   上＝ゲーム機の年表。時代の区切りは軸のグラデーションで示す（タグは置かない）。
+   「レトロ2D」も「レトロ3D」も何年からと線を引けるものではないので、帯で厳密に区切らない。
+   下＝2つの時代（レトロ2D時代／レトロ3D時代）を並べ、
+   その右で Pyxel Cube が「レトロ3D」を引き受ける */
+section.horizon > .hz {
+  display: grid; grid-template-columns: repeat(11, 1fr);
+  flex: 1 1 auto; align-content: start; min-height: 0;
+  width: 100%; max-width: var(--body-w); margin: 12px auto 0;
+}
+/* 3つの時代の色。軸のグラデーションと下の札の見出しで同じ色を使い、対応を色で示す。
+   軸は色の境目をなだらかに移すので、何年からという線にならない */
+
+section.horizon .pts { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid;
+  position: relative; }
+/* 軸の線。両端は最初と最後の点まで */
+section.horizon .pts::before {
+  content: ""; position: absolute; left: 42px; right: 41px; top: 86px;
+  height: 6px; border-radius: var(--r-xs);
+  /* 時代の色はブルー → 水色 → 明るいグリーン。Pyxel の16色には鮮やかな青も水色もない
+     （--p5 はくすんだ青、--p12 は青紫、--p1 は黒に近い）ので、ここは一般の色を使う。
+     レトロ3D と Pyxel Cube を同じ水色にして「引き受ける」関係を色でつなぐ。
+     色の境目はなだらかに移すので「何年から」という線にならない */
+  background: linear-gradient(to right,
+    var(--era1) 0%, var(--era1) 24%, var(--era2) 40%, var(--era2) 60%, var(--era3) 78%, var(--era3) 100%);
+}
+/* 行1は一番背の高い写真（縦置きの PS5）に合わせる。写真は下ぞろえ。
+   名前と英名は列の中で折り返してよい。行の高さを決め打ちして下端をそろえる */
+section.horizon .pt { position: relative; display: grid; grid-template-rows: 88px 34px 54px;
+  align-items: end; text-align: center; padding: 0 8px; }
+section.horizon .pt::before {
+  content: ""; position: absolute; left: 50%; top: 81px; transform: translateX(-50%);
+  width: 14px; height: 14px; border-radius: 50%; background: var(--cy);
+}
+/* 写真の下端と軸の線の間は空ける。詰めると機種が線に刺さって見える */
+section.horizon .hw { display: block; width: var(--w); height: auto; margin: 0 auto 16px; align-self: end; }
+section.horizon .y { grid-row: 2; padding-bottom: 2px; font-size: var(--t1); font-weight: var(--w-title); color: var(--cy); line-height: var(--lh-tight); }
+/* 列幅は 1500/11 = 136px。名前も英名もこの中に1行で入る大きさにする */
+section.horizon .n { grid-row: 3; align-self: start; margin-top: 6px; font-size: var(--fs-xs); color: var(--ink); line-height: var(--lh-snug); white-space: nowrap; }
+
+/* ── 下段：2つの時代 → Pyxel Cube ─────────────────
+   .eras と .cr はデッキの既存クラス（P.29 の段組みと、コード＋実行結果の2段組み）。
+   そのまま使うと .cr の display:grid が効いてクレジットが1列目に押し込まれ、
+   中央ぞろえが効かなくなる */
+section.horizon > .erow {
+  display: grid; grid-template-columns: 1fr 1fr 46px 1fr; align-items: stretch; gap: 0 18px;
+  flex: none; width: 100%; max-width: var(--body-w); margin: 14px auto 0;
+}
+/* 時代の札。世の中の事実なので灰ではなく白＋枠にして、中の画面を沈ませない */
+section.horizon .ea {
+  display: flex; flex-direction: column; min-width: 0;
+  background: #fff; border: var(--card-line); border-radius: var(--card-r); padding: 18px 18px 10px;
+}
+/* ここだけアイコンに座を敷かない（札の中に丸を置くと図と競う）。
+   座が塊を作らないぶん、絵そのものを大きくして見出し（31px）と釣り合わせる */
+section.horizon .ea .ic { flex: none; width: 44px; height: 44px; color: var(--cy); }
+/* 立方体は六角形で四隅が空き、同じ枠だと田の字よりインクが2割少ない（実測 371 : 297）。
+   見た目の重さを揃えるため、この1つだけ一回り大きくする */
+section.horizon .erow > .ea:nth-child(2) .ic { width: 49px; height: 49px; }
+/* 札の見出しは軸と同じ時代の色。レトロ時代＝紺（--p5）、レトロ3D時代＝ティール（--p3）*/
+section.horizon .erow > .ea:nth-child(1) .ic, section.horizon .erow > .ea:nth-child(1) .tt { color: var(--era1); }
+/* 水色は字にすると薄いので、見出しだけ一段落とす */
+section.horizon .erow > .ea:nth-child(2) .ic, section.horizon .erow > .ea:nth-child(2) .tt { color: #1f93b3; }
+/* 札の上辺を時代の色の帯にする。軸の色がそのまま降りてきた形になり、
+   上の年表のどこを指しているのかが読める。枠の色だけでは弱くて繋がりが見えない */
+section.horizon .ea { position: relative; overflow: hidden; }
+section.horizon .ea::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 7px; }
+section.horizon .erow > .ea:nth-child(1)::before { background: var(--era1); }
+section.horizon .erow > .ea:nth-child(2)::before { background: var(--era2); }
+section.horizon .erow > .ea:nth-child(1) { border-color: #c2d4ee; }
+section.horizon .erow > .ea:nth-child(2) { border-color: #b8e0eb; }
+section.horizon .ea .ic svg { width: 100%; height: 100%; display: block; }
+section.horizon .ea .tt { font-size: var(--t3); font-weight: var(--w-title); color: var(--cy); line-height: var(--lh-tight); }
+section.horizon .ea .d { margin: 8px 0 0; padding-left: 19px; font-size: var(--t2); color: var(--ink); line-height: var(--lh-snug);
+  word-break: auto-phrase; text-wrap: balance; }
+/* スクショは矩形のまま置く。枠も台紙も影も付けない（P.6・P.8・P.39〜41 と同じ扱い）*/
+/* 2枚は高さをそろえる。合計幅が札の内寸を超えないところが高さの上限（比の合計で決まる）*/
+section.horizon .shots { display: flex; width: 100%; gap: var(--sp-2); justify-content: center; align-items: flex-end; margin-top: auto; }
+section.horizon .shots img { display: block; height: 150px; width: auto; }
+/* クレジットは1タイトル1行（<br> で改行）。折り返すと「ゴエモ／ン」のように割れる。
+   幅を明示しないと nowrap のせいで中身幅になり、中央ぞろえが効かず左に寄る */
+section.horizon .ea .gscr { width: 100%; margin: 10px 0 0; font-size: var(--fs-xs); color: var(--sub3);
+  text-align: center; line-height: var(--lh-loose); white-space: nowrap; }
+
+/* レトロ3D の札から Pyxel Cube へ。同じ紺でつながっていることを矢印で確かめさせる */
+/* 矢印はレトロ3D の札と同じ水色。どの流れが Pyxel Cube に入るのかを色で示す */
+section.horizon > .erow > .ar { align-self: center; text-align: center; font-size: var(--t5);
+  color: var(--era2); font-weight: var(--w-label); line-height: 1; }
+/* Pyxel Cube の札は、色をレトロ3D の水色（var(--era2)）から紺へ流す。
+   年表の色と同じ系統なので「引き受ける」流れが色でつながる */
+section.horizon .next {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  min-width: 0; text-align: center;
+  background: linear-gradient(152deg, #0d2b60 0%, #164f9c 54%, #2a8cc4 100%);
+  border: none; border-radius: var(--card-r); padding: 28px 26px;
+}
+/* 立方体の後ろの光 */
+section.horizon .next::before {
+  content: ""; position: absolute; left: 50%; top: 96px; transform: translate(-50%, -50%);
+  width: 230px; height: 230px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(140,214,255,.42) 0%, rgba(140,214,255,0) 68%);
+}
+section.horizon .next > * { position: relative; }
+section.horizon .next img.ic { display: block; width: 96px; height: 96px; margin-bottom: 16px;
+  image-rendering: pixelated; filter: drop-shadow(0 0 14px rgba(150,220,255,.85)); }
+section.horizon .next .nm { font-size: var(--t5); font-weight: var(--w-title); color: #fff; line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight); }
+section.horizon .next .ver { margin-top: 18px; font-size: var(--t2); color: #cfe2f7; line-height: var(--lh-en); }
+section.horizon .ea .tt .en { font-size: var(--fs-s); }
+/* 札の英文はこの1本で決める */
+section.horizon .next .ver .en { font-size: var(--fs-sm); color: #9fc2e8; margin-top: var(--pair-box); }
+/* 時代の列は幅136pxに名前と英名を1行で収める必要があり、段の最小(--fs-xs 14px)では入らない（例外）*/
+/* ここだけ段（--fs-xs 14px）の外。12機種を横一列に並べるため、
+   「Super Famicom / SNES」が隣と当たらない大きさは11pxまで。
+   14pxでは幅が27%増えて衝突する */
+section.horizon .pt .en { display: block; font-size: 11px; color: var(--sub); margin-top: var(--pair-xs); line-height: var(--lh-snug); white-space: nowrap; }
+
+/* ── P.49 【予告】レトロ3D（デモ）─────────────────
+   理屈は前ページで済ませ、ここは画で終える。GIF は Pyxel の画面そのものなので
+   ドット絵として拡大する（img の既定 pixelated のまま）。
+   2本は縦横比が違う（240x240 と 256x192）ので、高さをそろえて横は成り行き */
+/* 罫線下の余白を他ページ（58px）とそろえるため、上端ぞろえにする。
+   中央ぞろえだと余りが上に回って69pxになる */
+section.cubedemo > .demos {
+  display: flex; gap: 64px; flex: 1 1 auto; min-height: 0;
+  width: 100%; margin: 0 auto;
+  align-items: flex-start; justify-content: center;
+}
+section.cubedemo figure {
+  flex: 0 1 auto; min-width: 0; margin: 0;
+  display: flex; flex-direction: column; align-items: center;
+}
+/* スクショは矩形のまま。角丸も枠も台紙も付けない（デッキの規則） */
+section.cubedemo figure img { display: block; height: 540px; width: auto; }
+/* 未リリースであることを画の下に1行だけ添える。
+   作りは P.46 の .rel と同じ。GIF の高さを 616→578px にして場所を作った */
+/* 未リリースであることを画の下に1行だけ添える。
+   大きさ・太さ・色は本文のまま（section の指定を継ぐ）。英文だけ本文の0.70と灰にする */
+section.cubedemo > .rel { margin: 24px 0 0; text-align: center; }
+section.cubedemo > .rel .en { display: block; font-size: var(--fs-en); color: var(--sub);
+  margin-top: var(--pair-box); }
+
+/* ── P.48 Pyxel Cube の使い方 ─────────────────
+   左＝ノードツリー、右＝その中の1つのノードの中身。
+   「新しく覚えるのはツリーの構造だけで、ノードの書き方は2D版と同じ考え方」を、
+   ツリーとコードを並べて一目で分からせる
+   左右とも札にして高さをそろえる。P.45（.role）・P.46（.col）と同じ型。
+   右はコードの黒い板がそのまま札の役をするので、地を重ねない。
+   色は既存のトークンだけを使う。札 var(--card-bg)＋var(--card-bd)／ノード 白＋--card-line／
+   根だけ --badge（札より一段濃い青）／罫は --card-line と同色。
+   木の線は区間ごとに引いてつなぐ。幹①＝親の行の中心→子の並びの先頭、
+   幹②＝子ひとつ分（最後の子だけ自分の行の中心で止める）、枝＝幹→札。
+   border-left で一本引くと最後の子の下に線が余って「ぶつ切れ」に見える。
+   行間は --row-h と --row-pad から計算する。生pxで置くと 56/62/68 のようにばらつく */
+section.nodetree {
+  /* 木の線。図の線は P.46 の差込口の図と同じ var(--line-fig)。太さは2px。
+     1pxの線は投影で消えるうえ、枠線並みの淡い色を1.5pxで引くと
+     札の地(var(--card-bg))にほぼ溶ける */
+  --tree-line: var(--line-fig);
+  --tree-w: 2px;
+  /* 木の1行の高さ。札（約46px）より和英2行の説明（約49px）が高いので、そちらに合わせる。
+     幹と枝の座標は全部この値から出す。行の中心＝ --row-pad + --row-h/2 */
+  --row-h: 50px;
+  --row-pad: 6px;   /* 行の上下の余白。行間は 12px になる */
+  --tree-ind: 27px; /* 幹から札までの距離。字下げも同じ値 */
+}
+section.nodetree > .ntree {
+  display: grid; grid-template-columns: 1fr 1.25fr; gap: 0 48px; align-content: start;
+  flex: 1 1 auto; min-height: 0;
+  width: 100%; max-width: var(--body-w); margin: 20px auto 0;
+}
+/* 段の見出し。デッキの縦棒（P.13・P.15・P.33）と同じ紺・6px・角丸3px */
+section.nodetree .th {
+  position: relative; padding-left: 32px; margin-bottom: 28px;
+  font-size: var(--t3); font-weight: var(--w-label); color: var(--cy); line-height: var(--lh-snug);
+}
+/* 木を載せる札。P.45（.role）・P.46（.col）と同じ地・枠・角丸。
+   右の段はコードの黒い板がそのまま札になるので、高さだけ合わせる */
+section.nodetree .tree .card {
+  flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
+  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); border-radius: var(--card-r);
+  /* 左は柱の分（32px）に合わせる。見出しの字と木の左端が段違いにならないように */
+  padding: 22px 30px;
+}
+/* 木。幹と枝でつなぐ。線は途中で切れないように、区間ごとに引く */
+section.nodetree .tree ul { list-style: none; margin: 0; padding: 0; }
+section.nodetree .tree li { position: relative; margin: 0; }
+section.nodetree .tree li li { padding: var(--row-pad) 0; }
+/* 根の行だけ上に余白がなく、木全体が札の中で上に寄る。上だけ足して釣り合わせる
+   （下も足すと、根の行と子の並びの間が空いて幹が切れる）*/
+section.nodetree .tree .card > ul > li { padding-top: var(--row-pad); }
+section.nodetree .row { position: relative; display: flex; align-items: center; min-height: var(--row-h); }
+/* 子の並び。字下げは幹1本分。上に行間ぶん空けて、親→子の間隔を兄弟どうしとそろえる */
+section.nodetree .tree li > ul {
+  position: relative; margin-left: var(--tree-ind); padding-left: var(--tree-ind); padding-top: var(--row-pad);
+}
+/* 子を持つ行の下は、親の下余白と子の上余白が重なって行間が広がる。子の並びを引き上げて打ち消す */
+section.nodetree .tree li li > ul { margin-bottom: calc(var(--row-pad) * -1); }
+/* 幹①：親の行の中心から、子の並びの先頭まで（ここが空くと線が切れて見える）。
+   札より下に敷く（.nd の z-index:1）ので、見た目は札の下端から線が出る */
+section.nodetree .tree li > ul::before {
+  content: ""; position: absolute; left: 0; top: calc(var(--row-h) / -2);
+  height: calc(var(--row-h) / 2 + var(--row-pad));
+  width: var(--tree-w); background: var(--tree-line);
+}
+/* 幹②：子ひとつ分の区間。最後の子だけ、自分の行の中心で止める */
+section.nodetree .tree li li::before {
+  content: ""; position: absolute; left: calc(var(--tree-ind) * -1); top: 0; bottom: 0;
+  width: var(--tree-w); background: var(--tree-line);
+}
+section.nodetree .tree li li:last-child::before {
+  bottom: auto; height: calc(var(--row-pad) + var(--row-h) / 2);
+}
+/* 枝：節の右端から札へ。幹まで伸ばすと節の丸を線が貫通して見える */
+section.nodetree .tree li li::after {
+  content: ""; position: absolute;
+  left: calc(var(--tree-ind) * -1 + 8px); width: calc(var(--tree-ind) - 8px);
+  top: calc(var(--row-pad) + var(--row-h) / 2 - var(--tree-w) / 2); height: var(--tree-w);
+  background: var(--tree-line);
+}
+/* 幹と枝の継ぎ目。白丸の節。幹の中心（-27+1 = -26px）に合わせる */
+section.nodetree .tree li li > .row::before {
+  content: ""; position: absolute; left: calc(var(--tree-ind) * -1 - 6px); top: 50%;
+  width: 10px; height: 10px; margin-top: -7px;
+  border-radius: 50%; background: var(--slide); border: var(--tree-w) solid var(--tree-line);
+}
+/* 札。地は白、枠は --card-line。青い札の上で白が浮く。
+   幅は名前の長さによらずそろえる。ばらばらだと右の説明の頭が
+   同じ深さでも 419/420/434 のように15pxずれて、階段が濁る */
+section.nodetree .nd {
+  /* 幹の上に載せる。敷かないと線が札の中から生えているように見える */
+  position: relative; z-index: 1;
+  flex: none; min-width: 6ch; text-align: center;
+  /* 枠は P.46 の白いタイルと同じ var(--tile-bd)。これより淡い枠色だと札の地に溶ける */
+  /* 白地だと幹の線に埋もれて読みにくいので、青の淡い面を敷く。
+     根は --badge で一段濃くしてあるので、子はその一段下の --pale-b */
+  background: var(--pale-b); border: var(--bd-w) solid var(--tile-bd); border-radius: var(--r-md); padding: 7px 16px;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: var(--t2); color: var(--ink); line-height: var(--lh-title);
+}
+/* 根だけ一段濃い青。--badge は「札より一段濃い青」として定義済みの色 */
+section.nodetree .nd.root { background: var(--badge); color: var(--cy); font-weight: var(--w-label); }
+section.nodetree .note { margin-left: 18px; font-size: var(--t1); color: var(--ink2); line-height: var(--lh-label); }
+section.nodetree .note .en { display: block; font-size: var(--fs-s); color: var(--sub); margin-top: var(--pair-box); }
+/* コード。段の幅に収める。はみ出すと右が切れて読めない。
+   このページでは黒い板が右の段の札そのものなので、角丸は既定の12pxではなく札と同じ --card-r。
+   隣り合って高さがそろっているので、角の丸みが違うと並びが濁る */
+section.nodetree .code pre {
+  flex: 1 1 auto; margin: 0; max-width: 100%; overflow: hidden; border-radius: var(--card-r);
+  /* 左右も柱の分に合わせる。見出しの字とコードの左端をそろえる */
+  padding: 34px 32px;
+}
+section.nodetree .code pre code { font-size: var(--fs-ml); line-height: var(--lh-body); }
+
+/* ── P.50 これからのPyxelは、もっと楽しい！ ─────────────
+   3章の総括。ページタイトル＝章タイトルなので、その答えを書くページ。
+   答えは2つ（AIの話 P.44〜46／新しいレトロの話 P.47〜49）。縦に積むより左右に1枚ずつ置くと
+   縦が半分で済み、余った縦を締めの帯に回せる。
+   3章の色（紫 var(--ch3)）は目次と章扉だけの色。中身のページは P.44〜49 とも --cy */
+/* P.15（.why）の型をそのまま使う。
+   grid 1fr 1fr・column-gap 72・row-gap 48／左に6pxの柱／見出し34px＋2pxの罫／
+   本文33px・英24px／矢印は上下46px／帯の上にも列ごとに矢印（.concl::before/::after）*/
+section.wrapup .grp { position: relative; min-width: 0;
+  display: flex; flex-direction: column; padding-left: 32px; }
+section.wrapup .grp > b {
+  margin-top: -6px; margin-bottom: 26px; padding-bottom: 15px;
+  border-bottom: var(--card-line);
+  color: var(--cy); font-size: var(--fs-3xl); font-weight: var(--w-label); letter-spacing: var(--ls-caps);
+  line-height: var(--lh-label);
+}
+/* P.15 の見出しは英訳がインラインだが、こちらは見出しが長いので次の行に置く */
+section.wrapup .grp > b .en { display: block; margin-top: var(--pair-s);
+  font-size: var(--fs-m); font-weight: var(--w-body); letter-spacing: var(--ls-en); color: var(--sub); }
+section.wrapup .grp .a, section.wrapup .grp .b { color: var(--ink); font-size: var(--fs-2xl); line-height: var(--lh-body); }
+section.wrapup .grp .a .en, section.wrapup .grp .b .en {
+  display: block; font-size: var(--fs-ml); margin-top: var(--pair-box); color: var(--sub); line-height: var(--lh-mid); }
+/* 最下段の帯は P.15 の .goal と同じ。上に列ごとの矢印を出す */
+/* 帯は P.15 の .goal と同じ値にする。P.15 は dense クラスを持っていて
+   section.dense .goal（32px・上下19px）が効くので、こちらも同じにそろえる
+   （P.15 が正）*/
+section.wrapup .concl {
+  grid-column: 1 / -1; align-self: end;
+  box-sizing: border-box; position: relative; width: 100%; margin: 0;
+  font-size: var(--fs-2xl); font-weight: var(--w-title); color: var(--ink); line-height: var(--lh-body);
+  border-radius: var(--card-r); padding: 19px 24px; text-align: center; background: var(--pale-n);
+  word-break: auto-phrase; text-wrap: balance;
+}
+section.wrapup .concl .en { display: block; font-size: var(--fs-ml); color: var(--sub);
+  font-weight: var(--w-body); margin-top: var(--pair-box); }
