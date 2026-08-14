@@ -27,6 +27,23 @@ PYXEL = re.compile(r"\bpyxel\.([A-Za-z_]\w*)")
 URL_PLAIN = re.compile(r"https?://[^\s\"&<]+")
 
 
+# <pyxel-run script="…"> の中身は Python だが、この塊は HTML として解析されるので、
+# highlight.js は素通しにする。ゲームのページ（P.23〜P.27）と同じ見え方にするため、
+# 属性の中だけ Python として色を足す。使う名前は highlight.js のものに合わせる
+PY_BEGIN = re.compile(r'class="hljs-name">pyxel-run<')
+PY_END = re.compile(r"^&quot;")
+PY_KEYWORD = re.compile(
+    r"\b(import|from|as|def|class|return|if|elif|else|for|while|in|is|not|and|or"
+    r"|pass|break|continue|with|lambda|global|nonlocal|yield|try|except|finally|raise)\b")
+PY_NUMBER = re.compile(r"\b\d+(?:\.\d+)?\b")
+
+
+def paint_python(line: str) -> str:
+    """属性の中の1行に、Python と同じ色を付ける（pyxel.xxx は paint が担う）"""
+    line = PY_KEYWORD.sub(r'<span class="hljs-keyword">\1</span>', line)
+    return PY_NUMBER.sub(r'<span class="hljs-number">\g<0></span>', line)
+
+
 def paint(line: str) -> str:
     def one(m):
         name = m.group(1)
@@ -49,11 +66,18 @@ def wrap(html: str) -> str:
         if body.endswith("\n"):
             body = body[:-1]
         out = []
+        in_python = False            # <pyxel-run script="…"> の中にいるか
         for line in body.split("\n"):
             hl = bool(MARK.search(line))
             if hl:
                 line = MARK.sub("", line)
             cls = "cl hl" if hl else "cl"
+            if in_python and PY_END.match(line):
+                in_python = False
+            elif in_python:
+                line = paint_python(line)
+            elif PY_BEGIN.search(line):
+                in_python = True
             out.append(f'<span class="{cls}">{paint(line)}</span>')
         # 改行では繋がない。<span> は block なので改行文字が余分な1行を作ってしまい、
         # 行送りが2倍に膨らんで空行が空行に見えなくなる（字も auto-scaling で半分まで縮む）
