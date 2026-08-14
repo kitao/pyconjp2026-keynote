@@ -2035,6 +2035,11 @@ section pre .hljs-literal  { color: #569cd6 !important; }   /* True False None *
 section pre .hljs-number   { color: #b5cea8 !important; }   /* 数値 */
 section pre .hljs-string   { color: #ce9178 !important; }   /* 文字列 */
 section pre .hljs-built_in { color: var(--code-fn) !important; }
+/* HTML のタグ名・属性名（P.36）。ここも既定のままだと #0550ae で 2.25:1 しかなく、
+   カスタムタグ <pyxel-run> が地に沈む。数値と同じ理由で差し替える */
+section pre .hljs-name     { color: #569cd6 !important; }   /* script pyxel-run */
+section pre .hljs-attr     { color: #9cdcfe !important; }   /* src script= */
+section pre .hljs-params   { color: var(--code-fg) !important; }
 
 /* highlight.js が知らない Pyxel のトークン（scripts/hl.py が付ける） */
 section pre .pm { color: #9cdcfe; }   /* モジュール名 pyxel */
