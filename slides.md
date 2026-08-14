@@ -1078,7 +1078,7 @@ pyxel.show()
     <text x="603" y="640">2027</text>
   </g>
 </svg></div>
-<div class="msg">人間が手を動かす部分は、なくなっていく<span class="en block">The part humans do by hand is going away</span></div>
+<div class="msg">プログラミングとの関わり方が変わる<span class="en block">How people take part in programming is changing</span></div>
 </div>
 
 <div class="side mine">
@@ -1126,7 +1126,7 @@ pyxel.show()
 </div>
 </div>
 
-<p class="concl">AIは「作りたい」がなければ動かない。情熱を保つ仕掛けがより重要に<span class="en block">AI cannot move without the wish to make — devices that keep that fire alive matter more than ever</span></p>
+<p class="concl">何を作るか考え、方向づけるのは人の役割。「情熱を育てる」仕掛けがより重要に<span class="en block">Setting the goal and giving direction is the human role — and devices that grow the passion matter more than ever</span></p>
 
 
 ---
