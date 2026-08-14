@@ -1051,6 +1051,11 @@
 //   P              無効にする（発表者ツールを使わないので、誤って別ウィンドウが開くのを防ぐ）
 //
 // 移動は bespoke のハッシュ機能（location.hash = "#21" で21ページ目）に任せる。
+//
+// あわせて、スライドの中のリンクと動画に焦点が残らないようにする。
+//   ・動画に焦点があると bespoke がキーを止めるので、ページ送りが空振りする
+//     （bespoke は AUDIO/BUTTON/INPUT/SELECT/TEXTAREA/VIDEO で stopPropagation する）
+//   ・リンクは別タブから戻ったときに、焦点の枠が残って見える
 (function () {
   var buf = '';
   var timer = null;
@@ -1093,5 +1098,20 @@
     e.preventDefault();
     e.stopPropagation();
   }, true);
+
+  // クリックしたあと、その要素に焦点を残さない。既定の動作（再生・遷移）は
+  // そのまま起き、そのあとで焦点だけ外す。キーボードから実行したとき
+  // （e.detail === 0）は、利用者の居場所を奪わないよう外さない
+  document.addEventListener('click', function (e) {
+    if (e.detail === 0 || !e.target || !e.target.closest) return;
+    var el = e.target.closest('section a, section video, section audio');
+    if (el) setTimeout(function () { el.blur(); }, 0);
+  }, true);
+
+  // Tab の巡回からも外す。押しても枠が出ない
+  window.addEventListener('load', function () {
+    var list = document.querySelectorAll('section a, section video, section audio');
+    for (var i = 0; i < list.length; i++) list[i].tabIndex = -1;
+  });
 })();
 </script></body></html>
