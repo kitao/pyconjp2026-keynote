@@ -827,7 +827,7 @@ pyxel.channels.append(pyxel.Channel())
 <div class="bh"><i class="no">4</i>OSを選ばず動く <span class="en block">It works on any OS</span></div>
 <div class="items">
 <div class="it"><span class="sq c4"><img src="assets/icon/play.svg" alt=""></span><span>Windows・Mac・Linux対応 <span class="en block">Windows, Mac, and Linux</span></span></div>
-<div class="it"><span class="sq c5"><img src="assets/icon/files.svg" alt=""></span><span>展開もインストールも不要 <span class="en block">No unpacking, no install</span></span></div>
+<div class="it"><span class="sq c5"><img src="assets/icon/files.svg" alt=""></span><span>展開も配置も不要 <span class="en block">No unpacking, no placing</span></span></div>
 <div class="it"><span class="sq c6"><img src="assets/icon/share.svg" alt=""></span><span>SNS・ゲームジャムで共有 <span class="en block">Share it online or at a game jam</span></span></div>
 </div>
 </div>
