@@ -918,7 +918,7 @@ pyxel.show()
 <span class="sg s5"><b>src/title</b><i>パス<span class="en block">path</span></i></span></p>
 
 <div class="flow">
-<div class="fb"><div class="fh"><span class="sq c1"><img src="assets/icon/link.svg" alt=""></span><span class="ft-h">URLを開く<span class="en block">Open the URL</span></span></div><div class="ft"><span>URLからリポジトリ名とファイル名を読み取る<span class="en block">The launcher reads the repository and file names from the URL</span></span></div></div>
+<div class="fb"><div class="fh"><span class="sq c1"><img src="assets/icon/link.svg" alt=""></span><span class="ft-h">URLを開く<span class="en block">Open the URL</span></span></div><div class="ft"><span>ランチャーがリポジトリ名とファイル名をURLから読み取る<span class="en block">The launcher reads the repository and file names from the URL</span></span></div></div>
 <div class="fa"></div>
 <div class="fb"><div class="fh"><span class="sq c3"><img src="assets/icon/cloud.svg" alt=""></span><span class="ft-h">CDNから取得<span class="en block">Fetch from the CDN</span></span></div><div class="ft"><span>Pyxel本体とGitHubのファイルをダウンロードする<span class="en block">It downloads Pyxel itself and the files from GitHub</span></span></div></div>
 <div class="fa"></div>
