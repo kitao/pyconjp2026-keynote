@@ -4,7 +4,7 @@ cd "$(dirname "$0")/../.."
 N="${1:-1}"
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .p.html </dev/null >/dev/null 2>&1 || exit 1
-python3 "$(dirname "$0")/hl.py" .p.html
+python3 tools/slides/hl.py .p.html   # hl.py の実体は tools/slides/（3行目でルートに cd 済み）
 python3 - "$N" << 'PYEOF'
 import sys,re
 n=int(sys.argv[1])
