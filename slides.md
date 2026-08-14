@@ -214,12 +214,12 @@ paginate: true
 
 <div class="pair gap-wide">
 <figure>
-<video src="assets/works/cursed_caverns.mp4" poster="assets/works/cursed_caverns_poster.png" loop controls playsinline></video>
+<video src="assets/works/cursed_caverns.mp4" poster="assets/works/cursed_caverns_poster.png" controls playsinline></video>
 <figcaption>Pyxel書籍付属サンプル『Cursed Caverns』<span class="en block">Cursed Caverns, a sample game from the Pyxel book</span></figcaption>
 <p class="credit">Music &copy; Maki Kirioka</p>
 </figure>
 <figure>
-<video src="assets/works/dungeon_antiqua.mp4" poster="assets/works/dungeon_antiqua_poster.png" loop controls playsinline></video>
+<video src="assets/works/dungeon_antiqua.mp4" poster="assets/works/dungeon_antiqua_poster.png" controls playsinline></video>
 <figcaption>Pyxel製の商用タイトル『Dungeon Antiqua』<span class="en block">Dungeon Antiqua, a commercial title made with Pyxel</span></figcaption>
 <p class="credit">&copy; Shiromofu Factory</p>
 </figure>
