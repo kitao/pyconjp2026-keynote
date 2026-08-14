@@ -73,6 +73,13 @@ Third-party materials included in this repository, used for citation in the talk
 上記以外の画像・ドット絵・GIF・動画、`slides.md`、`theme/pyxel.css`、`tools/`、`demo/`、`trailer/` は北尾崇に帰属します。
 Pyxel 本体は MIT ライセンスです → https://github.com/kitao/pyxel
 
+**利用条件は [LICENSE](LICENSE) を参照してください。**
+`demo/`（スライドに登場するゲームの実物）と `tools/` は **MIT ライセンス**なので、自由に使えます。
+発表資料そのもの（`slides.md`・`theme/`・`assets/`・PDF・`trailer/`）は著作権を保持しています。
+
+See [LICENSE](LICENSE) for terms. `demo/` (the actual game shown in the talk) and `tools/`
+are **MIT licensed**. The presentation materials themselves are all rights reserved.
+
 ---
 
 ## 同梱しているフォント / Bundled fonts
