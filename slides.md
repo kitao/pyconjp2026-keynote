@@ -128,7 +128,7 @@ paginate: true
 <div class="g"><div class="gh"><span class="ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M50.95 20.42A23.16 23.16 0 0 0 12 17.26"/>
   <path d="M12 17.26V6.73M12 17.26h10.53"/>
   <path d="M13.05 43.58a23.16 23.16 0 0 0 38.95 3.16"/>
-  <path d="M52 46.74v10.53M52 46.74H41.48"/></svg></span><span class="tx">試行錯誤 <span class="en block">Trial and error</span></span></div><div class="gi"><span>提示 <span class="en block">Cues</span></span> <span>ヒント <span class="en block">Hints</span></span> <span>調整 <span class="en block">Tuning</span></span></div></div>
+  <path d="M52 46.74v10.53M52 46.74H41.48"/></svg></span><span class="tx">試行錯誤 <span class="en block">Trial and error</span></span></div><div class="gi"><span>目標 <span class="en block">Objectives</span></span> <span>ヒント <span class="en block">Hints</span></span> <span>補正 <span class="en block">Assists</span></span></div></div>
 </div>
 </div>
 
