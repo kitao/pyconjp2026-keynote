@@ -164,12 +164,30 @@ def hang(html: str) -> str:
 # 半角スペースを打つと 1/2em で広すぎ、CSS の text-autospace は Chrome が未対応。
 # タグの中とコードは触らない（Marp は各スライドを <svg> で包むので svg は外せない）。エンティティ（&copy; など）は末尾が ; なので
 # 和字と隣り合わず、そのまま素通りする。
-# 数字も対象にしない。「2018 年」「4,900 円」「1 つ」は日本語として読みにくい。
+# 素の数字は対象にしない。「2018 年」「4,900 円」「1 つ」は日本語として読みにくい。
+# 数字が欧文語の一部のとき（PS2・3D・Pyxel 3.0）だけ AKI_C〜E で拾う。
+# 見分けは、数字の後ろに来るのが助数詞・単位か、助詞・和語か。
 # 約物（、。「」（）・）も入れない。約物は自分で空きを持っているので、
 # 欧文との間にさらにアキを足すと空きすぎる
 JA = "ぁ-んァ-ヴー々〆ヵヶ一-龥"
 AKI_A = re.compile(r"([A-Za-z])(?=[" + JA + "])")
 AKI_B = re.compile(r"([" + JA + r"])(?=[A-Za-z])")
+# 語末が数字の欧文語（PS2・ESP32・Base64）。拾わないと「〜のPS2」だけ空いて
+# 「PS2で」が詰まる。語頭が英字のものに限るので「2018 年」「1 つ」は入らない。
+# 語頭の判定に \b は使えない。和字も \w なので「をBase64」が語頭と見なされない
+NUMTAIL = r"[A-Za-z][A-Za-z0-9]*[0-9]"
+AKI_C = re.compile(r"(?<![A-Za-z0-9])" + NUMTAIL + r"(?=[" + JA + "])")
+NUMTAIL_END = re.compile(NUMTAIL + r"\Z")
+# 語頭が数字の欧文語（3D・2D）。拾わないと「レトロ3D ゲーム」が後ろだけ空く。
+# 「約3GB」のような数量＋単位も形は同じなので、その手の語を書くときは例外が要る
+NUMHEAD = r"[0-9]+[A-Za-z]"
+AKI_D = re.compile(r"([" + JA + r"])(?=" + NUMHEAD + ")")
+NUMHEAD_START = re.compile(NUMHEAD)
+# 版番号（「Pyxel 3.0で」）。後ろに来るのは助数詞ではなく助詞なので空ける。
+# 「英字語＋空白＋数字」に限れば、「2025年1月」のような数量とは取り違えない
+VER = r"(?<=[A-Za-z])[ ][0-9][0-9.]*"
+AKI_E = re.compile(VER + r"(?=[" + JA + "])")
+VER_END = re.compile(VER + r"\Z")
 # <title> はブラウザのタブと PDF のメタデータに出る「文字列」で、組版の対象ではない。
 # ここにアキの span を入れると、タブに &lt;span class="aki"&gt; が見える
 KEEP = re.compile(r"<(pre|script|style|title)\b.*?</\1>", re.S)
@@ -185,12 +203,31 @@ LAT = re.compile(r"[A-Za-z]")
 KAN = re.compile(r"[" + JA + r"]")
 
 
-def is_boundary(a: str, b: str) -> bool:
-    return bool(LAT.match(a) and KAN.match(b)) or bool(KAN.match(a) and LAT.match(b))
+def is_boundary(before: str, after: str) -> bool:
+    """要素をまたいだ隣り合わせが和欧の境目か。前後のテキストを丸ごと受け取る。
+
+    最後の1字・最初の1字だけでは、数字が欧文語の一部かどうかを見分けられない。
+    「km19809」＋「氏」（P.35）は末尾の数字が語の一部、「2018」＋「年」は数量。
+    """
+    if not before or not after:
+        return False
+    a, b = before[-1], after[0]
+    if LAT.match(a) and KAN.match(b):
+        return True
+    if KAN.match(a) and LAT.match(b):
+        return True
+    if KAN.match(b) and NUMTAIL_END.search(before):
+        return True
+    if KAN.match(a) and NUMHEAD_START.match(after):
+        return True
+    return bool(KAN.match(b) and VER_END.search(before))
 
 
 def aki_text(text: str) -> str:
     text = AKI_A.sub(r'\1<span class="aki"></span>', text)
+    text = AKI_C.sub(r'\g<0><span class="aki"></span>', text)
+    text = AKI_D.sub(r'\1<span class="aki"></span>', text)
+    text = AKI_E.sub(r'\g<0><span class="aki"></span>', text)
     return AKI_B.sub(r'\1<span class="aki"></span>', text)
 
 
@@ -200,22 +237,22 @@ INLINE = re.compile(r"</?(a|b|strong|em|i|small|span|code|sup|sub)\b[^>]*>\Z", r
 
 
 def aki_outside_tags(chunk: str) -> str:
-    out, pos, prev_char, prev_tag = [], 0, "", ""
+    out, pos, prev_text, prev_tag = [], 0, "", ""
     for m in re.finditer(r"<[^>]+>", chunk):
         text = chunk[pos:m.start()]
         # 直前がインラインタグで、その前の字と今の字が和欧の境目なら、ここにアキを入れる
-        if text and prev_char and INLINE.search(prev_tag):
-            if is_boundary(prev_char, text[0]):
+        if text and prev_text and INLINE.search(prev_tag):
+            if is_boundary(prev_text, text):
                 out.append(SPAN_LEAD if OPEN_TAG.search(prev_tag) else SPAN)
         out.append(aki_text(text))
         out.append(m.group(0))
         if text:
-            prev_char = text[-1]
+            prev_text = text
         prev_tag = m.group(0)
         pos = m.end()
     tail = chunk[pos:]
-    if tail and prev_char and INLINE.search(prev_tag):
-        if is_boundary(prev_char, tail[0]):
+    if tail and prev_text and INLINE.search(prev_tag):
+        if is_boundary(prev_text, tail):
             out.append(SPAN_LEAD if OPEN_TAG.search(prev_tag) else SPAN)
     out.append(aki_text(tail))
     return "".join(out)
