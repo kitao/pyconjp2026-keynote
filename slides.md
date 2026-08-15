@@ -104,7 +104,7 @@ paginate: true
 # ゲームデザインとは
 ## What Is Game Design?
 
-<p class="lead">「やりたいこと」と「達成感」を両立させ、「遊び」にする仕掛け<span class="en block">Devices that make freedom and achievement work together — and turn that into play</span></p>
+<p class="lead">「やりたいこと」と「達成感」を両立させ、「遊び」にする仕掛け<span class="en block">Devices that make freedom and achievement work together — and turn it into play</span></p>
 
 <div class="gd">
 <div class="gd-goal"><span class="lb">目的：<span class="en">Goal</span></span>
