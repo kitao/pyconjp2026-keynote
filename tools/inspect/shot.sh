@@ -1,8 +1,8 @@
 #!/bin/sh
-# 指定ページを縦に並べて1枚の画像にする:  ./shot.sh 出力名 1 8 18 ...
+# Stack the given slides into one image:  ./shot.sh <name> 1 8 18 ...
 cd "$(dirname "$0")/../.."
 
-# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+# Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 OUT="$1"; shift
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \

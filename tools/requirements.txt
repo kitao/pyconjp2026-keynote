@@ -1,8 +1,8 @@
-# tools/ のスクリプトが使う Python パッケージ（撮影・素材生成用）。
-# ほかに次の2つを使う。
-#   Google Chrome … スライドの書き出しと検品（PDF・ページ画像・寸法の実測）。
-#                   別の場所に入れているときは環境変数 CHROME で渡す
-#   ffmpeg        … 動画の合成
+# Python packages used by the scripts under tools/ (capture and asset builds).
+# Two other tools are needed as well:
+#   Google Chrome - exporting and inspecting the slides (PDF, page images,
+#                   measured dimensions). Set CHROME to override its location.
+#   ffmpeg        - assembling the videos
 #   python3 -m venv .venv && .venv/bin/pip install -r tools/requirements.txt
 pyxel>=2.9
 pillow>=10

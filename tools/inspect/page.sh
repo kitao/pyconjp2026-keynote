@@ -1,13 +1,13 @@
 #!/bin/sh
-# 指定ページを1枚だけ画像にする:  ./page.sh 8  →  .page.png
+# Render a single slide to an image:  ./page.sh 8  ->  render/P8.png
 cd "$(dirname "$0")/../.."
 
-# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+# Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 N="${1:-1}"
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .p.html </dev/null >/dev/null 2>&1 || exit 1
-python3 tools/slides/hl.py .p.html   # hl.py の実体は tools/slides/（3行目でルートに cd 済み）
+python3 tools/slides/hl.py .p.html   # hl.py lives in tools/slides/ (we cd'd to the root above)
 python3 - "$N" << 'PYEOF'
 import sys,re
 n=int(sys.argv[1])
@@ -28,4 +28,4 @@ PYEOF
   --screenshot=.page.png "file://$PWD/.p1.html" >/dev/null 2>&1
 rm -f .p.html .p1.html
 cp .page.png "render/P$N.png"
-echo "render/P$N.png を作りました（まだ開いていません）"
+echo "wrote render/P$N.png (not opened)"

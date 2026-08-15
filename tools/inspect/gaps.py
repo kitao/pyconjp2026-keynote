@@ -1,7 +1,8 @@
-"""同じ役割の要素どうしの余白が、ページをまたいで揃っているかを測る。
+"""Measure whether the same gap is used for the same purpose across slides.
 
-版面や見出しの位置は揃っていても、「見出しの罫 → リード」「リード → 中身」の
-アキがページごとに違うと、繰ったときに紙面が揺れて見える。
+The type area and the headings can line up perfectly and the deck can still
+feel unsteady when paged through, if the gap from the heading rule to the lead
+line, or from the lead line to the body, differs from slide to slide.
 
   python3 tools/gaps.py
 """
@@ -10,7 +11,7 @@ import json
 from collections import defaultdict
 
 D = json.load(open("render/probe.json"))
-RULE_Y = 211          # 見出しの下の罫（全ページ共通）
+RULE_Y = 211          # The rule under the heading, the same on every slide
 SPECIAL = {"cover", "hero", "section", "closing", "image-main", "full"}
 
 
@@ -18,7 +19,7 @@ def is_special(sc):
     return bool(SPECIAL & set(sc.split()))
 
 
-# section 直下の要素を、ページごとに上から並べる
+# List the direct children of each section, top to bottom
 pages = defaultdict(list)
 for r in D:
     if r["t"] != "box":
@@ -27,7 +28,7 @@ for r in D:
         continue
     pages[r["p"]].append(r)
 
-print("【罫（y211）から最初の中身までのアキ】")
+print("[gap from the rule (y211) to the first content]")
 first = defaultdict(list)
 for p, rs in sorted(pages.items()):
     sc = rs[0]["sc"] if rs else ""
@@ -41,10 +42,10 @@ for p, rs in sorted(pages.items()):
     first[round(top["y"] - RULE_Y)].append((p, kind))
 for gap, items in sorted(first.items()):
     ps = ", ".join(f"P.{p}({k})" for p, k in items[:8])
-    mark = "  ← 少数" if len(items) <= 2 else ""
-    print(f"  {gap:>4}px  {len(items):>2}ページ   {ps}{'...' if len(items) > 8 else ''}{mark}")
+    mark = "  <- rare" if len(items) <= 2 else ""
+    print(f"  {gap:>4}px  {len(items):>2} slides  {ps}{'...' if len(items) > 8 else ''}{mark}")
 
-print("\n【リードの下から次の要素までのアキ】")
+print("\n[gap from the lead line to the next element]")
 lead_gap = defaultdict(list)
 for p, rs in sorted(pages.items()):
     if not rs or is_special(rs[0]["sc"]):
@@ -58,10 +59,10 @@ for p, rs in sorted(pages.items()):
         lead_gap[gap].append((p, nxt["sel"].split(" > ")[-1]))
 for gap, items in sorted(lead_gap.items()):
     ps = ", ".join(f"P.{p}({k})" for p, k in items[:8])
-    mark = "  ← 少数" if len(items) <= 2 else ""
-    print(f"  {gap:>4}px  {len(items):>2}ページ   {ps}{'...' if len(items) > 8 else ''}{mark}")
+    mark = "  <- rare" if len(items) <= 2 else ""
+    print(f"  {gap:>4}px  {len(items):>2} slides  {ps}{'...' if len(items) > 8 else ''}{mark}")
 
-print("\n【行間（line-height）が同じ字の大きさで割れているもの】")
+print("\n[line-height that differs at the same type size]")
 g = defaultdict(set)
 for r in D:
     if r["t"] != "text" or r["lh"] == "normal":
@@ -69,4 +70,4 @@ for r in D:
     g[r["fs"]].add(round(float(r["lh"]) / r["fs"], 3))
 for fs, lhs in sorted(g.items()):
     if len(lhs) > 2:
-        print(f"  字{fs:<6} 行間の比 {sorted(lhs)}")
+        print(f"  size {fs:<6} ratios {sorted(lhs)}")

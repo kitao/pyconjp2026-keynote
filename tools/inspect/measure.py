@@ -1,39 +1,42 @@
-"""ページの寸法を測る道具。
+"""Measure the dimensions of a slide.
 
-毎回その場で測定コードを書くと、範囲の取り方を間違えて別の要素を
-拾ってしまう（壁を住人と数える、枠線と背景を混ぜる、など）。
-位置が決まっているものは、ここに定数として置く。
+Writing the measuring code afresh each time gets the ranges wrong and picks up
+the wrong thing (counting a wall as a resident, mixing a border with a
+background). Anything whose position is fixed lives here as a constant.
 
-  python3 tools/inspect/measure.py 32          # P.32 の縦の構成を出す
-  python3 tools/inspect/measure.py 32 --bands  # 墨のある帯を全部並べる
+  python3 tools/inspect/measure.py 32          # vertical structure of slide 32
+  python3 tools/inspect/measure.py 32 --bands  # every band that carries ink
 """
 
 import sys
 import numpy as np
 from PIL import Image
 
-# ── テンプレの不変項目（動かしてはいけない） ──────────────
+# -- Fixed by the template; do not move ------------------------------------
 SLIDE_W, SLIDE_H = 1920, 1080
-PAD_L, PAD_R = 131, 1789        # 版面の左右
-BODY_TOP, BODY_BOT = 268, 940   # 本文の版面
-RULE_Y = 210                    # 見出しの下の罫
+PAD_L, PAD_R = 131, 1789        # Left and right of the type area
+BODY_TOP, BODY_BOT = 268, 940   # Top and bottom of the body area
+RULE_Y = 210                    # The rule under the heading
 
-# ── 下の帯（本文とは別の層。測るときは必ず除く） ────────────
-# 住人は右下、ページ番号は左下。どちらも y999 以降。
-HOUSE_X0, HOUSE_X1 = 1550, 1810   # 住人だけを見る幅。3体は x1559〜1788 に並ぶ
-# 幅を狭めると1体目（x1559〜1608）を本文と数えてしまい、「版面を大きく超過」という嘘の値が出る
-PAGENO_X0, PAGENO_X1 = 120, 240   # ページ番号だけを見る幅
-FOOT_Y0 = 950                     # この下は下の帯として扱う
+# -- The footer band, a separate layer that must always be excluded --------
+# Residents bottom right, page number bottom left, both from y999 down.
+HOUSE_X0, HOUSE_X1 = 1550, 1810   # Width covering the residents alone; the
+                                  # three of them sit at x1559-1788
+# Narrowing this counts the first resident (x1559-1608) as body content and
+# reports a false overflow of the type area.
+PAGENO_X0, PAGENO_X1 = 120, 240   # Width covering the page number alone
+FOOT_Y0 = 950                     # Everything below counts as the footer band
 
-# 本文を測るときの幅。中身は版面の中央1500px（左端210）に置くのが基本だが、
-# 版面いっぱいに広がる型（two-up / .chron / .pack）もあるので版面で取る。
+# Width used when measuring the body. Content usually sits in the central
+# 1500 px (starting at 210), but some layouts (two-up, .chron, .pack) span the
+# full type area, so the full width is used.
 BODY_X0, BODY_X1 = PAD_L, PAD_R
 
 
 def load(page):
     a = np.array(Image.open(f"render/P{page}.png").convert("RGB")).astype(int)
     if a.shape[1] != SLIDE_W:
-        raise SystemExit(f"想定と違う画像の幅: {a.shape[1]}（{SLIDE_W} のはず）")
+        raise SystemExit(f"unexpected image width: {a.shape[1]} (expected {SLIDE_W})")
     return a
 
 
@@ -42,7 +45,7 @@ def ink(a, th=26):
 
 
 def bands(m, y0, y1, x0, x1, min_h=3):
-    """墨のある横帯を上から順に返す。"""
+    """Bands that carry ink, top to bottom."""
     sub = m[y0:y1, x0:x1]
     rows = sub.sum(axis=1) > 2
     out, s = [], None
@@ -72,36 +75,37 @@ def main():
     a = load(page)
     m = ink(a)
 
-    # 本文（下の帯は含めない）
+    # Body, excluding the footer band
     body = bands(m, RULE_Y + 8, FOOT_Y0, BODY_X0, BODY_X1)
-    # 下の帯（それぞれ専用の幅で見る。ここを広く取ると本文を巻き込む）
+    # Footer band; each part is measured in its own narrow width, because a
+    # wider range would swallow body content.
     house = bands(m, FOOT_Y0, SLIDE_H, HOUSE_X0, HOUSE_X1)
     pageno = bands(m, FOOT_Y0, SLIDE_H, PAGENO_X0, PAGENO_X1)
 
     print(f"── P.{page} ──")
     if not body:
-        print("本文に墨がない")
+        print("no ink in the body")
         return
     top, bot = body[0][0], body[-1][1]
     l, r = span_x(m, RULE_Y + 8, FOOT_Y0 - 1, BODY_X0, BODY_X1)
 
-    print(f"本文      y{top}〜{bot}   x{l}〜{r}")
-    print(f"  罫({RULE_Y})からの下がり  {top - RULE_Y} px")
-    print(f"  版面の下({BODY_BOT})まで   {BODY_BOT - bot} px" +
-          ("   ← はみ出している" if bot > BODY_BOT else ""))
-    print(f"  版面の右({PAD_R})まで     {PAD_R - r} px")
+    print(f"body       y{top}-{bot}   x{l}-{r}")
+    print(f"  below the rule ({RULE_Y})   {top - RULE_Y} px")
+    print(f"  to the bottom ({BODY_BOT})   {BODY_BOT - bot} px" +
+          ("   <- overflowing" if bot > BODY_BOT else ""))
+    print(f"  to the right ({PAD_R})     {PAD_R - r} px")
     if house:
-        print(f"住人      y{house[0][0]}〜{house[-1][1]}   本文からのあき {house[0][0] - bot} px")
+        print(f"residents  y{house[0][0]}-{house[-1][1]}   gap from body {house[0][0] - bot} px")
     if pageno:
-        print(f"ページ番号 y{pageno[0][0]}〜{pageno[-1][1]}")
+        print(f"page no.   y{pageno[0][0]}-{pageno[-1][1]}")
 
     if show_bands:
-        print("\n墨のある帯:")
+        print("\nbands with ink:")
         prev = None
         for y0, y1 in body:
             bl, br = span_x(m, y0, y1, BODY_X0, BODY_X1)
-            gap = "" if prev is None else f"  ↑あき {y0 - prev} px"
-            print(f"  y{y0:4}〜{y1:<4} 高さ{y1 - y0 + 1:4}  x{bl}〜{br}{gap}")
+            gap = "" if prev is None else f"  gap above {y0 - prev} px"
+            print(f"  y{y0:4}-{y1:<4} height {y1 - y0 + 1:4}  x{bl}-{br}{gap}")
             prev = y1
 
 

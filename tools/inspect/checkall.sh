@@ -1,17 +1,18 @@
 #!/bin/sh
-# ./checkall.sh [開始 [終了]]   範囲のページをまとめて検品し、要注意だけを並べる。
-# check.sh は1ページを詳しく見る道具。こちらは「どのページを見るべきか」を先に知る道具。
-# 既定は 1〜36（3章の手前まで）。
+# ./checkall.sh [from [to]]   Inspect a range of slides and list only the ones
+# worth a closer look. check.sh examines one slide in detail; this one tells
+# you which slides to examine. Defaults to 1-36 (up to the start of chapter 3).
 cd "$(dirname "$0")/../.." || exit 1
 
-# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+# Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 FROM="${1:-1}"
 TO="${2:-36}"
 
-# 通しで1回だけ描く（page.sh をページ数ぶん呼ぶと marp の起動で時間がかかる）
+# Render everything in one pass; calling page.sh per slide spends most of the
+# time starting marp over and over.
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
-  --theme-set theme/pyxel.css -o .check.html >/dev/null 2>&1 || { echo "変換に失敗"; exit 1; }
+  --theme-set theme/pyxel.css -o .check.html >/dev/null 2>&1 || { echo "conversion failed"; exit 1; }
 python3 tools/slides/hl.py .check.html
 "$CHROME" --headless --disable-gpu \
   --no-pdf-header-footer --virtual-time-budget=20000 \
@@ -25,7 +26,8 @@ import numpy as np
 
 frm, to = int(sys.argv[1]), int(sys.argv[2])
 
-# 版面の規則が当てはまらないページ（表紙・章扉・全面素材・締め）は対象外にする
+# Skip the slides the type-area rules do not apply to: cover, chapter title,
+# full-bleed art and the closing.
 SPECIAL = set()
 md = open("slides.md").read().split("\n---\n")
 for i, page in enumerate(md):
@@ -34,7 +36,7 @@ for i, page in enumerate(md):
     if {"cover", "hero", "section", "full", "closing", "image-main"} & set(cls):
         SPECIAL.add(i)
 L, R, T, B, RULE_Y = 131, 1789, 268, 940, 210
-HOUSE_Y = 999          # 住人とページ番号の帯の上端
+HOUSE_Y = 999          # Top of the band holding the residents and page number
 
 def load(pg):
     for f in sorted(glob.glob(".check-p*.png")):
@@ -42,19 +44,19 @@ def load(pg):
             return np.array(Image.open(f).convert("RGB")).astype(int)
     return None
 
-print(f"── P.{frm}〜P.{to} の一括検品 ──")
-print(f"{'頁':>4}  {'版面外':>6}  {'右余り':>6}  {'下余り':>6}  {'罫下':>5}  {'住人上':>6}  所見")
+print(f"-- slides {frm}-{to} --")
+print(f"{'pg':>4}  {'out':>6}  {'right':>6}  {'below':>6}  {'rule':>5}  {'house':>6}  notes")
 bad = []
 for pg in range(frm, to + 1):
     if pg in SPECIAL:
-        print(f"   {pg:>3}  {'':>6}  {'':>6}  {'':>6}  {'':>5}  {'':>6}  （特別レイアウト・対象外）")
+        print(f"   {pg:>3}  {'':>6}  {'':>6}  {'':>6}  {'':>5}  {'':>6}  (special layout, skipped)")
         continue
     a = load(pg)
     if a is None:
         continue
     ink = (np.abs(a - 255).sum(axis=2) > 26)
 
-    # 版面の外に墨があるか（左右）
+    # Any ink outside the type area, left or right
     outside = ink[RULE_Y + 8:995, :L].any() or ink[RULE_Y + 8:995, R:].any()
 
     body = ink[RULE_Y + 8:995, L:R]
@@ -65,31 +67,31 @@ for pg in range(frm, to + 1):
     top, bot = RULE_Y + 8 + ys.min(), RULE_Y + 8 + ys.max() + 1
     right = L + xs.max() + 1
 
-    rule_gap = top - RULE_Y                 # 罫からいちばん上の墨まで
-    house_gap = HOUSE_Y - bot               # いちばん下の墨から住人の帯まで
+    rule_gap = top - RULE_Y                 # Rule to the topmost ink
+    house_gap = HOUSE_Y - bot               # Bottom ink to the residents' band
     right_left = R - right
     below = B - bot
 
     notes = []
     if outside:
-        notes.append("版面の外に墨")
+        notes.append("ink outside the type area")
     if bot > B:
-        notes.append(f"版面の下を{bot - B}px超過")
+        notes.append(f"{bot - B}px below the type area")
     if house_gap < 45:
-        notes.append(f"住人に近い({house_gap}px)")
+        notes.append(f"close to the residents ({house_gap}px)")
     if right_left > 150:
-        notes.append(f"右が{right_left}px余る")
+        notes.append(f"{right_left}px spare on the right")
     if below > 150 and bot <= B:
-        notes.append(f"下が{below}px余る")
+        notes.append(f"{below}px spare below")
 
     mark = "  " if not notes else "★ "
-    print(f"{mark}{pg:>3}  {'あり' if outside else '—':>6}  {right_left:>6}  {below:>6}  "
+    print(f"{mark}{pg:>3}  {'yes' if outside else '-':>6}  {right_left:>6}  {below:>6}  "
           f"{rule_gap:>5}  {house_gap:>6}  {' / '.join(notes)}")
     if notes:
         bad.append(pg)
 
 print()
-print("要注意:", ", ".join(f"P.{p}" for p in bad) if bad else "なし")
+print("worth a look:", ", ".join(f"P.{p}" for p in bad) if bad else "none")
 PYEOF
 
 rm -f .check.html .check.pdf .check-p*.png

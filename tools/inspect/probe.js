@@ -1,9 +1,11 @@
-// 全ページの computed style を吸い出す。tools/probe.sh から HTML に注入して使う。
-// 出す種類は text（文字）／rule（線）／link（リンク）／box（版面の中の位置）の4つ。
+// Dump the computed styles of every slide. Injected into the HTML by probe.sh.
+// Four kinds of record come out: text, rule, link and box (position in the
+// type area).
 window.addEventListener('load', function () {
   var out = [];
 
-  // 要素を「タグ.クラス」で表す。親を2つまで足して、どこの何かが分かるようにする
+  // Name an element as tag.class, prefixed by up to two ancestors so it is
+  // clear which one it is.
   function cpath(el) {
     var parts = [];
     var e = el;
@@ -17,7 +19,8 @@ window.addEventListener('load', function () {
     return parts.join(' > ');
   }
 
-  // 直接の text node を持つか（親の入れ物ではなく、字を出している要素か）
+  // Does it hold a text node directly, i.e. is it setting type rather than
+  // just containing something that does?
   function hasOwnText(el) {
     for (var i = 0; i < el.childNodes.length; i++) {
       var n = el.childNodes[i];
@@ -31,7 +34,8 @@ window.addEventListener('load', function () {
     var page = si + 1;
     var sc = String(sec.className || '').trim();
     var sr = sec.getBoundingClientRect();
-    // section を原点にした座標に直す。svg で拡大されている場合の倍率も戻す
+    // Convert to coordinates with the section as origin, undoing the scale
+    // the svg may have applied.
     var k = sr.width ? 1920 / sr.width : 1;
     function box(el) {
       var r = el.getBoundingClientRect();
@@ -41,8 +45,9 @@ window.addEventListener('load', function () {
                h: Math.round(r.height * k * 10) / 10 };
     }
 
-    // 住人（フッターのキャラ）は section 自身の ::before に背景GIFで置かれている。
-    // 子孫だけ見ると取りこぼすので、section も走査に入れる
+    // The residents in the footer are a background GIF on the section's own
+    // ::before, so walking descendants alone would miss them; the section
+    // itself is included in the scan.
     var all = [sec].concat(Array.prototype.slice.call(sec.querySelectorAll('*')));
     all.forEach(function (el) {
       var cs = getComputedStyle(el);
@@ -50,7 +55,7 @@ window.addEventListener('load', function () {
       var b = box(el);
       var sel = cpath(el);
 
-      // ── 文字 ──
+      // -- Text --
       if (hasOwnText(el)) {
         out.push({
           t: 'text', p: page, sc: sc, sel: sel,
@@ -68,7 +73,7 @@ window.addEventListener('load', function () {
         });
       }
 
-      // ── リンク ──
+      // -- Links --
       if (el.tagName.toLowerCase() === 'a') {
         out.push({
           t: 'link', p: page, sc: sc, sel: sel,
@@ -81,17 +86,19 @@ window.addEventListener('load', function () {
         });
       }
 
-      // ── 画像の実寸と表示寸法 ──
-      // 表示より大きすぎる画像は、リポジトリと PDF を無駄に太らせる
+      // -- Natural size against displayed size --
+      // An image far larger than it is shown at bloats both the repository
+      // and the PDF.
       if (el.tagName.toLowerCase() === 'img' && el.naturalWidth) {
         out.push({ t: 'img', p: page, src: el.getAttribute('src') || '',
                    nw: el.naturalWidth, nh: el.naturalHeight,
                    w: b.w, h: b.h });
       }
 
-      // ── 動く要素（GIF・動画）の居場所 ──
-      // 撮るたびにコマが変わるので、差分を見るときはこの矩形の中を除く。
-      // img/video だけでなく、CSS の背景（住人は section::before の背景GIF）も拾う
+      // -- Where the moving elements are (GIFs and videos) --
+      // Their frame differs on every capture, so these rectangles are excluded
+      // when diffing. Both img/video and CSS backgrounds are collected (the
+      // residents are a background GIF on section::before).
       var tag = el.tagName.toLowerCase();
       var moving = false;
       if (tag === 'video') moving = true;
@@ -105,8 +112,9 @@ window.addEventListener('load', function () {
         var ps = getComputedStyle(el, pe);
         if (ps.content === 'none') return;
         if (!/\.gif(\?|"|\))/i.test(ps.backgroundImage || '')) return;
-        // 疑似要素は getBoundingClientRect が取れないので、
-        // 指定された位置と大きさから矩形を組み立てる（親は position:relative）
+        // getBoundingClientRect is unavailable for a pseudo-element, so the
+        // rectangle is assembled from the declared position and size (the
+        // parent is position:relative).
         var pw = parseFloat(ps.width), ph = parseFloat(ps.height);
         if (isNaN(pw) || isNaN(ph)) { pw = b.w; ph = b.h; }
         var px2 = b.x, py2 = b.y;
@@ -121,7 +129,7 @@ window.addEventListener('load', function () {
                    w: Math.round(pw * 10) / 10, h: Math.round(ph * 10) / 10 });
       });
 
-      // ── 線（枠線）──
+      // -- Rules drawn as borders --
       ['top', 'right', 'bottom', 'left'].forEach(function (side) {
         var w = parseFloat(cs['border' + side[0].toUpperCase() + side.slice(1) + 'Width']);
         var st = cs['border' + side[0].toUpperCase() + side.slice(1) + 'Style'];
@@ -136,7 +144,7 @@ window.addEventListener('load', function () {
         });
       });
 
-      // ── 線（細い箱・疑似要素・グラデーション）──
+      // -- Rules drawn as thin boxes, pseudo-elements or gradients --
       if ((b.w <= 8 || b.h <= 8) && b.w > 0 && b.h > 0) {
         var bg = cs.backgroundColor;
         if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
@@ -171,7 +179,8 @@ window.addEventListener('load', function () {
       }
     });
 
-    // ── 版面（section 直下の子だけ。中身の左右上下端を見る）──
+    // -- Type area: direct children of the section only, looking at the
+    //    outer edges of the content --
     Array.prototype.forEach.call(sec.children, function (el) {
       var cs = getComputedStyle(el);
       if (cs.display === 'none') return;

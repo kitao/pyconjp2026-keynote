@@ -1,8 +1,9 @@
 #!/bin/sh
-# 全ページを2倍解像度(3840x2160)で render/hi/P<N>.png に書き出す。
-#   ./renderall.sh          全ページ
-#   ./renderall.sh 4        1バンドあたりのページ数（既定4）
-# Chrome の起動が重いので、数ページを縦に並べて1回で撮り、あとで切り分ける。
+# Write every slide to render/hi/P<N>.png at 2x resolution (3840x2160).
+#   ./renderall.sh          every slide
+#   ./renderall.sh 4        slides per batch (default 4)
+# Starting Chrome is slow, so several slides are stacked and captured in one
+# go, then cut apart afterwards.
 cd "$(dirname "$0")/../.." || exit 1
 BAND="${1:-4}"
 SCALE=2
@@ -10,7 +11,7 @@ mkdir -p render/hi
 
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .all.tmp.html </dev/null >/dev/null 2>&1 \
-  || { echo "変換に失敗"; exit 1; }
+  || { echo "conversion failed"; exit 1; }
 python3 tools/slides/hl.py .all.tmp.html
 
 python3 - "$BAND" "$SCALE" << 'PYEOF'
@@ -20,10 +21,10 @@ from PIL import Image
 band, scale = int(sys.argv[1]), int(sys.argv[2])
 html = open(".all.tmp.html").read()
 
-# ページ数はセクションの数
+# One section per slide
 import re
 total = len(re.findall(r'<section', html))
-print(f"{total} ページを {scale}倍で撮ります（{band}ページずつ）")
+print(f"capturing {total} slides at {scale}x, {band} at a time")
 
 CHROME = os.environ.get("CHROME", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 for start in range(1, total + 1, band):
@@ -54,4 +55,4 @@ svg[data-marpit-svg]{display:block;width:1920px;height:1080px}</style>
 os.remove(".all.tmp1.html")
 PYEOF
 rm -f .all.tmp.html
-echo "render/hi/ に書き出しました"
+echo "wrote render/hi/"

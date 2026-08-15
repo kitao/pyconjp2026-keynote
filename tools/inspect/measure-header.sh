@@ -1,8 +1,9 @@
 #!/bin/sh
-# 指定ページの見出し欄をDOMで測る:  ./measure-header.sh 16 4 7   （ページ / 英題を下げる量 / ロゴを下げる量）
+# Measure a slide's header area in the DOM:
+#   ./measure-header.sh 16 4 7   (slide / English title offset / logo offset)
 cd "$(dirname "$0")/../.."
 
-# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+# Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .p.html </dev/null >/dev/null 2>&1 || exit 1
@@ -17,7 +18,7 @@ js = """
   function T(e){return Math.round((e.getBoundingClientRect().top-sr.top)*k)}
   function B(e){return Math.round((e.getBoundingClientRect().bottom-sr.top)*k)}
   var d=document.createElement('div'); d.id='MEAS';
-  d.textContent='['+s.className+'] h1='+T(h1)+'..'+B(h1)+' h2='+T(h2)+'..'+B(h2)+' 罫='+(B(h2)-2);
+  d.textContent='['+s.className+'] h1='+T(h1)+'..'+B(h1)+' h2='+T(h2)+'..'+B(h2)+' rule='+(B(h2)-2);
   document.body.appendChild(d);
 });</script>""" % n
 open(".p1.html","w").write(h.replace("</body>", js+"</body>"))

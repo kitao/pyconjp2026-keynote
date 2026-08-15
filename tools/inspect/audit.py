@@ -1,10 +1,12 @@
-"""render/probe.json を読み、ページ横断で値のばらつきを洗い出す。
+"""Read render/probe.json and surface values that vary across slides.
 
-  python3 tools/audit.py            # 全部
-  python3 tools/audit.py rule       # 線だけ（text / link / rule / box / var）
+  python3 tools/inspect/audit.py         everything
+  python3 tools/inspect/audit.py rule    one section only
+                                         (text / link / rule / box / var)
 
-「同じ役割の要素が、ページによって違う値を持っている」ものを不整合として出す。
-役割はセレクタの末尾（p.lead, div.msg など）で判定する。
+Anything where elements of the same role carry different values on different
+slides is reported as an inconsistency. The role is taken from the tail of the
+selector (p.lead, div.msg and so on).
 """
 
 import sys, json, re
@@ -12,11 +14,11 @@ from collections import defaultdict, Counter
 
 D = json.load(open("render/probe.json"))
 
-# 版面（テンプレの不変項目。tools/inspect/measure.py と同じ値）
+# The type area, fixed by the template; same values as tools/inspect/measure.py
 PAD_L, PAD_R = 131, 1789
 BODY_TOP, BODY_BOT = 268, 940
 
-# 版面の規則が当てはまらないページ
+# Slides the type-area rules do not apply to
 SPECIAL_CLS = {"cover", "hero", "section", "full", "closing", "image-main"}
 
 
@@ -25,7 +27,7 @@ def is_special(sc):
 
 
 def leaf(sel):
-    """セレクタの末尾（役割の名前）"""
+    """Tail of the selector, i.e. the name of the role."""
     return sel.split(" > ")[-1]
 
 
@@ -44,7 +46,7 @@ def head(title):
 
 
 def audit_text():
-    head("【文字】同じ役割で値が割れているもの")
+    head("TEXT: same role, different values")
     g = defaultdict(list)
     for r in D:
         if r["t"] != "text":
@@ -57,39 +59,40 @@ def audit_text():
         keys = Counter((x["fs"], x["fw"], x["lh"], rgb(x["col"]), x["ls"], x["ff"]) for x in rs)
         if len(keys) < 2:
             continue
-        # 1ページにしか出ない役割は、その場かぎりの飾りなので除く
+        # A role that appears on one slide only is a one-off flourish, not a
+        # pattern, so it is skipped.
         pages = {x["p"] for x in rs}
         if len(pages) < 2:
             continue
         found += 1
-        print(f"\n● {name}   {len(rs)}件 / {len(pages)}ページ   {len(keys)}通り")
+        print(f"\n* {name}   {len(rs)} uses / {len(pages)} slides   {len(keys)} variants")
         for k, n in keys.most_common():
             ps = sorted({x["p"] for x in rs
                          if (x["fs"], x["fw"], x["lh"], rgb(x["col"]), x["ls"], x["ff"]) == k})
-            mark = "  ← 少数" if n <= 2 and len(keys) > 1 else ""
-            print(f"   {n:>3}件  字{k[0]:<6} 太{k[1]:<4} 行{str(k[2]):<6} 色{k[3]:<8} "
-                  f"送{k[4]:<6} {k[5][:16]:<16} P.{','.join(map(str, ps[:12]))}"
+            mark = "  <- rare" if n <= 2 and len(keys) > 1 else ""
+            print(f"   {n:>3}x  size {k[0]:<6} wt {k[1]:<4} lh {str(k[2]):<6} col {k[3]:<8} "
+                  f"ls {k[4]:<6} {k[5][:16]:<16} P.{','.join(map(str, ps[:12]))}"
                   f"{'...' if len(ps) > 12 else ''}{mark}")
     if not found:
-        print("  割れているものはありません")
+        print("  nothing varies")
 
 
 def audit_rule():
-    head("【線】色と太さの分布")
+    head("RULES: distribution of colour and width")
     c = Counter()
     for r in D:
         if r["t"] != "rule":
             continue
         c[(rgb(r["col"]), r["w"])] += 1
-    print(f"{'色':<10} {'太さ':<7} {'件数':>5}   出るページ")
+    print(f"{'colour':<10} {'width':<7} {'uses':>5}   slides")
     for (col, w), n in sorted(c.items(), key=lambda kv: -kv[1]):
         ps = sorted({r["p"] for r in D
                      if r["t"] == "rule" and rgb(r["col"]) == col and r["w"] == w})
-        mark = "   ← 1〜2ページだけ" if len(ps) <= 2 else ""
+        mark = "   <- only 1-2 slides" if len(ps) <= 2 else ""
         print(f"{col:<10} {w:<7} {n:>5}   P.{','.join(map(str, ps[:14]))}"
               f"{'...' if len(ps) > 14 else ''}{mark}")
 
-    head("【線】同じ役割で色か太さが割れているもの")
+    head("RULES: same role, different colour or width")
     g = defaultdict(list)
     for r in D:
         if r["t"] == "rule":
@@ -103,29 +106,29 @@ def audit_rule():
         if len(keys) < 2:
             continue
         found += 1
-        print(f"\n● {name}  {kind}   {len(pages)}ページ")
+        print(f"\n* {name}  {kind}   {len(pages)} slides")
         for k, n in keys.most_common():
             ps = sorted({x["p"] for x in rs if (rgb(x["col"]), x["w"]) == k})
-            print(f"   {n:>3}件  色{k[0]:<9} 太さ{k[1]:<6} P.{','.join(map(str, ps[:12]))}")
+            print(f"   {n:>3}x  colour {k[0]:<9} width {k[1]:<6} P.{','.join(map(str, ps[:12]))}")
     if not found:
-        print("  割れているものはありません")
+        print("  nothing varies")
 
 
 def audit_link():
-    head("【リンク】色・下線・太さ")
-    print(f"{'頁':>3}  {'色':<9} {'下線':<6} {'太さ':<4} {'字':<5} セレクタ")
+    head("LINKS: colour, underline, weight")
+    print(f"{'pg':>3}  {'colour':<9} {'under':<6} {'wt':<4} {'size':<5} selector")
     for r in sorted([r for r in D if r["t"] == "link"], key=lambda r: r["p"]):
         print(f"{r['p']:>3}  {rgb(r['col']):<9} {r['td']:<6} {r['fw']:<4} {r['fs']:<5} "
               f"{r['sel']}  | {r['txt'][:30]}")
     cols = Counter(rgb(r["col"]) for r in D if r["t"] == "link")
-    print(f"\n  色の内訳: " + "  ".join(f"{c}×{n}" for c, n in cols.most_common()))
+    print(f"\n  colours: " + "  ".join(f"{c} x{n}" for c, n in cols.most_common()))
 
-    # --cy はリンク以外にも使われているか（色だけではリンクの印にならない、の確認）
+    # Is --cy used outside links too? If so, colour alone does not mark a link.
     cy = "#395c98"
     others = sorted({(r["p"], leaf(r["sel"])) for r in D
                      if r["t"] == "text" and rgb(r["col"]) == cy})
     if others:
-        print(f"\n  同じ色 {cy} を使っている非リンクの要素:")
+        print(f"\n  non-link elements using the same colour {cy}:")
         byname = defaultdict(set)
         for p, n in others:
             byname[n].add(p)
@@ -134,15 +137,15 @@ def audit_link():
 
 
 def audit_box():
-    head("【版面】section 直下の中身が版面からはみ出している／余っている")
-    print(f"{'頁':>3}  {'左':>6} {'右':>6} {'上':>6} {'下':>6}   所見")
+    head("TYPE AREA: direct children overflowing or leaving space")
+    print(f"{'pg':>3}  {'left':>6} {'right':>6} {'top':>6} {'bot':>6}   notes")
     for p in range(1, max(r["p"] for r in D) + 1):
         rs = [r for r in D if r["t"] == "box" and r["p"] == p]
         if not rs:
             continue
         sc = rs[0]["sc"]
         if is_special(sc):
-            print(f"{p:>3}  {'':>6} {'':>6} {'':>6} {'':>6}   （特別レイアウト・{sc}）")
+            print(f"{p:>3}  {'':>6} {'':>6} {'':>6} {'':>6}   (special layout: {sc})")
             continue
         x0 = min(r["x"] for r in rs)
         x1 = max(r["x"] + r["w"] for r in rs)
@@ -150,33 +153,33 @@ def audit_box():
         y1 = max(r["y"] + r["h"] for r in rs)
         note = []
         if x0 < PAD_L - 1:
-            note.append(f"左に{PAD_L-x0:.0f}px はみ出し")
+            note.append(f"{PAD_L-x0:.0f}px past the left edge")
         if x1 > PAD_R + 1:
-            note.append(f"右に{x1-PAD_R:.0f}px はみ出し")
+            note.append(f"{x1-PAD_R:.0f}px past the right edge")
         if y1 > BODY_BOT + 60:
-            note.append(f"下に{y1-BODY_BOT:.0f}px はみ出し")
+            note.append(f"{y1-BODY_BOT:.0f}px past the bottom")
         print(f"{p:>3}  {x0:>6.0f} {x1:>6.0f} {y0:>6.0f} {y1:>6.0f}   {' / '.join(note)}")
 
 
 def audit_var():
-    head("【書体】使われている font-family")
+    head("FONTS: font-family in use")
     c = Counter(r["ff"] for r in D if r["t"] == "text")
     for f, n in c.most_common():
         ps = sorted({r["p"] for r in D if r["t"] == "text" and r["ff"] == f})
-        print(f"  {f:<28} {n:>5}件  {len(ps)}ページ"
+        print(f"  {f:<28} {n:>5}x  {len(ps)} slides"
               + (f"  P.{','.join(map(str, ps))}" if len(ps) <= 6 else ""))
 
-    head("【太さ】使われている font-weight")
+    head("WEIGHTS: font-weight in use")
     c = Counter(r["fw"] for r in D if r["t"] == "text")
     for f, n in c.most_common():
-        print(f"  {f:<6} {n:>5}件")
+        print(f"  {f:<6} {n:>5}x")
 
-    head("【字の大きさ】使われている font-size（近い値が並んでいないか）")
+    head("SIZES: font-size in use, watching for values that sit too close")
     c = Counter(r["fs"] for r in D if r["t"] == "text")
     prev = None
     for f, n in sorted(c.items()):
-        gap = f" ← 直前と{f-prev:.1f}pxしか違わない" if prev is not None and 0 < f - prev <= 2 else ""
-        print(f"  {f:<7} {n:>5}件{gap}")
+        gap = f" <- only {f-prev:.1f}px from the previous" if prev is not None and 0 < f - prev <= 2 else ""
+        print(f"  {f:<7} {n:>5}x{gap}")
         prev = f
 
 
