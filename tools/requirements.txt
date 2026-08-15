@@ -1,5 +1,8 @@
 # tools/ のスクリプトが使う Python パッケージ（撮影・素材生成用）。
-# ほかに ffmpeg（動画の合成）と Google Chrome（求人票の切り出し）を使う。
+# ほかに次の2つを使う。
+#   Google Chrome … スライドの書き出しと検品（PDF・ページ画像・寸法の実測）。
+#                   別の場所に入れているときは環境変数 CHROME で渡す
+#   ffmpeg        … 動画の合成
 #   python3 -m venv .venv && .venv/bin/pip install -r tools/requirements.txt
 pyxel>=2.9
 pillow>=10
