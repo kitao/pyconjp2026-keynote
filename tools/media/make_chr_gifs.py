@@ -1,17 +1,18 @@
-"""住人キャラの2コマアニメGIFを作る。
+"""Build the two-frame animated GIFs of the Cursed Caverns residents.
 
-素材は既に確定している chr_*.png（1コマ目）と chr_*_2.png（2コマ目）をそのまま使う。
-コマ替えの間隔は Cursed Caverns 本体のコードに合わせる（Pyxel は 30fps）。
+The art is already final: chr_*.png is frame one and chr_*_2.png frame two.
+The frame interval matches the game's own code (Pyxel runs at 30 fps).
 
-  entities/player.py :  frame_count // 4 % 2  →  4/30 秒 = 133ms
-  entities/slime.py  :  frame_count // 4 % 2  →  133ms
-  entities/mummy.py  :  frame_count // 4 % 2  →  133ms
-  entities/flower.py :  frame_count // 8 % 2  →  8/30 秒 = 267ms
+  entities/player.py :  frame_count // 4 % 2  ->  4/30 s = 133 ms
+  entities/slime.py  :  frame_count // 4 % 2  ->  133 ms
+  entities/mummy.py  :  frame_count // 4 % 2  ->  133 ms
+  entities/flower.py :  frame_count // 8 % 2  ->  8/30 s = 267 ms
 
-宝石（chr_gem_red）はタイルマップの静止タイルで、ゲーム中も動かないので作らない。
-花粉（chr_pollen）は 2コマ目の素材（chr_pollen_2.png）を用意したが、GIF にはしない。
-本体は1フレーム周期（33ms）で色が白赤→緑黄と入れ替わる。ゲームの中では舞う粒に見えるが、
-止まった画面で50pxに置くと点滅にしか見えず、どぎつい。静止画のまま使う。
+The gem (chr_gem_red) is a static tilemap tile and does not move in the game
+either, so it gets no GIF. The pollen (chr_pollen) has frame-two art, but it
+is left as a still: in the game it swaps between white-red and green-yellow
+every frame (33 ms) and reads as a drifting mote, whereas on a static slide at
+50 px it reads as nothing but a harsh flicker.
 """
 
 from PIL import Image, ImageOps
@@ -19,11 +20,12 @@ from PIL import Image, ImageOps
 import os
 IMG = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
 
-# スライドは止まった画面なので、ゲームと同じ速さだと忙しない。
-# 全キャラ共通で2倍ゆっくりにする（キャラごとの速さの差はそのまま保たれる）。
+# A slide is a still frame, so the game's own speed feels restless here.
+# Everything is slowed by the same factor of two, which keeps the relative
+# difference between the characters intact.
 SLOW = 2
 
-# 出力名 → (1コマ目, 2コマ目, ゲーム本体での1コマの長さms, 左右反転)
+# Output name -> (frame one, frame two, frame length in the game in ms, flip)
 CHARS = [
     ("chr_player",      "chr_player",      "chr_player_2",      133, False),
     ("chr_player_r",    "chr_player",      "chr_player_2",      133, False),
@@ -36,7 +38,8 @@ CHARS = [
     ("chr_flower",      "chr_flower",      "chr_flower_2",      267, False),
 ]
 
-# GIF は半透明を持てないので、絵に使われていない色を透明用に割り当てる
+# GIF has no partial transparency, so a colour unused by the art is reserved
+# as the transparent key.
 KEY = (255, 0, 255)
 
 
@@ -67,7 +70,7 @@ def main():
         d = int(round(ms * SLOW / 10.0)) * 10
         p1.save(f"{IMG}/{out}.gif", save_all=True, append_images=[p2],
                 duration=d, loop=0, disposal=2, transparency=t1)
-        print(f"  {out}.gif   {d}ms/コマ（本体は{ms}ms）   {f1.size[0]}x{f1.size[1]}")
+        print(f"  {out}.gif   {d} ms/frame (game: {ms} ms)   {f1.size[0]}x{f1.size[1]}")
 
 
 main()

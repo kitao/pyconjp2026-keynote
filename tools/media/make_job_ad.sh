@@ -1,6 +1,7 @@
 #!/bin/sh
-# P.4 の求人票を高解像度で切り出して assets/quote/job_ad.png を作り直す。
-# P.4 のデザインや文言を直したら、これを走らせて P.6 の引用画像を更新する。
+# Re-cut the job ad on slide 4 at high resolution into assets/quote/job_ad.png.
+# Run this after changing the design or wording of slide 4, so the quoted image
+# on slide 6 matches.
 set -e
 cd "$(dirname "$0")/../.."
 
@@ -24,10 +25,11 @@ for y in range(int(230*s),int(1020*s)):
         if abs(r-0xcf)<18 and abs(g-0xc8)<18 and abs(b-0xb6)<18:
             xs.append(x); ys.append(y)
 c=im.crop((min(xs),min(ys),max(xs)+1,max(ys)+1))
-# P.6 での表示は 732px 幅。ファイルはその3倍あれば足りるので縮めておく
-# （切り出しの原寸のままだと4200px超で、リポジトリと PDF を無駄に太らせる）
+# Slide 6 shows it 732 px wide, so three times that is plenty. Left at the
+# original crop it would be over 4200 px and would bloat both the repository
+# and the PDF.
 c.thumbnail((2198, 10000), Image.LANCZOS)
 c.save('assets/quote/job_ad.png')
-print(f'assets/quote/job_ad.png {c.width}x{c.height}  比 {c.width/c.height:.3f}')
+print(f'assets/quote/job_ad.png {c.width}x{c.height}  ratio {c.width/c.height:.3f}')
 "
 rm -f _job_tmp.md _job_tmp*.png

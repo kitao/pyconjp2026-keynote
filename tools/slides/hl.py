@@ -1,35 +1,41 @@
-"""コードブロックの行に背景を付ける。
+"""Post-processing for the built HTML.
 
-Marp には行ハイライトの機能が無いので、生成後の HTML を加工する。
-slides.md のコード中で、強調したい行の末尾に `#!hl` と書いておくと、
-その目印は出力から消え、代わりにその行へ薄い背景が付く。
+Marp cannot highlight individual lines of code, so the generated HTML is
+rewritten here. Marking a line in slides.md with a trailing `#!hl` drops the
+marker from the output and gives that line a faint background instead.
 
-  while True:  #!hl   →   <span class="cl hl">while True:</span>
+  while True:  #!hl   ->   <span class="cl hl">while True:</span>
 
-各行を <span class="cl"> で包むのは、行単位の背景を敷くため。
-（highlight.js の出力は行をまたがないので、改行で切って包める）
+Every line is wrapped in <span class="cl"> so the background can be laid down
+per line; highlight.js never spans a newline, so splitting on newlines is safe.
+
+The same pass hangs opening brackets at the start of a line and inserts the
+quarter-space between Japanese and Latin text.
 """
 
 import os
 import re
 import sys
 
-# 目印は Python のコメントなので、highlight.js が <span class="hljs-comment"> で包む
+# The marker is a Python comment, so highlight.js wraps it in
+# <span class="hljs-comment">.
 MARK = re.compile(r'\s*(<span class="hljs-comment">)?#!hl(</span>)?\s*$')
 
-# highlight.js は Pyxel を知らないので、pyxel.xxx を自前で色分けする。
-# 大文字だけの名前は定数（KEY_LEFT など）、それ以外は関数（init, blt など）
+# highlight.js does not know Pyxel, so pyxel.xxx is coloured here. Names in all
+# caps are constants (KEY_LEFT and friends); the rest are functions (init, blt).
 PYXEL = re.compile(r"\bpyxel\.([A-Za-z_]\w*)")
 
 
-# URL の中の pyxel.js は、モジュール名＋関数名ではなくただのファイル名。
-# 文字列の一部なので色を足さない（足すと文字列の中だけ色が変わって見える）
+# pyxel.js inside a URL is a file name, not a module plus a function. It is
+# part of a string literal, so it is left alone; colouring it would tint the
+# middle of the string.
 URL_PLAIN = re.compile(r"https?://[^\s\"&<]+")
 
 
-# <pyxel-run script="…"> の中身は Python だが、この塊は HTML として解析されるので、
-# highlight.js は素通しにする。ゲームのページ（P.23〜P.27）と同じ見え方にするため、
-# 属性の中だけ Python として色を足す。使う名前は highlight.js のものに合わせる
+# The body of <pyxel-run script="..."> is Python, but the block is parsed as
+# HTML, so highlight.js leaves it plain. To make it read like the game slides
+# (23-27), Python colours are applied inside that attribute, reusing the class
+# names highlight.js would have used.
 PY_BEGIN = re.compile(r'class="hljs-name">pyxel-run<')
 PY_END = re.compile(r"^&quot;")
 PY_KEYWORD = re.compile(
@@ -39,7 +45,7 @@ PY_NUMBER = re.compile(r"\b\d+(?:\.\d+)?\b")
 
 
 def paint_python(line: str) -> str:
-    """属性の中の1行に、Python と同じ色を付ける（pyxel.xxx は paint が担う）"""
+    """Colour one line inside an attribute as Python (pyxel.xxx is paint's job)."""
     line = PY_KEYWORD.sub(r'<span class="hljs-keyword">\1</span>', line)
     return PY_NUMBER.sub(r'<span class="hljs-number">\g<0></span>', line)
 
@@ -53,7 +59,7 @@ def paint(line: str) -> str:
     out, pos = [], 0
     for m in URL_PLAIN.finditer(line):
         out.append(PYXEL.sub(one, line[pos:m.start()]))
-        out.append(m.group(0))          # URL はそのまま
+        out.append(m.group(0))          # URLs pass through untouched
         pos = m.end()
     out.append(PYXEL.sub(one, line[pos:]))
     return "".join(out)
@@ -62,11 +68,11 @@ def paint(line: str) -> str:
 def wrap(html: str) -> str:
     def one(m):
         body = m.group(2)
-        # </code> の直前の改行は行ではない
+        # The newline just before </code> is not a line
         if body.endswith("\n"):
             body = body[:-1]
         out = []
-        in_python = False            # <pyxel-run script="…"> の中にいるか
+        in_python = False            # Inside <pyxel-run script="...">?
         for line in body.split("\n"):
             hl = bool(MARK.search(line))
             if hl:
@@ -79,8 +85,10 @@ def wrap(html: str) -> str:
             elif PY_BEGIN.search(line):
                 in_python = True
             out.append(f'<span class="{cls}">{paint(line)}</span>')
-        # 改行では繋がない。<span> は block なので改行文字が余分な1行を作ってしまい、
-        # 行送りが2倍に膨らんで空行が空行に見えなくなる（字も auto-scaling で半分まで縮む）
+        # Join without newlines. The spans are block level, so a newline
+        # character would add a line of its own: the leading would double,
+        # blank lines would stop reading as blank, and auto-scaling would
+        # shrink the type to half its size.
         return m.group(1) + "".join(out) + m.group(3)
 
     return re.sub(
@@ -91,30 +99,35 @@ def wrap(html: str) -> str:
     )
 
 
-# 行頭の鉤括弧は、括弧の左が空くぶん頭が内側に入る。
-# CSS だけでは「で始まるかどうかを見分けられないので、ここで印を付けてぶら下げる。
-# （hanging-punctuation は Chrome が未対応）
-# 和文の括弧だけを対象にする。ラテンの “ ' は字幅が狭く、同じ量を下げると出過ぎる
-# 括弧の直前に <b> などが挟まっていても行頭は行頭。span も対象に入れる
-# （P.9/P.10 の <span class="cr"><b>『METAL GEAR SOLID』 がこれで漏れていた）。
-# text-indent はブロックにしか効かないので、インラインの span に付いても害はない
+# An opening bracket at the start of a line sits inset, because the bracket
+# carries space on its left. CSS alone cannot tell whether a line starts with
+# one (Chrome does not support hanging-punctuation), so it is marked here and
+# hung by the theme.
+# Only Japanese brackets qualify; the Latin quotes are narrow, and hanging them
+# by the same amount pushes them too far out.
+# A line still starts at its start even with <b> or a span in between, so those
+# are matched too (this is what used to miss the opening bracket in
+# <span class="cr"><b> on slides 9 and 10).
+# text-indent only applies to blocks, so putting it on an inline span is inert.
 HANG = re.compile(r'<(h1|h2|p|div|span)([^>]*)>((?:<[^/][^>]*>)*\s*[「『（【〈《])')
-# 中央ぞろえの行は、下げる量が左ぞろえと違う。行頭の空きは左右のアキの差として
-# 出るので、半分だけ戻せば釣り合う。全部下げると今度は左へ出すぎる
+# A centred line needs a different amount. There the leading space shows up as
+# a difference between the left and right margins, so hanging it half way
+# balances; hanging it fully pushes the line too far left.
 CENTERED = re.compile(r'class="[^"]*\b(msg|concl|rel|who|ids|doc-h)\b')
-# 「（複雑さ大）」のように括弧で始まって括弧で閉じる短い語は、左右の空きが
-# 相殺して中心がもともと揃っている。下げると逆にずれる（P.16/P.17 で実測）
+# A short phrase that both opens and closes with a bracket already balances:
+# the space on the left is cancelled by the space on the right, so hanging it
+# throws it off instead (measured on slides 16 and 17).
 OPEN_B = "（「『【〈《"
 CLOSE_B = "）」』】〉》"
 
 
 def balanced(head_and_rest: str) -> bool:
-    """行頭の括弧が、その行の中で閉じて終わっているか。
+    """Does the opening bracket close again before the line ends?
 
-    「（複雑さ大）」のように括弧で始まり括弧で閉じて終わる短い語は、
-    開き括弧の左の空きを閉じ括弧の右の空きが打ち消すので、下げると逆にずれる。
-    「「楽しく作る」をデザインする」のように括弧の後に文が続くものは相殺しない。
-    タグは中身を持たないので取り除いてから見る。
+    A short phrase that opens and closes with a bracket cancels its own edges,
+    so hanging it makes it worse. A line where text continues after the closing
+    bracket does not cancel and should be hung.
+    Tags carry no width, so they are stripped before looking.
     """
     text = re.sub(r"<[^>]*>", "", head_and_rest)
     text = text.strip()
@@ -127,21 +140,22 @@ def balanced(head_and_rest: str) -> bool:
         elif ch in CLOSE_B:
             depth -= 1
             if depth == 0:
-                # 閉じたところで行が終わっていれば相殺する
+                # It cancels only if the line ends where the bracket closes
                 return text[i + 1:].strip() == ""
     return False
 
 
 def hang(html: str) -> str:
-    """行頭の和文括弧をぶら下げる。
+    """Hang Japanese opening brackets that start a line.
 
-    タグや class で対象を絞らず、行頭が和文括弧なら必ず下げる。
-    絞ると漏れた要素（.msg・.v・.fn など）だけ左端が13.5px内側に入る。
+    No filtering by tag or class: if a line starts with one, it is hung.
+    Filtering leaves elements out (.msg, .v, .fn and so on), and those alone
+    end up inset by 13.5 px.
     """
     def one(m):
         tag, attrs, head = m.groups()
-        # 括弧で閉じる短い語は、開き括弧の空きを閉じ括弧の空きが打ち消すので触らない。
-        # 行の終わりまで見たいので、開始タグに対応する終了タグまでを渡す
+        # Leave the self-cancelling short phrases alone. The whole line is
+        # needed to tell, so pass everything up to the matching closing tag.
         seg = html[m.start():m.start() + 400]
         end = seg.find(f"</{tag}>")
         if end >= 0:
@@ -159,46 +173,57 @@ def hang(html: str) -> str:
     return HANG.sub(one, html)
 
 
-# 和文と欧文のあいだの四分アキ。日本語組版では和欧の境目に 1/4em ほどの
-# 空きを入れる（公式ドキュメントの日本語もすべて空きを入れている）。
-# 半角スペースを打つと 1/2em で広すぎ、CSS の text-autospace は Chrome が未対応。
-# タグの中とコードは触らない（Marp は各スライドを <svg> で包むので svg は外せない）。
-# エンティティ（&copy; など）は末尾が ; なので和字と隣り合わず、そのまま素通りする。
-# 数字だけの連なりは欧文として扱わない。「2018 年」「4,900 円」「1 つ」のように
-# 数量に助数詞・単位が続くものは、日本語では空けないため。
-# 一方「PS2」「3D」「Base64」は数字が語の一部で、後ろに来るのは助詞・和語なので空ける。
-# 見分けは「英字を1つ以上含むか」。版番号は語の続きとして扱う（「Pyxel 3.0」）。
-# 約物（、。「」（）・）も対象外。約物は自分で空きを持っているので、足すと空きすぎる
+# The quarter-space between Japanese and Latin text. Japanese typesetting puts
+# roughly 1/4 em at the boundary; the Pyxel documentation does the same. Typing
+# a space gives 1/2 em, which is too wide, and Chrome does not support the CSS
+# text-autospace property, so the space is inserted here as an empty span.
+# Tags and code are left alone (the svg cannot be skipped, since Marp wraps
+# every slide in one). Entities such as &copy; end in a semicolon, so they
+# never sit next to a Japanese character and pass straight through.
+# A run of digits alone is not treated as Latin: a quantity followed by a
+# counter or a unit is set solid in Japanese ("2018 nen", "4,900 yen", "1 tsu").
+# In "PS2", "3D" and "Base64" the digits are part of the word and what follows
+# is a particle, so those do take the space. The test is whether the run
+# contains at least one letter. A version number counts as part of the word
+# ("Pyxel 3.0").
+# Punctuation is excluded too: it already carries its own space, and adding
+# more opens the line up too far.
 JA = "ぁ-んァ-ヴー々〆ヵヶ一-龥"
-HEAD = r"[0-9]*[A-Za-z]"                        # 欧文語の始まり（3D の 3 も含む）
-WORD = HEAD + r"[A-Za-z0-9]*(?:[ ][0-9][0-9.]*)?"   # 末尾の括弧は版番号（Pyxel 3.0）
-# 欧文語 → 和字。語の切れ目から見るので「をBase64」も拾える
-# （\b は使えない。和字も \w なので語頭と見なされない）
+HEAD = r"[0-9]*[A-Za-z]"                        # Start of a Latin word (the 3 of 3D counts)
+WORD = HEAD + r"[A-Za-z0-9]*(?:[ ][0-9][0-9.]*)?"   # Trailing group is a version (Pyxel 3.0)
+# Latin word followed by Japanese. Matching from the word break also catches a
+# word that follows Japanese directly (\b is no use here: Japanese counts as \w,
+# so the boundary never registers).
 AKI_BEFORE_JA = re.compile(r"(?<![A-Za-z0-9])" + WORD + r"(?=[" + JA + "])")
-# 和字 → 欧文語
+# Japanese followed by a Latin word
 AKI_AFTER_JA = re.compile(r"([" + JA + r"])(?=" + HEAD + ")")
-# <title> はブラウザのタブと PDF のメタデータに出る「文字列」で、組版の対象ではない。
-# ここにアキの span を入れると、タブに &lt;span class="aki"&gt; が見える
+# <title> is a plain string shown in the browser tab and in the PDF metadata,
+# not something being typeset. Inserting a span there puts a literal
+# &lt;span class="aki"&gt; in the tab.
 KEEP = re.compile(r"<(pre|script|style|title)\b.*?</\1>", re.S)
 
 
 SPAN = '<span class="aki"></span>'
-# 開きタグの直後に入るアキ。要素の中身の先頭なので、その要素が行になる場合は
-# ただの字下げになる。CSS で消せるよう印を付ける（:first-child はテキストを
-# 数えないので、文中のアキまで巻き込む。だからここで区別する）
+# A space that lands right after an opening tag. It sits at the very start of
+# the element's content, so when that element becomes a line of its own the
+# space is just an indent. It is marked so the theme can drop it. The mark is
+# needed because :first-child does not count text nodes and would also catch
+# spaces in the middle of a line.
 SPAN_LEAD = '<span class="aki lead"></span>'
 OPEN_TAG = re.compile(r"<(a|b|strong|em|i|small|span|code|sup|sub)\b[^>]*>\Z", re.I)
 KAN = re.compile(r"[" + JA + r"]")
-# 要素をまたぐ判定用。同じ WORD・HEAD から組むので、文中の判定とずれない
+# Used across element boundaries. Built from the same WORD and HEAD, so it
+# cannot drift from the in-text rule.
 WORD_END = re.compile(r"(?<![A-Za-z0-9])" + WORD + r"\Z")
 WORD_START = re.compile(HEAD)
 
 
 def is_boundary(before: str, after: str) -> bool:
-    """要素をまたいだ隣り合わせが和欧の境目か。前後のテキストを丸ごと受け取る。
+    """Is this cross-element boundary one between Japanese and Latin?
 
-    末尾・先頭の1字だけでは、数字が欧文語の一部か数量かを見分けられない。
-    「km19809」＋「氏」（P.35）は語の一部、「2018」＋「年」は数量。
+    Takes the whole text on each side. The last and first characters alone are
+    not enough to tell a digit that belongs to a word from a digit that is a
+    quantity: "km19809" + "shi" (slide 35) is a word, "2018" + "nen" is not.
     """
     if not before or not after:
         return False
@@ -214,8 +239,8 @@ def aki_text(text: str) -> str:
     return AKI_AFTER_JA.sub(r'\1' + SPAN, text)
 
 
-# <a> や <b> をまたいだ和欧の境目（「…Examples</a>に集まった」など）も拾う。
-# 行が変わるブロック要素の境目では入れない
+# Also catch boundaries that straddle an <a> or <b>. Boundaries at block
+# elements start a new line, so nothing is inserted there.
 INLINE = re.compile(r"</?(a|b|strong|em|i|small|span|code|sup|sub)\b[^>]*>\Z", re.I)
 
 
@@ -223,7 +248,8 @@ def aki_outside_tags(chunk: str) -> str:
     out, pos, prev_text, prev_tag = [], 0, "", ""
     for m in re.finditer(r"<[^>]+>", chunk):
         text = chunk[pos:m.start()]
-        # 直前がインラインタグで、その前の字と今の字が和欧の境目なら、ここにアキを入れる
+        # If an inline tag sits between two characters that form a boundary,
+        # the space goes here.
         if text and prev_text and INLINE.search(prev_tag):
             if is_boundary(prev_text, text):
                 out.append(SPAN_LEAD if OPEN_TAG.search(prev_tag) else SPAN)
@@ -245,16 +271,16 @@ def aki(html: str) -> str:
     out, pos = [], 0
     for m in KEEP.finditer(html):
         out.append(aki_outside_tags(html[pos:m.start()]))
-        out.append(m.group(0))          # コードはそのまま
+        out.append(m.group(0))          # Code passes through untouched
         pos = m.end()
     out.append(aki_outside_tags(html[pos:]))
     return "".join(out)
 
 
-# コードの中の長いURLは、そのままだと任意の位置で折り返されて
-# 「…jsdelivr.ne / t/gh/…」のように単語の途中で切れる。<wbr> を / の後に
-# 差し込み、折り返しをパスの区切りに限定する。<pre> の中だけに入れる
-# （href の中に入れるとリンクが壊れる）
+# A long URL inside a code block wraps at an arbitrary point and breaks mid
+# word ("...jsdelivr.ne / t/gh/..."). Inserting <wbr> after each slash confines
+# the wrap to the path separators. Only inside <pre>: putting it in an href
+# would break the link.
 URL_IN_CODE = re.compile(r"https?://[^\s\"&<]+")
 PRE_BLOCK = re.compile(r"<pre\b.*?</pre>", re.S)
 
@@ -266,12 +292,13 @@ def url_wbr(html: str) -> str:
     return PRE_BLOCK.sub(in_pre, html)
 
 
-# CSS の background-image は、その要素を実際に描くときになって初めて読みに行く。
-# Chrome の --print-to-pdf は画面に描かないまま PDF を書き出すので、
-# 読み込みが間に合わず、CSS からしか参照していない画像が丸ごと抜け落ちる
-# （右下の住人が1枚おきに消える、という形で出る）。
-# <img> でも使っている画像は先に読まれて残るので、CSS 専用の画像だけが欠ける。
-# 先読みを宣言して、描く前に読み終わらせる。
+# A CSS background-image is only fetched once the element is actually painted.
+# Chrome's --print-to-pdf writes the PDF without painting to a screen, so the
+# fetch never completes in time and every image referenced only from CSS drops
+# out (it shows up as the residents in the bottom right vanishing from every
+# other page). Images that are also used in an <img> are fetched anyway, so
+# only the CSS-only ones are lost. Declaring a preload makes them load before
+# the paint.
 CSS_URL = re.compile(r'url\(\s*"?([^")]+\.(?:png|jpg|jpeg|gif|webp|svg))"?\s*\)')
 
 

@@ -1,12 +1,14 @@
-"""実演で使うリソース（demo/game/game.pyxres）を作る。
+"""Build the resource file used by the demo (demo/game/game.pyxres).
 
-書籍付属サンプルのドット絵から、必要な絵と音だけを取り出して詰め直す。
+It takes the art and sound the demo needs out of the book's sample data and
+packs them into a fresh file.
 """
 
 import pyxel
 
-# 宇宙飛行士と隕石のドット絵の元は、書籍『ゲームで学ぶPython!』付属サンプル
-# （このリポジトリには含まれない。手元のサンプル一式の場所に合わせて書き換える）
+# The astronaut and meteor art comes from the sample data shipped with the book
+# "Learn Python with Games" (Gijutsu-Hyohron). That data is not part of this
+# repository; point SRC at your own copy.
 SRC = "../../../gihyo_pyxel/chapter5/space_rescue.pyxres"
 OUT = "../../demo/game/game.pyxres"
 
@@ -15,10 +17,10 @@ pyxel.load(SRC)
 
 img = pyxel.images[0]
 
-# 書籍サンプルのスプライトを、スライドのコードが読む位置へ移す。
-# 画面に地面があるので、自機は宇宙船ではなく宇宙飛行士を使う。
-# 宇宙飛行士 = (16,0) → (0,120)、隕石 = (24,0) → (8,120)。
-# 同一バンク内の blt は RefCell で落ちるので、1ドットずつ写す。
+# Move the sample sprites to the positions the slide code reads from.
+# The screen has ground on it, so the player is the astronaut rather than the
+# spaceship: astronaut (16,0) -> (0,120), meteor (24,0) -> (8,120).
+# blt within a single bank panics on the RefCell, so copy pixel by pixel.
 def copy(sx, sy, dx, dy, w=8, h=8):
     buf = [[img.pget(sx + i, sy + j) for i in range(w)] for j in range(h)]
     for j in range(h):
@@ -29,10 +31,11 @@ def copy(sx, sy, dx, dy, w=8, h=8):
 copy(16, 0, 0, 120)
 copy(24, 0, 8, 120)
 
-# 背景 160x120 を (0,0) に。図形版と同じ読み（紺の空 cls 1・y=112 に緑の地面線）。
+# Background 160x120 at (0,0), reading the same as the shapes-only version:
+# navy sky (cls 1) and a green ground line at y=112.
 img.rect(0, 0, 160, 120, 1)
 
-# 星。種を固定して、撮り直しても絵が変わらないようにする。
+# Stars. The seed is fixed so a re-run produces the same sky.
 pyxel.rseed(7)
 for _ in range(38):
     x = pyxel.rndi(0, 159)

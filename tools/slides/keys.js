@@ -1,25 +1,27 @@
-// Marp の bespoke テンプレのキー操作を、この講演の進行に合わせて調整する。
-// ビルド後に preview.sh が差し込む。
+// Adjusts the key handling of Marp's bespoke template to suit this talk.
+// preview.sh injects this file after the build.
 //
-//   数字 → Enter   そのページへ移動（画面には何も出さない。1.8秒放置で破棄）
-//   L              レーザーポインターの入り切り
-//   P              無効にする（発表者ツールを使わないので、誤って別ウィンドウが開くのを防ぐ）
+//   digits then Enter   jump to that slide (nothing is shown on screen; the
+//                       buffer is dropped after 1.8 s of no typing)
+//   L                   laser pointer on / off
+//   P                   disabled; the presenter tools are not used, and this
+//                       stops a stray window from opening
 //
-// 移動は bespoke のハッシュ機能（location.hash = "#21" で21ページ目）に任せる。
+// Jumping is left to bespoke's hash support (location.hash = "#21" is slide 21).
 //
-// あわせて、スライドの中のリンクと動画に焦点が残らないようにする。
-//   ・動画に焦点があると bespoke がキーを止めるので、ページ送りが空振りする
-//     （bespoke は AUDIO/BUTTON/INPUT/SELECT/TEXTAREA/VIDEO で stopPropagation する）
-//   ・リンクは別タブから戻ったときに、焦点の枠が残って見える
+// It also keeps focus off the links and videos inside the slides:
+//   - a focused video makes bespoke swallow the keys, so paging does nothing
+//     (bespoke calls stopPropagation for AUDIO/BUTTON/INPUT/SELECT/TEXTAREA/VIDEO)
+//   - a focused link keeps its focus ring visible after returning from a tab
 (function () {
 
-  // 入力欄にいるときは、こちらのキー操作を効かせない
+  // Never take over the keys while the caret is in an input
   function typing(e) {
     var t = e.target;
     return !!(t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.nodeName) || t.isContentEditable));
   }
 
-  // ── 数字 → Enter でページ移動 ──
+  // -- Digits then Enter to jump to a slide --
   var buf = '';
   var timer = null;
 
@@ -33,11 +35,11 @@
     timer = setTimeout(reset, 1800);
   }
 
-  // capture 段で受ける。Marp 側のキー処理（document の bubble 段）より先に取る
+  // Listen in the capture phase, ahead of Marp's own handler on document
   document.addEventListener('keydown', function (e) {
     if (typing(e) || e.metaKey || e.ctrlKey || e.altKey) return;
 
-    // P は発表者ツールを別ウィンドウで開く。使わないので、ここで握り潰す
+    // P opens the presenter tools in another window. Unused, so swallow it.
     if (e.key === 'p' || e.key === 'P') {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -54,47 +56,49 @@
       buf = buf.slice(0, -1);
       hold();
     } else {
-      return;   // 関係ないキーは Marp に渡す
+      return;   // Anything else goes through to Marp
     }
     e.preventDefault();
     e.stopPropagation();
   }, true);
 
-  // ── リンクと動画に焦点を残さない ──
-  // クリックしたあと、その要素に焦点を残さない。既定の動作（再生・遷移）は
-  // そのまま起き、そのあとで焦点だけ外す。キーボードから実行したとき
-  // （e.detail === 0）は、利用者の居場所を奪わないよう外さない
+  // -- Keep focus off the links and videos --
+  // Drop focus after a click. The default action (play, follow the link) still
+  // happens; only the focus is cleared afterwards. When the click came from the
+  // keyboard (e.detail === 0) focus is left alone, so the user keeps their place.
   document.addEventListener('click', function (e) {
     if (e.detail === 0 || !e.target || !e.target.closest) return;
     var el = e.target.closest('section a, section video, section audio');
     if (el) setTimeout(function () { el.blur(); }, 0);
   }, true);
 
-  // Tab の巡回からも外す。押しても枠が出ない
+  // Take them out of the tab order as well, so Tab shows no focus ring
   window.addEventListener('load', function () {
     var list = document.querySelectorAll('section a, section video, section audio');
     for (var i = 0; i < list.length; i++) list[i].tabIndex = -1;
   });
 
-  // ── L でレーザーポインター。マウスの位置に光点を出す ──
+  // -- L for a laser pointer: a dot of light at the mouse position --
   var dot = null;
   var on = false;
-  // 最後のマウス位置。入れた瞬間からそこに出す。まだ一度も動いていなければ画面の中央
+  // Last mouse position, so the dot appears there the moment it is switched
+  // on. Before the mouse has moved at all, that is the centre of the screen.
   var mx = window.innerWidth / 2;
   var my = window.innerHeight / 2;
 
   function make() {
     dot = document.createElement('div');
-    // 大きさは vh 基準。窓の大小によらず、投影したときと同じ比率で見える。
-    // margin は幅の半分。これで translate の座標が光点の中心になる
+    // Sized in vh, so a small window looks the same as the projected screen.
+    // The margin is half the width, which puts the translate coordinate at
+    // the centre of the dot.
     dot.style.cssText = [
       'position:fixed', 'left:0', 'top:0',
       'width:1.7vh', 'height:1.7vh', 'margin:-0.85vh 0 0 -0.85vh',
       'border-radius:50%',
-      // 中心を白く飛ばすと、赤一色より光って見える
+      // Blowing the centre out to white reads as light, where flat red does not
       'background:radial-gradient(circle,#fff 10%,#ff3b3b 45%,#d40000 100%)',
       'box-shadow:0 0 1.3vh 0.65vh rgba(255,45,45,.42)',
-      // 実演のリンク（P.39・P.41）はレーザー中でも押せるままにする
+      // Keep the demo links (slides 39 and 41) clickable while the laser is on
       'pointer-events:none',
       'z-index:2147483647',
       'display:none'
@@ -106,7 +110,7 @@
     dot.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
   }
 
-  // 消えている間も位置は覚えておく。入れたときにマウスのある場所から出る
+  // Track the position even while hidden, so it lights up where the mouse is
   document.addEventListener('mousemove', function (e) {
     mx = e.clientX;
     my = e.clientY;
@@ -115,7 +119,7 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'l' && e.key !== 'L') return;
-    // 押しっぱなしの自動リピートで入り切りを繰り返さない
+    // Do not toggle over and over on auto-repeat
     if (e.repeat || typing(e) || e.metaKey || e.ctrlKey || e.altKey) return;
     e.preventDefault();
 
@@ -123,7 +127,7 @@
     on = !on;
     if (on) place();
     dot.style.display = on ? 'block' : 'none';
-    // 矢印と光点が二重に見えないようにする
+    // Hide the arrow so it is not seen alongside the dot
     document.documentElement.style.cursor = on ? 'none' : '';
   }, true);
 })();

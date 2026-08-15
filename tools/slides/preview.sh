@@ -1,19 +1,21 @@
 #!/bin/sh
-# 本番と同じHTMLをブラウザで開く。
-#   ← → PageUp/Down Space   ページ送り
-#   数字 → Enter             そのページへ移動（tools/slides/keys.js が足している操作）
-#   F                        全画面
-#   P                        無効（発表者ツールは使わない。誤って別ウィンドウが開くのを防ぐ）
+# Open the same HTML that is used on stage.
+#   Arrows, PageUp/Down, Space   next / previous slide
+#   digits then Enter            jump to that slide (added by tools/slides/keys.js)
+#   L                            laser pointer on / off (same file)
+#   F                            full screen
+#   P                            disabled; the presenter tools are not used, and
+#                                this stops a stray window from opening
 #
-# 画面の下に出る補助UI（OSC）は出さない（--bespoke.osc=false）。
-# マウスを動かすたびに現れて、動画の再生・シークの邪魔になるため。
-# ページ番号はスライド自身が左下に出しているので、これで失うものはない。
+# The on-screen controls (OSC) are turned off (--bespoke.osc=false): they
+# appear on every mouse move and get in the way of playing and scrubbing the
+# videos. Nothing is lost, since the slides print the page number themselves.
 cd "$(dirname "$0")/../.."
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bespoke --bespoke.osc=false \
   -o index.html </dev/null >/dev/null 2>&1 || exit 1
 
-# Marp のテンプレに無い操作を差し込む（数字を打って Enter でページ移動）
+# Inject the key handling Marp's template does not provide.
 python3 - << 'PYEOF'
 h = open("index.html").read()
 js = open("tools/slides/keys.js").read()
@@ -27,4 +29,4 @@ PYEOF
 
 python3 tools/slides/hl.py index.html
 open index.html
-echo "index.html を開きました（← → で送り、数字→Enter でジャンプ、F で全画面）"
+echo "opened index.html (arrows to move, digits then Enter to jump, F for full screen)"
