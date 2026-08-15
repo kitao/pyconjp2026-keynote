@@ -235,6 +235,7 @@
   --ch1: var(--p5);   /* 1章。--cy と同じ藍 */
   --ch2: var(--p3);   /* 2章。青緑 */
   --ch3: var(--p2);   /* 3章。葡萄 */
+  --ch0: #b4682c;     /* 序章。暖色にして、番号の付く章でないことを色でも示す */
   /* P.46 の2群。動かす＝青、調べる＝青緑。アイコンの座とカードの枠で共通に使う */
   --run-bd: #8fb4e0;   /* 動かす系の枠。白地との差 1.49→2.05 にして見えるようにした */
   --run-fg: var(--cy);
@@ -294,8 +295,15 @@
   --era2: #35b4d6;   /* 3D */
   --era3: #58c68d;   /* これから */
 
-  /* コードの板の色（VS Code の Dark+ に合わせている） */
-  --code-fn: #dcdcaa;   /* 組み込み関数・定義した関数 */
+  /* コードの板の色（VS Code の Dark+ に合わせている）。
+     Marp 既定は明るい地の前提で、この黒地に載せるとコントラストが足りない */
+  --code-kw: #c586c0;     /* import if for while */
+  --code-lit: #569cd6;    /* True False None・HTML のタグ名 */
+  --code-num: #b5cea8;    /* 数値 */
+  --code-str: #ce9178;    /* 文字列 */
+  --code-fn: #dcdcaa;     /* 組み込み関数・定義した関数 */
+  --code-attr: #9cdcfe;   /* 属性名・モジュール名 pyxel */
+  --code-const: #4fc1ff;  /* 定数 KEY_LEFT … */
 
   /* 淡い灰へ抜けるグラデーションの終端（P.29 の地・P.34 の帯） */
   --grad-end: #f2f3f6;
@@ -2031,21 +2039,21 @@ section pre code .cl.hl { background: #7a1f42; }
    このデッキの黒地（var(--code-bg)）に載せると数値が 2.25:1、キーワードが 3.2:1 しかない。
    数値だらけのコードで一番読ませたい部分が読めないので、VSCode Dark+ の配色に差し替える。
    Marp 側が id セレクタで指定しているため !important が要る */
-section pre .hljs-keyword  { color: #c586c0 !important; }   /* import if for while */
-section pre .hljs-literal  { color: #569cd6 !important; }   /* True False None */
-section pre .hljs-number   { color: #b5cea8 !important; }   /* 数値 */
-section pre .hljs-string   { color: #ce9178 !important; }   /* 文字列 */
+section pre .hljs-keyword  { color: var(--code-kw) !important; }   /* import if for while */
+section pre .hljs-literal  { color: var(--code-lit) !important; }   /* True False None */
+section pre .hljs-number   { color: var(--code-num) !important; }   /* 数値 */
+section pre .hljs-string   { color: var(--code-str) !important; }   /* 文字列 */
 section pre .hljs-built_in { color: var(--code-fn) !important; }
 /* HTML のタグ名・属性名（P.36）。ここも既定のままだと #0550ae で 2.25:1 しかなく、
    カスタムタグ <pyxel-run> が地に沈む。数値と同じ理由で差し替える */
-section pre .hljs-name     { color: #569cd6 !important; }   /* script pyxel-run */
-section pre .hljs-attr     { color: #9cdcfe !important; }   /* src script= */
+section pre .hljs-name     { color: var(--code-lit) !important; }   /* script pyxel-run */
+section pre .hljs-attr     { color: var(--code-attr) !important; }   /* src script= */
 section pre .hljs-params   { color: var(--code-fg) !important; }
 
 /* highlight.js が知らない Pyxel のトークン（scripts/hl.py が付ける） */
-section pre .pm { color: #9cdcfe; }   /* モジュール名 pyxel */
+section pre .pm { color: var(--code-attr); }   /* モジュール名 pyxel */
 section pre .pf { color: var(--code-fn); }   /* 関数 init blt btn … */
-section pre .pk { color: #4fc1ff; }   /* 定数 KEY_LEFT … */
+section pre .pk { color: var(--code-const); }   /* 定数 KEY_LEFT … */
 
 /* ── P.21 の制約表 ────────────────────────────────
    .bio（P.9・P.11・P.12）と同じ組み方に揃える。
@@ -2850,7 +2858,7 @@ section.recall { padding-bottom: 112px; }
    目次で見た並びがそのまま出るので、いまどの章かが絵で分かる */
 /* 序章だけ暖色にする。1〜3章（藍・青緑・紫）と色相の系統を変えることで、
    番号の付く章ではないことが色でも分かる */
-section.section .no.ch0n { --ch: #b4682c; }
+section.section .no.ch0n { --ch: var(--ch0); }
 /* 1〜3章の割り当ては目次の帯と共通（.agenda の節を見よ） */
 /* 締めの扉。ここは通過点ではなく到達点なので、章の4色とも別の色を持たせる。
    同じページの宝石と同じ色（--p8）＝たどり着いた宝の色で締める */
