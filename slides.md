@@ -842,7 +842,7 @@ pyxel.channels.append(pyxel.Channel())
 # Web版Pyxelへの道のり
 ## The Road to Pyxel on the Web
 
-<p class="lead">Pyxelにコミュニティが生まれ、周辺プロジェクトを巻き込んだ総力戦になった <span class="en block">A community formed around Pyxel, and nearby projects were pulled into the effort</span></p>
+<p class="lead">Pyxelのコミュニティと周辺プロジェクトを巻き込んだ総力戦になった <span class="en block">It became an all-out effort, pulling in the Pyxel community and nearby projects</span></p>
 
 <div class="chron">
 <div class="timeline">
@@ -875,7 +875,7 @@ pyxel.channels.append(pyxel.Channel())
 <div class="steps">
 <div class="step"><div class="n">1</div><div class="w">Pyxel本体をCDNサーバーに置き、インストールなしで実行<span class="en block">Pyxel sits on a CDN — it runs with no install</span><span class="d">pyxel.jsスクリプトが、Python実行環境（Pyodide）とPyxel本体を読み込む<span class="en block">The pyxel.js script pulls in Pyodide (a Python runtime) and Pyxel itself</span></span></div></div>
 <div class="step"><div class="n">2</div><div class="w">独自のHTMLタグを定義し、HTML内にPythonを直接記述<span class="en block">A custom HTML tag lets Python live right inside the HTML</span><span class="d">ブラウザがタグを見つけると、中身のコードを取り出してPyxelに渡す<span class="en block">When the browser finds the tag, it hands the code inside to Pyxel</span></span></div></div>
-<div class="step"><div class="n">3</div><div class="w">pyxappをBase64エンコードし、単体HTMLファイルに変換<span class="en block">A pyxapp is Base64-encoded and turned into a standalone HTML file</span><span class="d">逆変換スクリプトが起動時にpyxappファイルを復元し、Pyxelに渡す<span class="en block">At startup a decoder script rebuilds the pyxapp file and passes it to Pyxel</span></span></div></div>
+<div class="step"><div class="n">3</div><div class="w">pyxappを<code>pyxel app2html</code>コマンドでHTMLに変換<span class="en block">The pyxel app2html command turns a pyxapp into a standalone HTML file</span><span class="d">pyxappをBase64エンコードし、復元コードとともにHTMLに書き込む<span class="en block">The pyxapp is Base64-encoded and written into the HTML with the code that restores it</span></span></div></div>
 </div>
 
 <div class="webcode">
@@ -1172,7 +1172,7 @@ pyxel.show()
 # AI時代へのPyxelの対応
 ## How Pyxel Is Meeting the Age of AI
 
-<p class="lead">人の使いやすさはそのままに、AI用のツールを開発<span class="en block">The same ease of use for people, and tools developed for AI</span></p>
+<p class="lead">人の使い方は変えずに、AIのための道具を新たに開発<span class="en block">Without changing how people use it, new tools built for AI</span></p>
 
 <div class="cols">
 <div class="col">
