@@ -1146,7 +1146,8 @@ section p.lead .en code {
 .fnote {
   /* 結論の帯。P.34 の「残る課題」と同じ灰の面。上の白い箱と分かれる。
      文言は中央に置く。左ぞろえだと右に640px空いて、帯だけがら空きに見える */
-  box-sizing: border-box; width: 100%; max-width: var(--body-w); margin: 28px auto 0; font-size: var(--t3); color: var(--ink); line-height: var(--lh-mid);
+  /* 大きさ・太さ・墨は「結論の帯の一族」の節（末尾）でまとめて与える */
+  box-sizing: border-box; width: 100%; max-width: var(--body-w); margin: 28px auto 0; line-height: var(--lh-mid);
   /* 右にQRが乗るので、そのぶん右の余白を大きく取る。文言はその残りで中央になり、
      QRに押された分だけ左に寄る（帯の全幅で中央にするとQRに近づきすぎる）*/
   border-radius: var(--card-r); padding: 21px 179px 21px 38px; border: none; text-align: center;
@@ -3401,7 +3402,9 @@ section.trialpage .ch .nm, section.trialpage .ft .tx { flex: 1 1 auto; min-width
    左右のカードで下の説明の位置がずれる */
 section.trialpage .ch .badge > .ic { width: 37px; height: 37px; object-fit: contain; }
 section.trialpage .ch .badge {
-  flex: none; width: 56px; height: 56px; border-radius: 50%;
+  /* 56px だと、和欧間アキ（Skill|形式）が入ったぶんで
+     「Agent Skill 形式 / An Agent Skill」が折れる。同じ理由の続きで 4px 詰める */
+  flex: none; width: 52px; height: 52px; border-radius: 50%;
   background: var(--badge); display: flex; align-items: center; justify-content: center;
 }
 /* MCP が標準の差込口であることを USB のメタファーで示す */
@@ -3640,12 +3643,13 @@ section.cubedemo figure {
 /* スクショは矩形のまま。角丸も枠も台紙も付けない（デッキの規則） */
 section.cubedemo figure img { display: block; height: 540px; width: auto; }
 /* 未リリースであることを画の下に1行だけ添える。
-   作りは P.46 の .rel と同じ。GIF の高さを 616→578px にして場所を作った */
-/* 未リリースであることを画の下に1行だけ添える。
-   大きさ・太さ・色は本文のまま（section の指定を継ぐ）。英文だけ本文の0.70と灰にする */
-section.cubedemo > .rel { margin: 24px 0 0; text-align: center; }
-section.cubedemo > .rel .en { display: block; font-size: var(--fs-en); color: var(--sub);
-  margin-top: var(--pair-box); }
+   GIF の高さを 616→578px にして場所を作ったので、上の空きは 24px（この行だけの値）。
+   置き場所は P.6・P.8 の .msg と同じ「写真の下の中央一行」なので、
+   大きさと太さもそこに合わせる。本文のままだと 36px/400 に落ちて、
+   同じ位置・同じ作りの一行なのに 3px と太さ1段だけ違う。
+   英文は .en.block の既定に任せる（--fs-en を上書きすると、ここだけ 25px になる）*/
+section.cubedemo > .rel { margin: 24px 0 0; text-align: center;
+  font-size: var(--fs-lead); font-weight: var(--w-title); }
 
 /* ── P.48 Pyxel Cube の使い方 ─────────────────
    左＝ノードツリー、右＝その中の1つのノードの中身。
@@ -3794,3 +3798,21 @@ section.wrapup .concl {
 }
 section.wrapup .concl .en { display: block; font-size: var(--fs-ml); color: var(--sub);
   font-weight: var(--w-body); margin-top: var(--pair-box); }
+
+/* ── 結論の帯の一族をそろえる ────────────────────
+   P.15（.goal）・P.34（.issue）・P.37（.fnote）・P.44/P.50（.concl）は、
+   版面の下に置いて「このページの結論」を言い切る、同じ役割の帯。
+   大きさ・太さ・墨は P.15 が正（和文 32px ／ 英文 24px ／ 太さ 500 ／ --ink）。
+   放っておくと、各ページの節と「添え」の節に散らばって 31px/20px や
+   太さ 400、P.34 は --ink2 に落ちる。
+   末尾に置く順序が仕様（後勝ちで一族を引き上げる）*/
+.issue .tx,
+.fnote,
+section.aipage > .concl {
+  font-size: var(--fs-2xl); font-weight: var(--w-title); color: var(--ink);
+}
+section:has(> .pack) > .issue .tx .en,
+.fnote .en,
+section.aipage > .concl .en {
+  font-size: var(--fs-ml);
+}
