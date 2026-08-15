@@ -1,16 +1,18 @@
-"""P.27 ⑤ 絵と音を入れる — 動画（音つき）
+"""Slide 27, step 5: add art and sound. Captures a video with audio.
 
-GIF だとループ再生になって音も乗らないので、P.26 と同じく MP4 にする。
-音は headless では鳴らないので、BGM と効果音を別々に WAV へ書き出しておき、
-make_video.py 側で「BGM を敷いて、当たったコマに効果音を重ねる」形で合成する。
+A GIF would loop and carry no sound, so this becomes an MP4 like slide 26.
+Headless Pyxel plays nothing, so the BGM and the effect are exported as
+separate WAVs; make_video.py lays down the BGM and mixes the effect in at the
+frames where a hit occurred.
 """
 import pyxel
 from drive import Pilot, Rec
 
 OUT = "g5_done"
 SCALE = 4
-# 当たったらゲームオーバー。開始から撮り、当たって止まった画を1秒残して終える。
-# この種だと初被弾は 209コマめ（7.0秒）。頭から撮るので BGM も曲の頭から鳴る
+# A hit ends the game. Recording starts from frame one and holds the stopped
+# frame for a second. With this seed the first hit lands on frame 209 (7.0 s);
+# recording from the start also means the BGM begins at the top of the loop.
 SKIP = 0
 FRAMES = 240
 FPS = 30
@@ -20,10 +22,10 @@ rec = Rec(OUT, skip=SKIP, frames=FRAMES, scale=SCALE)
 
 pilot = Pilot()
 game_over = False
-TAIL = 30   # 撮影用：止まった画を1秒ぶん残す
+TAIL = 30   # Capture only: hold the stopped frame for one second
 tail = None
 held = 0
-hits = []  # 効果音を鳴らすコマ（録画開始からの相対）
+hits = []  # Frames to sound the effect on, relative to the recording start
 _btn = pyxel.btn
 
 
@@ -37,14 +39,14 @@ def btn(key):
 
 pyxel.btn = btn
 
-# ここからスライドのコードそのまま
+# From here on, exactly the code shown on the slide
 pyxel.load("../../demo/game/game.pyxres")
 pyxel.gen_bgm(7, 0, 3, 0, play=True)
 x = 76
 enemies = [[pyxel.rndi(0, 152), -i * 16] for i in range(16)]
 
 while True:
-    held = pilot.input(rec.n, x, enemies)  # 撮影用：キーを押す代わり
+    held = pilot.input(rec.n, x, enemies)  # Capture only: stands in for key presses
 
     pyxel.blt(0, 0, 0, 0, 0, 160, 120)
 
@@ -61,38 +63,39 @@ while True:
             if abs(enemy[0] - x) < 8 and abs(enemy[1] - 104) < 8:
                 pyxel.play(3, 0)
                 game_over = True
-                hits.append(rec.n - SKIP)  # 撮影用：あとで音を重ねる位置
-                tail = TAIL  # 撮影用：止まった画を1秒残す
+                hits.append(rec.n - SKIP)  # Capture only: where to mix the effect
+                tail = TAIL  # Capture only: hold the stopped frame
         pyxel.blt(enemy[0], enemy[1], 0, 8, 120, 8, 8, 0)
 
     pyxel.blt(x, 104, 0, 0, 120, 8, 8, 0)
     pyxel.flip()
-    # ここまで
+    # End of the slide code
     if not rec.tick():
         break
-    if tail is not None:  # 撮影用：止まった画を数コマ残して終える
+    if tail is not None:  # Capture only: end after holding the stopped frame
         tail -= 1
         if tail <= 0:
             break
 
 rec.save()
 
-# 音を別に書き出す（動画に重ねるため）。
-# BGM は頭から流れているので、捨てたぶん(SKIP)も含めた長さで書き出して、
-# 合成側で SKIP コマぶん先頭を落として使う。
-# gen_bgm が返すのは MML のリストで、musics には入らない。書き出すには
-# 同じ引数で呼び直して（seed が同じなので同じ曲）、空いている枠に入れ直す
+# Export the sound separately so it can be mixed into the video.
+# The BGM runs from the very start, so it is exported long enough to cover the
+# skipped frames too, and the mixer drops those SKIP frames off the front.
+# gen_bgm returns a list of MML strings and does not populate musics, so it is
+# called again with the same arguments (same seed, same tune) and the result is
+# parked in free slots.
 hits = [h for h in hits if h >= 0]
 mml_list = pyxel.gen_bgm(7, 0, 3, 0)
 for i, mml in enumerate(mml_list):
     pyxel.sounds[16 + i].mml(mml)
 pyxel.musics[7].set(*[[16 + i] for i in range(len(mml_list))])
 pyxel.musics[7].save("bgm.wav", (SKIP + FRAMES) / FPS + 1)
-# 効果音の長さは音そのものから決める。指定が実際より長いと、その秒数を
-# 埋めるためにループして「バンバン」と2回鳴った音になる。
-# notes 4つ × speed 9 ÷ 120 = 0.30 秒
+# Take the length of the effect from the sound itself. Asking for longer than
+# it actually is makes it loop to fill the time, which sounds like two hits.
+# 4 notes x speed 9 / 120 = 0.30 s
 _se = pyxel.sounds[0]
 _se.save("snd_hit.wav", len(_se.notes) * _se.speed / 120)
 open("g5_done_hits.txt", "w").write(",".join(map(str, hits)) + "\n" + str(SKIP))
-print("当たったコマ", hits)
+print("hit frames:", hits)
 print("done")

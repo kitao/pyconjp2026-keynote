@@ -1,6 +1,7 @@
-"""P.23 ゲームを作ってみよう① 図形を描く — 静止画を撮る。
+"""Slide 23, step 1 of building the game: draw shapes. Captures a still.
 
-スライドのコードそのまま。撮影のために show() を flip()+screenshot() に置き換えただけ。
+The code is exactly as it appears on the slide; only show() is replaced with
+flip() + screenshot() so the frame can be captured.
 """
 
 import pyxel

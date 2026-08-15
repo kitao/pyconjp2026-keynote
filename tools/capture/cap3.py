@@ -1,4 +1,7 @@
-"""P.25 ③ キーで操作する — GIF。押しているキーだけ外から与える"""
+"""Slide 25, step 3: take key input. Captures a GIF.
+
+Only the held keys are supplied from outside; the game code is untouched.
+"""
 import pyxel
 from drive import Pilot, Rec
 
@@ -23,12 +26,12 @@ def btn(key):
 
 pyxel.btn = btn
 
-# ここからスライドのコードそのまま
+# From here on, exactly the code shown on the slide
 x = 76
 enemies = [[pyxel.rndi(0, 152), -i * 16] for i in range(16)]
 
 while True:
-    held = pilot.input(rec.n, x, enemies)  # 撮影用：キーを押す代わり
+    held = pilot.input(rec.n, x, enemies)  # Capture only: stands in for key presses
 
     pyxel.cls(1)
     pyxel.line(0, 112, 159, 112, 3)
@@ -46,7 +49,7 @@ while True:
 
     pyxel.rect(x, 104, 8, 8, 10)
     pyxel.flip()
-    # ここまで
+    # End of the slide code
     if not rec.tick():
         break
 

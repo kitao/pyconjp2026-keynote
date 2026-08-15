@@ -1,4 +1,4 @@
-"""P.24 ② 図形を動かす — GIF"""
+"""Slide 24, step 2: move the shapes. Captures a GIF."""
 import pyxel
 from drive import Rec
 
@@ -8,7 +8,7 @@ pyxel.init(160, 120, headless=True, capture_scale=SCALE, capture_sec=8)
 pyxel.rseed(20260810)
 rec = Rec(OUT, skip=150, frames=124, scale=SCALE)
 
-# ここからスライドのコードそのまま
+# From here on, exactly the code shown on the slide
 enemies = [[pyxel.rndi(0, 152), -i * 16] for i in range(16)]
 
 while True:
@@ -23,7 +23,7 @@ while True:
 
     pyxel.rect(76, 104, 8, 8, 10)
     pyxel.flip()
-    # ここまで
+    # End of the slide code
     if not rec.tick():
         break
 

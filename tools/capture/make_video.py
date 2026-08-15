@@ -1,8 +1,8 @@
-"""撮った GIF を MP4 にする。必要なら音も重ねる。
+"""Turn a captured GIF into an MP4, mixing in sound where needed.
 
-GIF はループ再生になってしまい音も乗らないので、ツールの作成風景は動画で置く。
-GIF の 1/100 秒刻みのコマ間隔をそのまま使うと 30fps にならないので、
-いったん PNG に展開して、きっちり 30fps で並べ直す。
+A GIF loops and carries no audio, so the editor sessions are shipped as video.
+GIF frame delays are quantised to 1/100 s and cannot express 30 fps, so the
+frames are expanded to PNGs and laid out again at exactly 30 fps.
 """
 
 import array
@@ -12,7 +12,7 @@ import sys
 import wave
 
 FPS = 30
-RATE = 22050  # pyxel の書き出す WAV のサンプリング周波数
+RATE = 22050  # Sample rate of the WAVs Pyxel writes
 
 
 def gif_to_frames(gif, outdir):
@@ -34,10 +34,10 @@ def gif_to_frames(gif, outdir):
 
 
 def build_audio(src_wav, out_wav, total_frames, at_frames, base_wav=None, base_skip=0):
-    """total_frames ぶんの音に、指定コマの位置で src_wav を重ねる
+    """Mix src_wav into a track of total_frames at the given frame positions.
 
-    base_wav を渡すと、その base_skip コマめ以降を地の音（BGM）として敷く。
-    渡さなければ無音の上に重ねる
+    With base_wav, that file from frame base_skip onwards becomes the bed
+    (the BGM); without it the effect is mixed over silence.
     """
     with wave.open(src_wav, "rb") as w:
         ch, sw, rate = w.getnchannels(), w.getsampwidth(), w.getframerate()
@@ -51,16 +51,16 @@ def build_audio(src_wav, out_wav, total_frames, at_frames, base_wav=None, base_s
         buf.extend([0] * (total - len(buf)))
     else:
         buf = array.array("h", [0] * total)
-    # 効果音は1つのチャンネルで鳴るので、まず効果音だけの列を作る。
-    # 鳴っている途中でもう一度 play すると鳴り直しになるので、ここは上書き。
-    # 足し込むと、連続で当たったときに音が重なって不自然に大きくなる
+    # The effect plays on a single channel, so build the effect track first.
+    # Playing again while it still sounds restarts it, so writes overwrite
+    # here. Adding instead would stack repeated hits into an unnatural peak.
     se = array.array("h", [0] * total)
     for fr in at_frames:
         off = int(fr / FPS * rate) * ch
         for i in range(min(len(clip), len(se) - off)):
             se[off + i] = clip[i]
-    # BGM と効果音は別のチャンネルで同時に鳴るので、ここで足し合わせる。
-    # 置き換えにすると、鳴っているあいだ BGM が消える
+    # BGM and effect sound on separate channels at the same time, so they are
+    # summed here. Overwriting would silence the BGM whenever the effect plays.
     for i in range(total):
         if se[i]:
             buf[i] = max(-32768, min(32767, buf[i] + se[i]))
@@ -90,21 +90,23 @@ if __name__ == "__main__":
     if which == "image":
         n = gif_to_frames("g4_image.gif", "fr_image")
         encode("fr_image", "g4_image.mp4")
-        print("g4_image.mp4", n, "コマ", round(n / FPS, 1), "秒")
+        print("g4_image.mp4", n, "frames", round(n / FPS, 1), "sec")
     elif which == "sound":
         n = gif_to_frames("g4_sound.gif", "fr_sound")
         plays, total = open("g4_sound_plays.txt").read().split("\n")
         at = [int(x) for x in plays.split(",")]
         build_audio("snd_hit.wav", "g4_sound_track.wav", n, at)
         encode("fr_sound", "g4_sound.mp4", audio="g4_sound_track.wav")
-        print("g4_sound.mp4", n, "コマ", round(n / FPS, 1), "秒", "鳴らすコマ", at)
+        print("g4_sound.mp4", n, "frames", round(n / FPS, 1), "sec", "at", at)
     else:
-        # ⑤ の完成画面。BGM を地に敷き、隕石に当たったコマで効果音を重ねる
+        # Step 5, the finished screen: lay down the BGM and mix the effect in
+        # on the frames where a meteor hit.
         n = gif_to_frames("g5_done.gif", "fr_done")
         hits, skip = open("g5_done_hits.txt").read().split("\n")
         at = [int(x) for x in hits.split(",") if x]
-        # 実機で鳴る音とずらさない。録画の開始コマぶん曲は進んでいる
+        # Keep it aligned with what the app plays: the tune has already
+        # advanced by the number of frames skipped before recording.
         build_audio("snd_hit.wav", "g5_done_track.wav", n, at,
                     base_wav="bgm.wav", base_skip=int(skip))
         encode("fr_done", "g5_done.mp4", audio="g5_done_track.wav")
-        print("g5_done.mp4", n, "コマ", round(n / FPS, 1), "秒", "鳴らすコマ", at)
+        print("g5_done.mp4", n, "frames", round(n / FPS, 1), "sec", "at", at)
