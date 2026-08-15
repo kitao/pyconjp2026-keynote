@@ -1058,6 +1058,14 @@
 //     （bespoke は AUDIO/BUTTON/INPUT/SELECT/TEXTAREA/VIDEO で stopPropagation する）
 //   ・リンクは別タブから戻ったときに、焦点の枠が残って見える
 (function () {
+
+  // 入力欄にいるときは、こちらのキー操作を効かせない
+  function typing(e) {
+    var t = e.target;
+    return !!(t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.nodeName) || t.isContentEditable));
+  }
+
+  // ── 数字 → Enter でページ移動 ──
   var buf = '';
   var timer = null;
 
@@ -1073,9 +1081,7 @@
 
   // capture 段で受ける。Marp 側のキー処理（document の bubble 段）より先に取る
   document.addEventListener('keydown', function (e) {
-    var t = e.target;
-    if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.nodeName) || t.isContentEditable)) return;
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (typing(e) || e.metaKey || e.ctrlKey || e.altKey) return;
 
     // P は発表者ツールを別ウィンドウで開く。使わないので、ここで握り潰す
     if (e.key === 'p' || e.key === 'P') {
@@ -1100,6 +1106,7 @@
     e.stopPropagation();
   }, true);
 
+  // ── リンクと動画に焦点を残さない ──
   // クリックしたあと、その要素に焦点を残さない。既定の動作（再生・遷移）は
   // そのまま起き、そのあとで焦点だけ外す。キーボードから実行したとき
   // （e.detail === 0）は、利用者の居場所を奪わないよう外さない
@@ -1114,10 +1121,8 @@
     var list = document.querySelectorAll('section a, section video, section audio');
     for (var i = 0; i < list.length; i++) list[i].tabIndex = -1;
   });
-})();
 
-// L でレーザーポインター。マウスの位置に光点を出す
-(function () {
+  // ── L でレーザーポインター。マウスの位置に光点を出す ──
   var dot = null;
   var on = false;
   // 最後のマウス位置。入れた瞬間からそこに出す。まだ一度も動いていなければ画面の中央
@@ -1157,9 +1162,7 @@
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'l' && e.key !== 'L') return;
     // 押しっぱなしの自動リピートで入り切りを繰り返さない
-    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
-    var t = e.target;
-    if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.nodeName) || t.isContentEditable)) return;
+    if (e.repeat || typing(e) || e.metaKey || e.ctrlKey || e.altKey) return;
     e.preventDefault();
 
     if (!dot) make();
