@@ -2,6 +2,7 @@
 // ビルド後に preview.sh が差し込む。
 //
 //   数字 → Enter   そのページへ移動（画面には何も出さない。1.8秒放置で破棄）
+//   L              レーザーポインターの入り切り
 //   P              無効にする（発表者ツールを使わないので、誤って別ウィンドウが開くのを防ぐ）
 //
 // 移動は bespoke のハッシュ機能（location.hash = "#21" で21ページ目）に任せる。
@@ -67,4 +68,59 @@
     var list = document.querySelectorAll('section a, section video, section audio');
     for (var i = 0; i < list.length; i++) list[i].tabIndex = -1;
   });
+})();
+
+// L でレーザーポインター。マウスの位置に光点を出す
+(function () {
+  var dot = null;
+  var on = false;
+  // 最後のマウス位置。入れた瞬間からそこに出す。まだ一度も動いていなければ画面の中央
+  var mx = window.innerWidth / 2;
+  var my = window.innerHeight / 2;
+
+  function make() {
+    dot = document.createElement('div');
+    // 大きさは vh 基準。窓の大小によらず、投影したときと同じ比率で見える。
+    // margin は幅の半分。これで translate の座標が光点の中心になる
+    dot.style.cssText = [
+      'position:fixed', 'left:0', 'top:0',
+      'width:1.7vh', 'height:1.7vh', 'margin:-0.85vh 0 0 -0.85vh',
+      'border-radius:50%',
+      // 中心を白く飛ばすと、赤一色より光って見える
+      'background:radial-gradient(circle,#fff 10%,#ff3b3b 45%,#d40000 100%)',
+      'box-shadow:0 0 1.3vh 0.65vh rgba(255,45,45,.42)',
+      // 実演のリンク（P.39・P.41）はレーザー中でも押せるままにする
+      'pointer-events:none',
+      'z-index:2147483647',
+      'display:none'
+    ].join(';');
+    document.body.appendChild(dot);
+  }
+
+  function place() {
+    dot.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
+  }
+
+  // 消えている間も位置は覚えておく。入れたときにマウスのある場所から出る
+  document.addEventListener('mousemove', function (e) {
+    mx = e.clientX;
+    my = e.clientY;
+    if (on) place();
+  }, true);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'l' && e.key !== 'L') return;
+    // 押しっぱなしの自動リピートで入り切りを繰り返さない
+    if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+    var t = e.target;
+    if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.nodeName) || t.isContentEditable)) return;
+    e.preventDefault();
+
+    if (!dot) make();
+    on = !on;
+    if (on) place();
+    dot.style.display = on ? 'block' : 'none';
+    // 矢印と光点が二重に見えないようにする
+    document.documentElement.style.cursor = on ? 'none' : '';
+  }, true);
 })();
