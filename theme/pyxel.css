@@ -2170,14 +2170,10 @@ section.relax > .lead { margin-bottom: 39px; }
    対象は .aki.lead に限る。.aki だけで書くと、:first-child はテキストを
    数えないので「MCP準拠」「AI時代も」のように行の途中にあるアキまで消える */
 section.closing .links em > .aki.lead:first-child, section.closing .links em .en > .aki.lead:first-child,
-section.closing .msg > .aki.lead:first-child,
-section.aipage .en > .aki.lead:first-child,
-section.trialpage .en > .aki.lead:first-child, section.trialpage .ft i > .aki.lead:first-child,
-section.trialpage .bd i > .aki.lead:first-child, section.trialpage .d > .aki.lead:first-child,
-section.trialpage .ft b > .aki.lead:first-child, section.trialpage .ft em > .aki.lead:first-child,
-section.trialpage .plug em > .aki.lead:first-child,
-section.nodetree .en > .aki.lead:first-child, section.nodetree .note > .aki.lead:first-child,
-section.wrapup .en > .aki.lead:first-child, section.wrapup .concl > .aki.lead:first-child { display: none; }
+section.aipage .en > .aki.lead:first-child, section.trialpage .en > .aki.lead:first-child,
+section.trialpage .ft i > .aki.lead:first-child, section.trialpage .bd i > .aki.lead:first-child,
+section.trialpage .ft em > .aki.lead:first-child, section.nodetree .en > .aki.lead:first-child,
+section.nodetree .note > .aki.lead:first-child, section.wrapup .en > .aki.lead:first-child { display: none; }
 
 a { color: var(--cy); text-decoration: none; }
 /* 下線は border で引く。text-decoration だと、和欧間アキ（中身が空の .aki）の
