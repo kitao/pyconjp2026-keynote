@@ -4,6 +4,9 @@
 # ページ横断で突き合わせるための素材。
 cd "$(dirname "$0")/../.." || exit 1
 
+# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
+
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .probe.tmp.html </dev/null >/dev/null 2>&1 \
   || { echo "変換に失敗"; exit 1; }
@@ -17,7 +20,7 @@ css = "<style>html,body{margin:0;padding:0;background:#fff}" \
 open(".probe.tmp1.html", "w").write(h.replace("</body>", css + js + "</body>"))
 PYEOF
 
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+"$CHROME" --headless --disable-gpu \
   --hide-scrollbars --window-size=1920,1080 --virtual-time-budget=25000 \
   --dump-dom "file://$PWD/.probe.tmp1.html" > .probe.dom.html 2>/dev/null
 

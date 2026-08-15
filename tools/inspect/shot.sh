@@ -1,6 +1,9 @@
 #!/bin/sh
 # 指定ページを縦に並べて1枚の画像にする:  ./shot.sh 出力名 1 8 18 ...
 cd "$(dirname "$0")/../.."
+
+# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 OUT="$1"; shift
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .p.html </dev/null >/dev/null 2>&1 || exit 1
@@ -17,7 +20,7 @@ document.body.style.width='1920px';});</script>""" % (ns,)
 open(".p1.html","w").write(h.replace("</body>",js+"</body>"))
 PYEOF
 H=$(( $# * 1094 + 20 ))
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+"$CHROME" --headless --disable-gpu \
   --hide-scrollbars --window-size=1920,$H --virtual-time-budget=8000 \
   --screenshot="render/$OUT.png" "file://$PWD/.p1.html" >/dev/null 2>&1
 rm -f .p.html .p1.html

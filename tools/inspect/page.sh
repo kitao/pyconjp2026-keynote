@@ -1,6 +1,9 @@
 #!/bin/sh
 # 指定ページを1枚だけ画像にする:  ./page.sh 8  →  .page.png
 cd "$(dirname "$0")/../.."
+
+# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 N="${1:-1}"
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .p.html </dev/null >/dev/null 2>&1 || exit 1
@@ -20,7 +23,7 @@ js = """
 });</script>""" % (n,n)
 open(".p1.html","w").write(h.replace("</body>", js+"</body>"))
 PYEOF
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+"$CHROME" --headless --disable-gpu \
   --hide-scrollbars --window-size=1920,1080 --virtual-time-budget=8000 \
   --screenshot=.page.png "file://$PWD/.p1.html" >/dev/null 2>&1
 rm -f .p.html .p1.html

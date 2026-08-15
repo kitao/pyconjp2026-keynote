@@ -3,6 +3,9 @@
 # check.sh は1ページを詳しく見る道具。こちらは「どのページを見るべきか」を先に知る道具。
 # 既定は 1〜36（3章の手前まで）。
 cd "$(dirname "$0")/../.." || exit 1
+
+# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 FROM="${1:-1}"
 TO="${2:-36}"
 
@@ -10,7 +13,7 @@ TO="${2:-36}"
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css -o .check.html >/dev/null 2>&1 || { echo "変換に失敗"; exit 1; }
 python3 tools/slides/hl.py .check.html
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+"$CHROME" --headless --disable-gpu \
   --no-pdf-header-footer --virtual-time-budget=20000 \
   --print-to-pdf=.check.pdf "file://$PWD/.check.html" >/dev/null 2>&1
 pdftoppm -r 96 -png -f "$FROM" -l "$TO" .check.pdf .check-p >/dev/null 2>&1

@@ -25,7 +25,7 @@ import re
 total = len(re.findall(r'<section', html))
 print(f"{total} ページを {scale}倍で撮ります（{band}ページずつ）")
 
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+CHROME = os.environ.get("CHROME", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
 for start in range(1, total + 1, band):
     end = min(start + band - 1, total)
     n = end - start + 1

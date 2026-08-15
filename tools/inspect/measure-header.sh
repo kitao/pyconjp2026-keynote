@@ -1,6 +1,9 @@
 #!/bin/sh
 # 指定ページの見出し欄をDOMで測る:  ./measure-header.sh 16 4 7   （ページ / 英題を下げる量 / ロゴを下げる量）
 cd "$(dirname "$0")/../.."
+
+# Chrome は既定の場所を見る。別の場所に入れているときは環境変数 CHROME で渡す
+CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .p.html </dev/null >/dev/null 2>&1 || exit 1
 python3 - "$1" << 'PYEOF'
@@ -19,7 +22,7 @@ js = """
 });</script>""" % n
 open(".p1.html","w").write(h.replace("</body>", js+"</body>"))
 PYEOF
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+"$CHROME" --headless --disable-gpu \
   --virtual-time-budget=6000 --dump-dom "file://$PWD/.p1.html" 2>/dev/null \
   | grep -o 'id="MEAS">[^<]*' | sed 's/id="MEAS">//'
 rm -f .p.html .p1.html
