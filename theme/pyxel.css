@@ -1927,12 +1927,13 @@ section.mock .doc {
   /* 紙は中身の幅に合わせる。全幅に伸ばすと右に空白の帯ができる */
   width: fit-content;
   max-width: 100%;
-  /* 罫→紙＝紙→住人帯＝59px の実測合わせ。
-     上の基準は罫線で descender が無いので単純均等 */
-  margin: -1px auto 0;
-  /* 縁→最初のインク（募集の字）と最後のインク→縁を同じに見せる配分。
-     見出しの行が上に約13pxの余白を持つぶん、上のpaddingは下より薄い */
-  padding: 24px 80px 25px;
+  /* 罫→紙＝紙→住人帯。上の基準は罫線で descender が無いので単純均等。
+     使える高さは罫(210)〜住人の帯(999)＝789px、紙は678pxなので上下56pxずつ */
+  margin: -5px auto 0;
+  /* 縁から中身まで、上下は34px。左右は44pxとわずかに広く取る（紙は印刷物なので、
+     表が縁に迫ると図版に見える）。上だけ padding が薄いのは、見出しの行が
+     自分で約10pxの余白を持つぶん（24＋10＝34） */
+  padding: 24px 44px 34px;
   display: flex;
   flex-direction: column;
   border: var(--bd-w) solid var(--paper-bd);
