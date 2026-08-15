@@ -2950,8 +2950,11 @@ section:has(> .cyc) > .lead { margin-bottom: 52px; }
 .chron .tp + .tp::after {
   /* 覆いの寸法は区切り線（--card-line＝--bd-w）に追従させる。
      固定値のままだと線を太くしたときに覆いから溢れ、軸の上に線が透ける */
-  content: ""; position: absolute; left: 0; right: auto; top: calc(-1 * var(--tbl-w));
-  width: 56px; height: var(--tbl-w);
+  /* 端数倍率で表示されると、覆いと罫が別の画素に落ちて罫が透ける。
+     上下に1pxずつはみ出させて、どの倍率でも必ず覆う */
+  content: ""; position: absolute; left: 0; right: auto;
+  top: calc(-1 * var(--tbl-w) - 1px);
+  width: 56px; height: calc(var(--tbl-w) + 2px);
   /* 軸が通る 38〜40px だけは軸の色で埋める。ここまで白で塗ると、行の境目ごとに
      軸が1pxずつ欠けて点線に見える。border-top のぶん軸の背景が1px下がる欠けも
      同時に塞がる */
