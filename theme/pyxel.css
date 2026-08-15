@@ -829,14 +829,6 @@ tbody tr:last-child td { border-bottom: none; }
 td:first-child, th:first-child { width: 360px; padding-right: 38px; }
 
 /* ── 順を追う3段 ─────────────────────────── */
-/* 見出しに混ぜるコマンド。「pyxel app2html」は中に空白があるので、
-   本文書体のままだと2語に見える。等幅の座布団でひと塊にする。
-   値は本文に混ぜるコード（section p code）と同じ。指定しないと Marp 既定の
-   書体・寸法（24.65px・4.93px など）が出て、デッキの段から外れる */
-.steps .step .w > code {
-  font-family: var(--font-mono); font-size: var(--fs-code-in);
-  background: var(--box); border-radius: var(--img-r); padding: 2px 10px;
-}
 .steps { display: flex; flex-direction: column; gap: var(--sp-9);  min-height: 0; }
 .step { display: flex; gap: var(--sp-9); align-items: flex-start; }
 .step .n {
@@ -1014,7 +1006,15 @@ section p code{
 /* リードに混ぜるコード片。座布団は本文と同じものを敷き、字だけ章の色にする */
 /* 大きさは --fs-code-in ひとつ。ここだけ .94em の直値を持っていたが、
    同じ「本文に混ぜるコード」で値を2つ持つ理由がないので寄せた*/
-section p.lead code { font-size: var(--fs-code-in); color: var(--cy); padding: 1px 9px; }
+/* 本文・見出しに混ぜるコマンド。地は本文の座布団、字は効かせどころの藍。
+   P.30 のリード（import pyxel）と P.36 の手順（pyxel app2html）で同じ扱いにする。
+   等幅にするのは、中に空白のある「pyxel app2html」が2語に見えないため。
+   大きさは .9em なので、置かれた行の大きさに自分で追従する。
+   書かないと Marp 既定（別書体・4.93px の余白）が出てデッキの段から外れる */
+section p.lead code, .steps .step .w > code {
+  font-family: var(--font-mono); font-size: var(--fs-code-in); color: var(--cy);
+  background: var(--box); border-radius: var(--img-r); padding: 1px 9px;
+}
 /* 英文のほうは何も足さない。書体も座布団も変えると英語だけ賑やかになる */
 section p.lead .en code {
   color: inherit; font-family: inherit; font-size: inherit;
