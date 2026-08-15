@@ -1,7 +1,9 @@
-"""スライド P.23〜P.27 で作った、隕石をよけるゲーム。
+"""The meteor-dodging game built on slides 23-27.
 
-コードはスライドに映るものと同一。絵と音は同じフォルダの game.pyxres にある。
-遊び方:  pyxel run game.py   （← → で自機を動かす。隕石に当たるとゲームオーバー）
+The code is identical to what appears on the slides. Art and sound live in
+game.pyxres in this folder.
+
+    pyxel run game.py     (arrow keys to move; touching a meteor ends the game)
 """
 import pyxel
 
