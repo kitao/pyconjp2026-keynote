@@ -842,7 +842,7 @@ pyxel.channels.append(pyxel.Channel())
 # Web版Pyxelへの道のり
 ## The Road to Pyxel on the Web
 
-<p class="lead">Pyxelのコミュニティと周辺プロジェクトを巻き込んだ総力戦になった <span class="en block">It became an all-out effort, pulling in the Pyxel community and nearby projects</span></p>
+<p class="lead">コミュニティと周辺プロジェクトを巻き込んだ「みんなと作る」総力戦になった <span class="en block">It became an all-out effort &mdash; making things together with the community and nearby projects</span></p>
 
 <div class="chron">
 <div class="timeline">
