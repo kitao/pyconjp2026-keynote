@@ -1059,9 +1059,6 @@
 //   - a focused video makes bespoke swallow the keys, so paging does nothing
 //     (bespoke calls stopPropagation for AUDIO/BUTTON/INPUT/SELECT/TEXTAREA/VIDEO)
 //   - a focused link keeps its focus ring visible after returning from a tab
-//
-// And it rewinds the videos on every slide change, so a video that was played
-// part way through is back at its poster the next time the slide comes up.
 (function () {
 
   // Never take over the keys while the caret is in an input
@@ -1125,40 +1122,6 @@
   window.addEventListener('load', function () {
     var list = document.querySelectorAll('section a, section video, section audio');
     for (var i = 0; i < list.length; i++) list[i].tabIndex = -1;
-  });
-
-  // -- Rewind the videos whenever the slide changes --
-  // A video that was stopped part way keeps its position, so the slide comes
-  // back up showing the frame it stopped on instead of its poster. load() is
-  // used rather than currentTime = 0, which leaves the first frame on screen.
-  // Only the videos that are played by hand are touched. The autoplaying loops
-  // (slides 30 and 31) run on their own and have no position worth keeping.
-  function rewind() {
-    var list = document.querySelectorAll('section video');
-    for (var i = 0; i < list.length; i++) {
-      var v = list[i];
-      if (v.autoplay) continue;
-      if (v.paused && !v.currentTime) continue;   // already at the start
-      v.pause();
-      v.load();
-    }
-  }
-
-  // One slide change flips the class on several elements, so the calls are
-  // collapsed into one.
-  var pending = null;
-
-  function schedule() {
-    if (pending) return;
-    pending = setTimeout(function () { pending = null; rewind(); }, 50);
-  }
-
-  window.addEventListener('load', function () {
-    // Watching the class is more reliable than the hash, which bespoke only
-    // reads on the way in.
-    new MutationObserver(schedule).observe(document.body, {
-      subtree: true, attributes: true, attributeFilter: ['class']
-    });
   });
 
   // -- L for a laser pointer: a dot of light at the mouse position --
