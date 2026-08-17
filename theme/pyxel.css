@@ -1825,7 +1825,10 @@ section.wrapup .concl::before, section.wrapup .concl::after {
 section.closing .msg { margin: 34px 0 0; font-size: var(--fs-6xl); font-weight: var(--w-title);
   color: var(--cy); line-height: var(--lh-loose); }
 /* The call is set large, so it opens up more than the paired step (an exception) */
-section.closing .msg .en { display: block; margin-top: 16px; font-size: var(--fs-ml);
+/* The Japanese here is the largest on the deck (--fs-6xl), so its English is
+   set a step above the usual paired size: at --fs-ml it read as 0.46 of the
+   Japanese, where the same line on 8 and 44 sits at 0.62-0.65 */
+section.closing .msg .en { display: block; margin-top: 16px; font-size: var(--fs-xl);
   color: var(--sub); font-weight: var(--w-body); line-height: var(--lh-mid); }
 /* Each link becomes a card: round icon, divider, address, description, in that order */
 section.closing .links { display: flex; flex-direction: column; gap: var(--sp-5);
