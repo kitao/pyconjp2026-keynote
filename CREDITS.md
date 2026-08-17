@@ -87,3 +87,7 @@ are **MIT licensed**. The presentation materials themselves are all rights reser
 | ファイル | 内容 | 権利者・出典 | ライセンス |
 |---|---|---|---|
 | `trailer/umplus_j10r.bdf` `trailer/umplus_j12r.bdf` | 予告動画の日本語表示に使う M+ ビットマップフォント（Pyxel 同梱のものと同一） | [M+ FONTS](https://mplusfonts.github.io/) | SIL Open Font License 1.1 |
+| `assets/font/NotoSansJP-subset.woff2` | スライド本文の書体。Noto Sans JP（可変・cp932 の範囲＋本文で使う文字にサブセット。`tools/slides/font.sh` で生成） | [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)（全文は `assets/font/OFL-NotoSansJP.txt`） | SIL Open Font License 1.1 |
+| `assets/font/NotoSans-ipa-subset.woff2` | P.11 の発音記号3文字（Noto Sans JP に収録がないため） | [Noto Sans](https://fonts.google.com/noto/specimen/Noto+Sans)（全文は `assets/font/OFL-NotoSans.txt`） | SIL Open Font License 1.1 |
+| `assets/font/NotoSansKR-hangul-subset.woff2` | 「안녕하세요」の5文字（同上） | [Noto Sans KR](https://fonts.google.com/noto/specimen/Noto+Sans+KR)（全文は `assets/font/OFL-NotoSansKR.txt`） | SIL Open Font License 1.1 |
+| `assets/font/NotoSansMono-subset.woff2` | コード面の等幅書体。Noto Sans Mono（コードで使う文字にサブセット） | [Noto Sans Mono](https://fonts.google.com/noto/specimen/Noto+Sans+Mono)（全文は `assets/font/OFL-NotoSansMono.txt`） | SIL Open Font License 1.1 |

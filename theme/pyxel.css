@@ -36,12 +36,18 @@
               Set as ratios: --fs-en-ratio .70em (the paired English) and
               --fs-code-in .9em
    Weight     --w-light 300 / --w-body 400 / --w-title 500 /
-              --w-label 600 (= --w-cover / --w-strong) / --w-bold 700
+              --w-label 600 / --w-cover 700 (= --w-strong) / --w-bold 800
+              These are the numbers the bundled faces are declared at. The ink
+              they carry was cut lighter than the number says (330/385/425/460/
+              500/620), measured against the old Hiragino rendering size band by
+              size band -- large type needed a bigger cut than small. The split
+              between the two is what keeps the browser from synthesising a
+              weight; see tools/slides/font.sh
    Leading    --lh-tight 1.1 / --lh-title 1.2 / --lh-snug 1.25 / --lh-label 1.3 /
               --lh-en 1.35 / --lh-mid 1.4 / --lh-body 1.45 / --lh-loose 1.5 /
               --lh-code 1.55
    Pairs      The top margin of the English line has four steps:
-              --pair-lead -5 / --pair-box 1 / --pair-xs 2 / --pair-s 4
+              --pair-lead -2 / --pair-box 1 / --pair-msg 4 / --pair-xs 2 / --pair-s 4
    Below lead --lead-gap 27 (dense page types; the roomy default is 32 on .lead)
    Spacing    --sp-1 8 / --sp-2 12 / --sp-3 14 / --sp-4 16 / --sp-5 18 /
               --sp-6 22 / --sp-7 24 / --sp-8 26 / --sp-9 30 / --sp-10 34 /
@@ -92,14 +98,42 @@
    Pages reference these rather than writing px directly.
    Being on :root, they apply to the whole file wherever they are declared.
    ============================================================ */
+/* -- The bundled type faces ---------------------------------
+   The deck ships its faces so it looks the same on every machine. Without them
+   the face falls back to whatever the system has (Hiragino here, Yu Gothic on
+   Windows) and the weight and the line widths change with it.
+
+   They are static cuts, one file per weight, not one variable file. Chrome
+   embeds a variable instance into the PDF as a Type 3 font, which some readers
+   (poppler, and everything built on it) draw as nothing at all -- whole pages
+   came out blank. A static cut is embedded as CID TrueType and draws
+   everywhere. Rebuild them with tools/slides/font.sh */
+@font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansJP-330.woff2") format("woff2"); font-weight: 300; font-display: block; }
+@font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansJP-385.woff2") format("woff2"); font-weight: 400; font-display: block; }
+@font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansJP-425.woff2") format("woff2"); font-weight: 500; font-display: block; }
+@font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansJP-460.woff2") format("woff2"); font-weight: 600; font-display: block; }
+@font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansJP-500.woff2") format("woff2"); font-weight: 700; font-display: block; }
+@font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansJP-620.woff2") format("woff2"); font-weight: 800; font-display: block; }
+/* Noto Sans JP carries no IPA and no Hangul, so the pronunciation on 11 and the
+   Korean greeting on 33 come from the same family's Latin and Korean cuts */
+@font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSans-ipa-subset.woff2") format("woff2"); font-display: block; unicode-range: U+02C8, U+026A, U+0259; }
+@font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansKR-hangul-subset.woff2") format("woff2"); font-display: block; unicode-range: U+C548, U+B155, U+D558, U+C138, U+C694; }
+/* The code face travels with the deck for the same reason */
+@font-face { font-family: "Noto Sans Mono"; src: url("assets/font/NotoSansMono-subset.woff2") format("woff2"); font-display: block; }
+
 :root {
   /* -- Gap in a Japanese/English pair --------------------------
      The space between a line and its translation. The target is 12px by eye.
      Line boxes differ from element to element, so one value will not do it;
      each place is measured. The career table (.bio) cancels the leading in its
      own arithmetic and does not use this scale. */
-  --pair-lead: -5px;      /* Lead, message and chapter title */
+  --pair-lead: -2px;      /* Lead, message and chapter title. Opened up 3px
+                             when the bundled face came in: its Japanese sits
+                             lower in the line box than Hiragino did, which ate
+                             the gap to the English underneath */
   --pair-box: 1px;        /* Inside a card */
+  --pair-msg: 4px;        /* Under the large message lines (6, 8, 52). Wider
+                             than a card for the same reason as --pair-lead */
   /* Two steps for elements the first two do not cover. .en defaults to --pair-box */
   --pair-xs: 2px;         /* Inside a small label, opened up slightly from the default */
   --pair-s: 4px;          /* Small */
@@ -215,7 +249,7 @@
   --sub3: #8a8a94;        /* Between --sub and --ja2: credits and sources */
   --code-fg: #e8e8ee;     /* Type on the code panel */
   /* Three weights: 400 for running text, --w-title 500 for headings,
-     --w-label 600 for labels. 700 is kept only for the few places that need to
+     --w-label 600 for labels. 800 is kept only for the few places that need to
      be stronger than everything around them */
   --w-body: 400;
 
@@ -392,7 +426,7 @@
                              not shrink with the body on dense pages */
 
   /* -- Weight: lighter as the type grows, heavier as it shrinks - */
-  --w-cover: 600;         /* Large type on the cover and chapter slides */
+  --w-cover: 700;         /* Large type on the cover and chapter slides */
   --w-title: 500;         /* Slide headings */
   --w-label: 600;         /* Small labels and table headings */
 
@@ -410,13 +444,13 @@
   --lh-loose: 1.5;    /* Running text */
   --lh-tight: 1.1;    /* Tightening large type (years, machine names, the closing line) */
   --lh-code:  1.55;   /* Code panel */
-  --w-strong: 600;        /* A word to bring forward within the body */
-  --w-bold: 700;          /* Stronger in that one place: table headings, years, the conclusion band */
+  --w-strong: 700;        /* A word to bring forward within the body */
+  --w-bold: 800;          /* Stronger in that one place: table headings, years, the conclusion band */
   --w-light: 300;         /* Large English titles. Lighter than the body, following the rule that larger type is lighter */
 
   /* -- Type faces --------------------------------------------- */
-  --font-ja: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
-  --font-mono: "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
+  --font-ja: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  --font-mono: "Noto Sans Mono", "SFMono-Regular", "SF Mono", Menlo, monospace;
 
   /* -- Large type ----------------------------------------------
      The one big heading a slide gets: cover, chapter titles, closing */
@@ -2467,7 +2501,7 @@ section.low { padding-bottom: 82px; }
 
 /* Medium -- body text, card contents, conclusion bands */
 .why .en.block, .gd-goal .b .en,
-.msg .en, .goal .en { font-size: var(--fs-ml); margin-top: var(--pair-box); }
+.msg .en, .goal .en { font-size: var(--fs-ml); margin-top: var(--pair-msg); }
 
 /* Aside -- names inside figures, small notes, a card's single line. The
    smallest step in the deck.
@@ -3991,6 +4025,13 @@ section.trialpage .en {
   color: var(--sub); margin-top: var(--pair-box);
 }
 
+/* The lead is the same line on every page, so it keeps the deck's paired
+   English (26px) even here. Without this it is caught by the page-wide
+   defaults above and comes out at 20px, which shows up when the leads are
+   lined up side by side */
+section.trialpage > .lead .en, section.aipage > .lead .en,
+section.rolepage > .lead .en { font-size: var(--fs-l); }
+
 /* A page whose subject is a photograph and a period screen. The space below the
    rule and above the residents is tightened and given to the content's own
    margins (the same exception as 28) */
@@ -4324,7 +4365,9 @@ section.wrapup .grp > b {
 }
 /* On 15 the heading's translation is inline; here the heading is long, so it goes on the next line */
 section.wrapup .grp > b .en { display: block; margin-top: var(--pair-s);
-  font-size: var(--fs-m); font-weight: var(--w-body); letter-spacing: var(--ls-en); color: var(--sub); }
+  /* The heading is the larger of the two lines, so its English cannot be the
+     smaller one: at --fs-m it came out under the 24px of the .a/.b below */
+  font-size: var(--fs-ml); font-weight: var(--w-body); letter-spacing: var(--ls-en); color: var(--sub); }
 section.wrapup .grp .a, section.wrapup .grp .b { color: var(--ink); font-size: var(--fs-2xl); line-height: var(--lh-body); }
 section.wrapup .grp .a .en, section.wrapup .grp .b .en {
   display: block; font-size: var(--fs-ml); margin-top: var(--pair-box); color: var(--sub); line-height: var(--lh-mid); }

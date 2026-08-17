@@ -13,6 +13,7 @@ The same pass hangs opening brackets at the start of a line and inserts the
 quarter-space between Japanese and Latin text.
 """
 
+import base64
 import os
 import re
 import sys
@@ -311,10 +312,50 @@ def preload_css_images(html: str, css_text: str) -> str:
     return html.replace("</head>", links + "</head>", 1)
 
 
+# The bundled faces are written into the file as data URIs. Left as separate
+# requests, printing to PDF can win the race against the font and drop the text
+# that was waiting for it -- the code panels came out blank that way. Inlining
+# also makes the built HTML stand on its own, which is what gets carried on
+# stage.
+FONT_URL = re.compile(r'url\(\s*"?(assets/font/[^")]+\.woff2)"?\s*\)')
+
+
+def inline_fonts(html: str, root: str) -> str:
+    def swap(m):
+        path = os.path.join(root, m.group(1))
+        if not os.path.exists(path):
+            return m.group(0)
+        with open(path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("ascii")
+        return f'url("data:font/woff2;base64,{b64}")'
+
+    return FONT_URL.sub(swap, html)
+
+
+# Printing to PDF lays every page out at once, and a face that is first needed
+# on a later page can miss the print: Chrome falls back to a system font for it.
+# A hidden line that uses every bundled weight makes them all load with the
+# page, before the print starts.
+PRIME = (
+    '<div aria-hidden="true" style="position:absolute;left:-9999px;top:0;'
+    'font-family:\'Noto Sans JP\'">'
+    + "".join(f'<span style="font-weight:{w}">\u3042A</span>'
+              for w in (300, 400, 500, 600, 700, 800))
+    + '<span>\u02c8\u026a\u0259\uc548\ub155</span>'
+    + '<span style="font-family:\'Noto Sans Mono\'">code</span>'
+    + '</div>')
+
+
+def prime_fonts(html: str) -> str:
+    return re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + PRIME, html, count=1)
+
+
 if __name__ == "__main__":
     path = sys.argv[1]
     src = open(path).read()
     theme = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                          "..", "..", "theme", "pyxel.css")
     css = open(theme, encoding="utf-8").read()
-    open(path, "w").write(preload_css_images(url_wbr(aki(hang(wrap(src)))), css))
+    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
+    out = preload_css_images(url_wbr(aki(hang(wrap(src)))), css)
+    open(path, "w").write(prime_fonts(inline_fonts(out, root)))
