@@ -542,7 +542,6 @@ li > ul > li {
 }
 li > ul > li::marker { content: none; }
 
-/* English set on the same line. Short ones go here. */
 /* There are only two kinds of English. Both are ratios against the Japanese
    they sit with, so they look the same on every slide. Never write px for one.
      - a tag on the same line ("Goal") ....... 0.62, held back as they share a line
@@ -1322,9 +1321,9 @@ section p.lead .en code {
 }
 .fnote .qrslot { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); display: flex; }
 
-/* The QR is the URL itself, so it goes at the right end of the same surface.
-   Bottom right it would intrude on the residents and the page number */
-/* The URL centres across the whole band; the QR goes at the right of the band below (.fnote) */
+/* The URL centres across the whole band. The QR is the URL itself, so it goes
+   at the right of the band below (.fnote); bottom right it would intrude on the
+   residents and the page number */
 .urlmap { position: relative; justify-content: center; }
 /* The QR is 49 modules square including its 4-module quiet zone. At 147px each
    module is exactly 3px; at 145px it would be 2.96px, blurring the edges and
@@ -1631,8 +1630,7 @@ section.two-up .bio .r { --bio-ja: var(--fs-m); --bio-en: var(--fs-s);  }
   position: static; flex: none; margin-top: 16px;
 }
 figcaption {  color: var(--ja2); text-align: center; }
-/* Under the title of a work, a line saying what it is */
-/* The title of a work and its description run on the same line */
+/* Under the title of a work, a line saying what it is, run on the same line */
 figcaption .sub { display: inline; font-size: var(--fs-m); color: var(--ja2); margin-left: .7em; }
 
 /* -- A wall of works (31, closing chapter 1) ------------------
@@ -1643,7 +1641,6 @@ figcaption .sub { display: inline; font-size: var(--fs-m); color: var(--ja2); ma
   display: flex; align-items: center; justify-content: center;
 }
 .wall video { max-width: 100%; max-height: 100%; width: auto; height: auto; border-radius: var(--img-r); }
-/* The wall is capped by the height of the type area. The gap to the lead is tightened and given to the picture */
 /* The wall is a picture about quantity, so this slide alone lowers the bottom of the type area to just above the residents */
 section:has(.wall) { padding-bottom: 120px; }
 /* The lead's left edge follows the wall. Stretched to the full height, the wall
@@ -1807,9 +1804,9 @@ section.wrapup .concl::before, section.wrapup .concl::after {
              right: calc(100% - var(--map-pad-x) + var(--map-gap-x)); }
 .map .lb.r { top: 50%; transform: translateY(-50%);
              left:  calc(100% - var(--map-pad-x) + var(--map-gap-x)); }
-/* The point for each engine */
-/* It is the POINT that is placed at the coordinate, with the label hanging from
-   it. Centring the whole element would lift the points with longer notes */
+/* The point for each engine. It is the POINT that is placed at the coordinate,
+   with the label hanging from it; centring the whole element would lift the
+   points with longer notes */
 .map .p {
   position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%);
   font-size: var(--fs-xl); color: var(--ja2); white-space: nowrap; text-align: center;
@@ -1828,7 +1825,6 @@ section.wrapup .concl::before, section.wrapup .concl::after {
 /* The call to the room. In ink the block is heavy, so it takes the navy and is not made bolder */
 section.closing .msg { margin: 34px 0 0; font-size: var(--fs-6xl); font-weight: var(--w-title);
   color: var(--cy); line-height: var(--lh-loose); }
-/* The call is set large, so it opens up more than the paired step (an exception) */
 /* The Japanese here is the largest on the deck (--fs-6xl), so its English is
    set a step above the usual paired size: at --fs-ml it read as 0.46 of the
    Japanese, where the same line on 8 and 44 sits at 0.62-0.65 */
@@ -2177,7 +2173,6 @@ section.mock .doc-h {
 }
 /* The slides that imitate a document (4 and 5) keep their own scale, to pass as
    a real job ad. They are not brought onto the deck's steps */
-/* Its own scale, to imitate a job ad. Deliberately off the deck's steps */
 section.mock .doc-h .en { font-size: 27px; letter-spacing: var(--ls-caps); margin-top: var(--pair-xs); }
 
 /* It is a job ad, so the rules close each field on all four sides. Top and
@@ -2574,8 +2569,6 @@ figcaption{ line-height: var(--lh-loose); }
    The longest line is B on the right of 15,
    "レトロゲーム向けのものはLuaが主流だった", with about 15px to spare.
    Copy is written to a length that fits this width */
-/* The "two columns + a closing band below" type. Set the same way on 15 (.why)
-   and 50 (.wu) */
 .why, section.wrapup > .wu {
   flex: 1 1 auto;
   min-height: 0;
@@ -2613,11 +2606,9 @@ section.two-up .bio .r { grid-template-columns: 150px 1fr; gap: var(--sp-5);
   /* Six rows, so the 18px of the one-column table would run past the bottom of the type area */
   --tbl-row-pad: 13px; }
 section.two-up > .lead { grid-area: l; margin-bottom: var(--lead-gap); }
-/* Only 11 had 31px below the lead, tighter than the other two-up pages
-   (39-41 at 57px).
-   section.low has 82px to spare at the bottom (bottom edge 998), so that is
-   given back to the top */
-/* Balances the table top and bottom. At 48px it sits low, leaving only 11px to the residents */
+/* 11 sits tighter under the lead than the other two-up pages (39-41 at 57px):
+   .low has room to spare at the bottom, and it is given back to the top.
+   Anything looser drops the table and leaves only 11px to the residents */
 section.two-up.low > .lead { margin-bottom: 26px; }
 section.two-up:has(> .bio) { padding-bottom: 86px; }
 
@@ -2870,7 +2861,6 @@ section:has(.map) .map {
 /* -- Settings for 20 only --------------------------------------
    Artwork on top (image bank 1 of sample.pyxres), the resident characters
    below. Pixel art is set by .dot (shared across the deck) */
-/* The two pictures differ in size, so the frame takes the width of its content and a set gap centres them */
 /* The two pictures differ in width (596 left / 486 right). Matching the outer
    margins would put their visual centres at unequal distances from the centre
    of the type area and look unsteady. The whole is shifted left by half the
@@ -3462,13 +3452,11 @@ section:has(> .pack) > .issue b .en {
      18 is --en-c) */
   color: var(--en-c); margin-top: var(--pair-box);
 }
-/* The body is centred within the band (as on the other bands). As flex, the
-   words of the sentence break onto separate lines one by one, so text-align and
-   align-self do the centring */
-/* The body is centred against the full width of the band. Centred within what
-   is left after the label (190px), it looks to sit right of the centre of the
-   type area. The box is widened left by the label's width, bringing the centre
-   to the centre of the type area (960) */
+/* The body is centred against the full width of the band, as on the other
+   bands. Centred within what is left after the label (190px) it looks to sit
+   right of the centre of the type area, so the box is widened left by the
+   label's width, bringing the centre back to 960. As flex, the words break onto
+   separate lines one by one, so text-align and align-self do the centring */
 section:has(> .pack) > .issue .tx {
   /* The centre of the copy falls between the centre of the band's full width
      (960) and the centre of the area right of the label (1054). At the full-width
@@ -3539,8 +3527,8 @@ section:has(> .pack) > .lead { max-width: none; margin-bottom: 27px; }
 }
 /* The English is --en-c. The same type as on 18 (.doable .step .d), so the colour matches */
 .webw .step .d .en { display: block; font-size: var(--fs-s); margin-top: var(--pair-xs); color: var(--en-c); }
-/* The code box balances its height against the three steps on the left, stretching on its leading */
-/* The code and a link to a working example of that way of writing it. The height balances against the three steps on the left */
+/* The code and a link to a working example of that way of writing it. Its
+   height balances against the three steps on the left, stretching on its leading */
 
 .webcode pre { margin: 0; font-size: var(--t2); line-height: 1.68; padding: 28px 32px; }
 /* A long URL wraps at the width of the box. Broken by hand in the source, a
@@ -4127,8 +4115,6 @@ section.horizon .shots img { display: block; height: 150px; width: auto; }
 section.horizon .ea .gscr { width: 100%; margin: 10px 0 0; font-size: var(--fs-xs); color: var(--sub3);
   text-align: center; line-height: var(--lh-loose); white-space: nowrap; }
 
-/* From the retro 3D card to Pyxel Cube. The arrow lets the same navy be
-   confirmed as connecting them */
 /* The arrow is the pale blue of the retro 3D card, showing in colour which flow
    feeds into Pyxel Cube */
 section.horizon > .erow > .ar { align-self: center; text-align: center; font-size: var(--t5);
@@ -4360,8 +4346,8 @@ section.wrapup .grp > b .en { display: block; margin-top: var(--pair-s);
 section.wrapup .grp .a, section.wrapup .grp .b { color: var(--ink); font-size: var(--fs-2xl); line-height: var(--lh-body); }
 section.wrapup .grp .a .en, section.wrapup .grp .b .en {
   display: block; font-size: var(--fs-ml); margin-top: var(--pair-box); color: var(--sub); line-height: var(--lh-mid); }
-/* The band at the foot is as .goal on 15, with an arrow per column above it */
-/* The band takes the same values as .goal on 15. 15 carries the dense class, so
+/* The band at the foot takes the same values as .goal on 15, with an arrow per
+   column above it. 15 carries the dense class, so
    section.dense .goal (32px, 19px top and bottom) applies there, and this
    matches it (15 is the reference) */
 section.wrapup .concl {
