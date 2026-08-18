@@ -187,7 +187,13 @@
   --cy: var(--p5);        /* The word to bring forward (6.7:1 on white) */
   --sub: #82828e;         /* Grey for secondary information; shared by chapter subtitles and English. No hue */
   --en-c: var(--sub);     /* English. Clearly lighter than the ink so it does not compete with the Japanese */
-  --rule: #d0d6e3;        /* Hairline dividers between columns or items. Drawn at 1px */
+  /* Line colours were taken up a step on 2026-08-17. At 1920x1080 the deck is
+     drawn at 1.5x, so a 1px line lands on 1.5 device pixels and is spread over
+     two rows at partial coverage -- the colour is diluted and a pale hairline
+     disappears. The rule under a heading survives because it is navy, which is
+     the proof that the answer is colour, not width: a thicker line splits the
+     same way at this scale. Widths are untouched, so nothing moves */
+  --rule: #b6c0d3;        /* Hairline dividers between columns or items. Drawn at 1px */
   --rule-wait: #b8b8c2;   /* Placeholder frame while art is pending. Dashed is used for nothing else */
   --title-rule: var(--p1);  /* The rule under a heading, in the same navy. The rule is part of the heading,
                                so it does not take a colour of its own; using the accent
@@ -215,7 +221,7 @@
   /* Table rules take their own colour, one step paler than the card line. A table
      is a grid of many thin lines, and at the card's weight they would outshout the
      content. 2px because 1px disappears when projected */
-  --rule-tbl: #c1c9da;
+  --rule-tbl: #a9b4ca;
   --tbl-w: 2px;
   --tbl-line: var(--tbl-w) solid var(--rule-tbl);
 
@@ -228,12 +234,12 @@
      it is stronger than the dividers inside it (--rule 1.44) and than tile
      borders (--tile-bd 1.51). Contrast against white is 1.87. One card uses the
      single --card-line inside and out */
-  --card-bd: #aebfd8;
+  --card-bd: #93a7c6;
   /* Width of an unfilled outline. The same width whatever the colour.
      The dashed placeholder (--rule-wait 2px) and slides 4 and 5, which imitate a
      printed job ad, are the only exceptions */
   --bd-w: 1.5px;
-  --tile-bd: #c6ccdb;     /* Border of a white tile (45, 46, 48) */
+  --tile-bd: #aeb7cb;     /* Border of a white tile (45, 46, 48) */
   --line-fig: #9aa7bd;    /* Lines and arrows in figures. Dropped to the same rank as a rule */
   --axis: #b9b9c2;        /* Chart axis (16, 17) */
   /* Pale surfaces, neutral and blue. Surfaces that carry a hue (green, purple,
@@ -376,6 +382,8 @@
   --code-fn: #dcdcaa;     /* Built-in and user-defined functions */
   --code-attr: #9cdcfe;   /* Attribute names and the module name pyxel */
   --code-const: #4fc1ff;  /* Constants such as KEY_LEFT */
+  --code-cls: #4ec9b0;    /* Class names (48). The one colour VS Code Dark+ keeps
+                             for types, and the only token here without a home */
 
   /* End of the fade into pale grey (the ground on 29, the band on 34) */
   --grad-end: #f2f3f6;
@@ -2299,6 +2307,14 @@ section pre .hljs-built_in { color: var(--code-fn) !important; }
 section pre .hljs-name     { color: var(--code-lit) !important; }   /* script pyxel-run */
 section pre .hljs-attr     { color: var(--code-attr) !important; }   /* src script= */
 section pre .hljs-params   { color: var(--code-fg) !important; }
+/* The class and method names on 48 are the only tokens highlight.js hands back
+   under these names, and Marp's default leaves them at GitHub's #6639ba --
+   2.33:1 on this ground, which is not readable. The method name takes the
+   function colour it has everywhere else, and self takes the colour pyxel
+   already has: both are the thing a call hangs off */
+section pre .hljs-title.class_       { color: var(--code-cls) !important; }
+section pre .hljs-title.function_    { color: var(--code-fn) !important; }
+section pre .hljs-variable.language_ { color: var(--code-attr) !important; }
 
 /* Pyxel tokens highlight.js does not know, added by tools/slides/hl.py */
 section pre .pm { color: var(--code-attr); }   /* The module name pyxel */
