@@ -74,9 +74,9 @@
               shorthand for the pair.
    Surfaces   --card-bg card / --pale-b pale blue / --pale-n pale neutral /
               --tile-bg tile / --code-bg the code panel
-   Lines      --card-bd card border / --tile-bd white tile border /
-              --line-fig figure lines / --axis chart axis / --rule thin divider /
-              --card-line the card line, inside and out
+   Lines      --card-line the deck's structural line: frames, dividers and the
+              lines inside figures alike (--card-bd its colour, --bd-w its
+              width) / --axis chart axis
    Ink        --ink body / --ink2 soft black / --ja2 secondary Japanese /
               --sub secondary / --sub2 tertiary / --sub3 credits /
               --cy the word to bring forward
@@ -103,10 +103,9 @@
    the face falls back to whatever the system has (Hiragino here, Yu Gothic on
    Windows) and the weight and the line widths change with it.
 
-   They are static cuts, one file per weight, not one variable file. Chrome
-   embeds a variable instance into the PDF as a Type 3 font, which some readers
-   (poppler, and everything built on it) draw as nothing at all -- whole pages
-   came out blank. A static cut is embedded as CID TrueType and draws
+   They are static cuts, one file per weight, not one variable file: Chrome
+   writes a variable instance into the PDF as a Type 3 font, which readers built
+   on poppler do not draw, while a static cut goes in as CID TrueType and draws
    everywhere. Rebuild them with tools/slides/font.sh */
 @font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansJP-330.woff2") format("woff2"); font-weight: 300; font-display: block; }
 @font-face { font-family: "Noto Sans JP"; src: url("assets/font/NotoSansJP-385.woff2") format("woff2"); font-weight: 400; font-display: block; }
@@ -127,10 +126,9 @@
      Line boxes differ from element to element, so one value will not do it;
      each place is measured. The career table (.bio) cancels the leading in its
      own arithmetic and does not use this scale. */
-  --pair-lead: -2px;      /* Lead, message and chapter title. Opened up 3px
-                             when the bundled face came in: its Japanese sits
-                             lower in the line box than Hiragino did, which ate
-                             the gap to the English underneath */
+  --pair-lead: -2px;      /* Lead, message and chapter title. The face sets its
+                             Japanese low in the line box, so the pair needs a
+                             looser top margin here than the number suggests */
   --pair-box: 1px;        /* Inside a card */
   --pair-msg: 4px;        /* Under the large message lines (6, 8, 52). Wider
                              than a card for the same reason as --pair-lead */
@@ -187,14 +185,6 @@
   --cy: var(--p5);        /* The word to bring forward (6.7:1 on white) */
   --sub: #82828e;         /* Grey for secondary information; shared by chapter subtitles and English. No hue */
   --en-c: var(--sub);     /* English. Clearly lighter than the ink so it does not compete with the Japanese */
-  /* Line colours were taken up a step on 2026-08-17. At 1920x1080 the deck is
-     drawn at 1.5x, so a 1px line lands on 1.5 device pixels and is spread over
-     two rows at partial coverage -- the colour is diluted and a pale hairline
-     disappears. The rule under a heading survives because it is navy, which is
-     the proof that the answer is colour, not width: a thicker line splits the
-     same way at this scale. Widths are untouched, so nothing moves */
-  --rule: #b6c0d3;        /* Hairline dividers between columns or items. Drawn at 1px */
-  --rule-wait: #b8b8c2;   /* Placeholder frame while art is pending. Dashed is used for nothing else */
   --title-rule: var(--p1);  /* The rule under a heading, in the same navy. The rule is part of the heading,
                                so it does not take a colour of its own; using the accent
                                (--cy) here would spend the accent and stop it working */
@@ -215,32 +205,31 @@
   --r-md: 10px;
   --r-lg: 12px;
   --badge: #dce7fa;       /* Round tile behind an icon. One step deeper than the card (#f4f7fd) */
-  /* Shorthand for the card border; colour and width come from --card-bd / --bd-w */
-  /* One line for cards: the outer border and the dividers inside it are the same */
+  /* The deck draws structure with one line. Frames, tiles, chips and the rules
+     inside a table or a timeline are all --card-line; what tells them apart is
+     whether the line closes a shape or only runs inside one. A divider that is
+     heavier than the frame around it reads as the stronger of the two, which is
+     backwards */
   --card-line: var(--bd-w) solid var(--card-bd);
-  /* Table rules take their own colour, one step paler than the card line. A table
-     is a grid of many thin lines, and at the card's weight they would outshout the
-     content. 2px because 1px disappears when projected */
-  --rule-tbl: #a9b4ca;
-  --tbl-w: 2px;
-  --tbl-line: var(--tbl-w) solid var(--rule-tbl);
 
   /* The X logo, shared by the contact line on the cover (.ids .x) and the closing cards (.links .x) */
   --icon-x: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%234a4a52%22%3E%3Cpath%20d%3D%22M18.244%202.25h3.308l-7.227%208.26%208.502%2011.24H16.17l-5.214-6.817L4.99%2021.75H1.68l7.73-8.835L1.254%202.25H8.08l4.713%206.231zm-1.161%2017.52h1.833L7.084%204.126H5.117z%22%2F%3E%3C%2Fsvg%3E");
   /* Lines and surfaces by role. Change them here and the whole deck follows.
      Borders that carry a hue (the three groups on 7, the cream on 34, the eras
      on 47) mean something and are handled separately */
-  /* Card border. A card is separated by its outline alone rather than a fill, so
-     it is stronger than the dividers inside it (--rule 1.44) and than tile
-     borders (--tile-bd 1.51). Contrast against white is 1.87. One card uses the
-     single --card-line inside and out */
+  /* The structural line. A card is separated by its outline alone rather than a
+     fill, so the colour has to hold on its own: 2.45 against white. At 1920x1080
+     the deck is drawn at 1.5x and a thin line is spread over two device rows at
+     partial coverage, so what survives is depth, not width */
   --card-bd: #93a7c6;
-  /* Width of an unfilled outline. The same width whatever the colour.
-     The dashed placeholder (--rule-wait 2px) and slides 4 and 5, which imitate a
-     printed job ad, are the only exceptions */
+  /* Width of an unfilled outline. The same width whatever the colour. It is
+     stepped down to --bd-w-rep where the same line repeats through a figure,
+     and slides 4 and 5, which imitate a printed job ad, set their own */
   --bd-w: 1.5px;
-  --tile-bd: #aeb7cb;     /* Border of a white tile (45, 46, 48) */
-  --line-fig: #9aa7bd;    /* Lines and arrows in figures. Dropped to the same rank as a rule */
+  /* A second width, for lines that repeat many times inside one figure: the six
+     dividers of the timeline on 35 and the six node frames on 48. At --bd-w
+     they add up and the figure comes out heavier than the card holding it */
+  --bd-w-rep: 1px;
   --axis: #b9b9c2;        /* Chart axis (16, 17) */
   /* Pale surfaces, neutral and blue. Surfaces that carry a hue (green, purple,
      wisteria, cream) are tied to a meaning and are not part of this set */
@@ -372,6 +361,12 @@
   --era1: #2f6ec9;   /* 2D */
   --era2: #35b4d6;   /* 3D */
   --era3: #58c68d;   /* What comes next */
+  /* The frames of the two era cards on 47 carry the era's hue, at the weight of
+     the deck's line (2.45 against white). Taken raw, --era1 lands at 5.01 and
+     would be the strongest frame anywhere in the deck, twice the weight of the
+     --era2 frame beside it; --era2 is already at the line's weight */
+  --era1-bd: #82a8de;
+  --era2-bd: var(--era2);
 
   /* Colours of the code panel, following VS Code's Dark+.
      Marp's defaults assume a light ground and lack contrast on this black */
@@ -931,7 +926,7 @@ th, td {
   text-align: left;
   padding: 19px 24px 19px 0;
   border: none;
-  border-bottom: 1px solid var(--rule);
+  border-bottom: var(--card-line);
   vertical-align: top;
   background: none;
 }
@@ -1221,7 +1216,6 @@ section p.lead .en code {
 .urlmap .sg.s4::before, .urlmap .sg.s5::before { border-color: var(--seg); }
 .urlmap .sg.s1 > i .en, .urlmap .sg.s2 > i .en, .urlmap .sg.s3 > i .en,
 .urlmap .sg.s4 > i .en, .urlmap .sg.s5 > i .en { color: var(--seg); opacity: var(--op-mid); }
-/* The fixed part is grey, line and dot included, so it separates from the coloured parts you replace */
 /* The fixed part is ink; a light grey would not be readable. Its label and
    underline stay grey, handing the lead to the parts that change colour */
 .urlmap .sg.fx > b { color: var(--ink); }
@@ -1270,7 +1264,10 @@ section p.lead .en code {
      measured: (card width 390.7 - column width 300) / 2 - 34. The text still
      starts at 45px */
   content: ""; position: absolute; bottom: 0; left: -11px; right: -11px;
-  height: var(--bd-w); background: var(--card-bd);
+  /* Drawn as a border, not a filled box: a border's width is rounded to whole
+     device pixels and a height is not, so the same --bd-w would come out a step
+     heavier here than in every frame on a screen that is not Retina */
+  height: 0; border-top: var(--card-line);
 }
 .flow .fh .sq { width: 54px; height: 54px; border-radius: var(--card-r); }
 /* The icon on its tile, two thirds of the tile's outer size (56px including the
@@ -1455,7 +1452,7 @@ section.mock tr:has(th:empty) th, section.mock tr:has(th:empty) td { border-top:
 /* Only the chip itself takes a border; on the English inside (.en) it would double up */
 .gd-means .gi > span {
   background: #fff;
-  border: var(--bd-w) solid var(--tile-bd);
+  border: var(--card-line);
   border-radius: var(--img-r);
   padding: 7px 17px;
   font-size: var(--fs-xl);
@@ -1505,7 +1502,7 @@ section > h1 .t2 {
      The wrap point is 1440px, below which the English job title wraps */
   width: 100%; max-width: var(--body-w); margin-left: auto; margin-right: auto;
   flex: none; display: flex; flex-direction: column;
-  border-left: var(--tbl-line); border-right: var(--tbl-line);
+  border-left: var(--card-line); border-right: var(--card-line);
 }
 /* The category column is lightly filled, so the four categories are visible at a
    glance. It is narrowed to the words; filled at full width, half the band
@@ -1521,7 +1518,7 @@ section > h1 .t2 {
   content: ""; position: absolute; left: 0; top: 0; bottom: 0;
   box-sizing: border-box;
   width: 206px; background: var(--box);
-  border-right: var(--tbl-line);
+  border-right: var(--card-line);
 }
 /* On the second profile slide, only the Pyxel row is brought forward. No fill;
    the colour of the words alone does it, in the red of the note on 5 */
@@ -1584,7 +1581,7 @@ section.two-up .bio .r { --bio-ja: var(--fs-m); --bio-en: var(--fs-s);  }
 
 .bio .r.hl .v { color: var(--p8); }
 .bio .r.hl .v .en { color: var(--p8); opacity: .78; }
-.bio .r:last-child { border-bottom: var(--tbl-line); }
+.bio .r:last-child { border-bottom: var(--card-line); }
 /* The label is held back; the row on the right is the subject. Type never
    touches the edge of the filled area.
    Label and value are separated by a vertical rule as well as the grey ground.
@@ -1751,17 +1748,16 @@ section.wrapup .grp::before {
 }
 .why .c .a, .why .c .b {   color: var(--ink); }
 /* The arrow between a motive and the decision that came from it.
-   Its colour is the figure-line colour, var(--line-fig), as used by the tree on
+   Its colour is the deck's line colour, var(--card-bd), as used by the tree on
    48. In the deep navy of --title-rule it would read heavier than the body,
    being a solid symbol, and the eye would go to it first.
-   An arrow marks a direction rather than carrying content, so it drops to the
-   same rank as a rule */
+   An arrow marks a direction rather than carrying content, so it stays at the
+   rank of the deck's line */
 .why .c .ar, section.wrapup .grp .ar {
   align-self: center; margin: 46px 0; width: 0; height: 0;
   border-left: 14px solid transparent; border-right: 14px solid transparent;
-  border-top: 18px solid var(--line-fig);
+  border-top: 18px solid var(--card-bd);
 }
-/* The conclusion. The only strong surface on the slide, so the eye lands there */
 /* The conclusion. A pale ground with deep navy type keeps it settled.
    Being the only coloured surface on the slide, that alone makes it the landing
    point */
@@ -1780,7 +1776,7 @@ section.wrapup .concl::before, section.wrapup .concl::after {
   content: ""; position: absolute; top: -40px; transform: translateX(-50%);
   width: 0; height: 0;
   border-left: 15px solid transparent; border-right: 15px solid transparent;
-  border-top: 18px solid var(--line-fig);   /* The same colour as the arrows inside the columns */
+  border-top: 18px solid var(--card-bd);   /* The same colour as the arrows inside the columns */
 }
 /* Positioned in line with the arrows inside the columns (the centre of the column's inner area) */
 .why .goal::before, section.wrapup .concl::before { left: 24.88%; }
@@ -2013,7 +2009,6 @@ section.dense .tp .w, section.dense .tp .y { font-size: var(--fs-xl); }
 /* -- Placeholder frames and figures fill the space available --
    (keeping the aspect ratio, never floating small) */
 .ph {
-  border: 2px dashed var(--rule-wait);
   border-radius: var(--r-md);
   background: #fafafa;
   display: flex;
@@ -2338,15 +2333,15 @@ section.spec table {
   /* All four sides close with the same rule. Without setting the top, Marp's
      default 1px #d1d9e0 remains and that edge alone is thinner and a different
      colour */
-  border: var(--tbl-line);
+  border: var(--card-line);
 }
 section.spec th, section.spec td {
   /* Marp's default 1px #d1d9e0 is replaced by the deck's card line
      (--card-line). The vertical rules are the column boundaries, closing the
      table as on the job ad on 5 and the career tables on 9-11 */
   border-left: none; border-top: none;
-  border-right: var(--tbl-line);
-  border-bottom: var(--tbl-line);
+  border-right: var(--card-line);
+  border-bottom: var(--card-line);
   /* At 19px top and bottom, the leading puts 9px above the first line (the
      Japanese) and only 1px below. Four are moved from one to the other, keeping
      the total, so the gaps look equal */
@@ -2372,7 +2367,7 @@ section.spec thead th {
      type on the slide and stronger than the Pyxel values (500) that are its
      subject. They drop to 500, the heading step of the deck's three weights */
   font-weight: var(--w-title);
-  border-bottom: var(--tbl-line);
+  border-bottom: var(--card-line);
   /* Filled with the label column into an L, so the table's frame reads first.
      A dark fill with reversed white type is not used: the top-left cell keeps
      the label column's colour and breaks the band, and the English (--sub grey)
@@ -2443,8 +2438,8 @@ section.relax > .lead { margin-bottom: 39px; }
 /* A link is shown to be one by colour alone. An underline breaks at the
    descenders and reads as a dashed line, and in a lead the Japanese/English gap
    (--pair-lead) is tight enough that it would collide with the English below */
-/* The quarter-space between Japanese and Latin, an empty span inserted by tools/slides/hl.py */
-/* The quarter-space between Japanese and Latin, given width as an inline-block.
+/* The quarter-space between Japanese and Latin, an empty span inserted by
+   tools/slides/hl.py and given width as an inline-block.
    As inline with a margin it changes the line height and the spacing and breaks
    the timeline on 35.
    The underline of a link breaking at one of these is solved by drawing the
@@ -2691,7 +2686,7 @@ section.two-up:has(> .bio) { padding-bottom: 86px; }
   display: grid;
   grid-template-columns: 206px 1fr;
   gap: var(--sp-7);
-  border-top: var(--tbl-line);
+  border-top: var(--card-line);
   /* A row begins with Japanese (large type) and ends with its English
      translation (small type), and the leading leaves a different amount of
      space outside the letters in each. Each is subtracted with its own type,
@@ -3057,13 +3052,11 @@ section.spec td img.pal {
   width: 100%; max-width: var(--body-w); margin: 0 auto; flex: 1 1 auto; min-height: 0;
 }
 .cards .card { background: var(--box); padding: 27px; display: flex; flex-direction: column; min-width: 0; text-align: center; }
-/* The type with a long explanation is left-aligned. A rule under the period
-   label separates the heading from the body */
 /* The type with a long explanation is a white card with a thin frame. On a grey
    tile it would sink into the ground and the three blocks would not stand */
 .cards.left .card {
   text-align: left;
-  /* The paper is presented to the same specification as the job ad on 4 (3px frame, ground, shadow, corners not rounded) */
+  /* Presented as the job ad on 4: a frame, a ground, a shadow, corners not rounded */
   border: var(--bd-w) solid var(--paper-bd); border-radius: 0;
   box-shadow: 0 8px 26px rgba(60, 52, 30, .13);
   background: var(--paper-bg);
@@ -3120,7 +3113,7 @@ section:has(.card > .y > .ic) > .lead { margin-bottom: 55px; }
      the upper content heavy, so tightening the top alone would bring the tile
      close to the frame */
   text-align: left; border-radius: var(--card-r); padding: 23px 24px 24px;
-  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd);
+  background: var(--card-bg); border: var(--card-line);
 }
 /* The name and the icon. The name labels one of three parallel items, so it is
    not as strong as the page's main heading (31px navy on 33). It drops one step
@@ -3140,7 +3133,7 @@ section:has(.card > .y > .ic) > .lead { margin-bottom: 55px; }
   content: ""; position: absolute; left: 0;
   /* The divider is the deck's rule colour. In pale blue (#d3ddf0) here alone it
    would differ from the cards of the same type on 39-41 */
-  bottom: -23px; width: 100%; height: var(--bd-w); background: var(--card-bd);
+  bottom: -23px; width: 100%; height: 0; border-top: var(--card-line);
 }
 .cards:has(.card > .y > .ic) .card > .y::before {
   content: ""; flex: none; width: 64px; height: 64px;
@@ -3180,15 +3173,14 @@ section:has(.card > .y > .ic) > .lead { margin-bottom: 55px; }
   font-size: var(--fs-m);
   width: 100%; margin: 43px 0 0;
 }
-/* The material frame. No label: "screen" on all three would say nothing */
-/* The material frame. A dotted box until its content arrives. No label (the
-   same "screen" on all three would say nothing).
+/* The material frame. No label: the same "screen" on all three would say
+   nothing.
    .ph itself is the box. Built with ::after, the .cards .card > .ph rule and
    flex collide, no width comes out and it becomes a single vertical line */
 .cards:has(.card > .y > .ic) .card > .ph {
   margin: 25px auto 0; flex: 1 1 auto; height: auto; min-height: 0;
   display: block; padding: 0;
-  border: 2px dashed var(--rule-wait); border-radius: var(--img-r); background: var(--slide);
+  border-radius: var(--img-r); background: var(--slide);
   /* .ph is width: auto / align-self: center by nature. With no content its width
      goes to 0 and the frame becomes a single vertical line. Here the width is
      fixed to the full card */
@@ -3339,9 +3331,8 @@ section:has(> .cyc) > .lead { margin-bottom: 52px; }
   /* The two columns of timeline and terms are treated as two-up: the full type area (1658) */
   width: 100%; flex: 1 1 auto; min-height: 0;
 }
-/* The timeline goes on the same tile as the right-hand side. A vertical axis
-   runs down its left edge and each item is marked with a dot. The items are
-   divided by a faint rule (built as the terms column on the right is) */
+/* The timeline goes on the same tile as the right-hand side: a vertical axis
+   down the left edge, a dot per item, and the divider step between rows */
 .chron .timeline {
   gap: 0; justify-content: center; position: relative;
   background: #fff; border: var(--card-line); border-radius: var(--card-r);
@@ -3349,15 +3340,10 @@ section:has(> .cyc) > .lead { margin-bottom: 52px; }
   padding: 0 30px 0 0;
 }
 
-/* The vertical axis, drawn on the rows themselves. Taken from the card, the
-   axis would sit off the rows by however much they centre vertically within it
-   (justify-content: center on .timeline) and its tip would stick out above the
-   first dot. Taken from the rows, it runs from the centre of the first dot to
-   the centre of the last however the row heights change.
-   Its colour is the card's frame, --card-bd. The axis is a structural line
-   running through the rows, so it would be weak at the same step as the
-   dividers inside (--rule) or the tile frames (--tile-bd). #dfe3ee comes to a
-   difference of 1.31 and --tile-bd to 1.61, and neither was really visible */
+/* The vertical axis. It is drawn on the rows, not on the card, so that it runs
+   from the centre of the first dot to the centre of the last whatever the row
+   heights are. It carries the card's frame colour: an axis leads the eye
+   through the rows, so it sits a step above the dividers crossing it */
 .chron .tp { gap: var(--sp-4); align-items: baseline; padding: 13px 0 19px 66px; position: relative;
   background-image: linear-gradient(var(--card-bd), var(--card-bd));
   background-repeat: no-repeat;
@@ -3370,19 +3356,17 @@ section:has(> .cyc) > .lead { margin-bottom: 52px; }
   background-size: 2px calc(100% - var(--node-c));
 }
 .chron .tp:last-child { background-size: 2px var(--node-c); }
-/* The dividers start to the right of the axis. Crossing it would break which line leads */
-/* The rows of the timeline and the dividers of the terms column are the same line (built alike within 35) */
-.chron .tp + .tp, .gloss .g + .g { border-top: var(--tbl-line); }
+/* The rows of the timeline and the dividers of the terms column are the same
+   line, at the repeated width: six of them stacked read heavy at --bd-w */
+.chron .tp + .tp, .gloss .g + .g { border-top: var(--card-line); border-top-width: var(--bd-w-rep); }
 .chron .tp + .tp::after {
-  /* The cover's size follows the divider (--card-line = --bd-w). Left at a fixed
-     value it would spill when the line is thickened and the line would show
-     through over the axis */
-  /* Displayed at a fractional zoom, the cover and the rule land on different
-     pixels and the rule shows through. It overhangs by 1px above and below, so
-     it covers at any zoom */
+  /* Hides the divider where it would cross the axis; crossing it would break
+     which of the two leads. Its size follows the divider (--bd-w-rep) and
+     overhangs by 1px above and below, so it still covers at a fractional zoom,
+     where the two land on different pixels */
   content: ""; position: absolute; left: 0; right: auto;
-  top: calc(-1 * var(--tbl-w) - 1px);
-  width: 56px; height: calc(var(--tbl-w) + 2px);
+  top: calc(-1 * var(--bd-w-rep) - 1px);
+  width: 56px; height: calc(var(--bd-w-rep) + 2px);
   /* Only the 38-40px the axis runs through is filled in the axis colour. Painted
      white this far, the axis loses 1px at every row boundary and reads as a
      dotted line. It also closes the 1px drop in the axis's background caused by
@@ -3420,11 +3404,9 @@ section:has(> .cyc) > .lead { margin-bottom: 52px; }
 .chron .en .tm { color: inherit; font-weight: inherit; }
 .chron .tp .w { font-size: var(--t2); line-height: var(--lh-label); }
 .chron .tp .w .en { font-size: var(--fs-sm); }
-/* The terms are subordinate to the timeline. A ground makes them a block and the type drops a step */
-/* The terms are subordinate to the timeline. They go on a rounded tile, divided
-   one by one with a faint rule.
-   A logo goes at the left (real ones for the three that have an official logo,
-   line drawings for the three that do not) */
+/* The terms are subordinate to the timeline: a rounded tile, a ground, a step
+   down in type, and a logo at the left (real ones where they exist, line
+   drawings for the rest) */
 .gloss {
   background: #f7f8fb; border: var(--card-line); border-radius: var(--card-r);
   padding: 6px 22px; align-self: center;
@@ -3480,9 +3462,6 @@ section:has(> .pack) > .issue b .en {
      18 is --en-c) */
   color: var(--en-c); margin-top: var(--pair-box);
 }
-/* The body is centred within the band, matching the other bands (15, 37, 44,
-   50), which are centred. The label on the left is fixed at 190px, so this is
-   the centre of what is left (the label stays) */
 /* The body is centred within the band (as on the other bands). As flex, the
    words of the sentence break onto separate lines one by one, so text-align and
    align-self do the centring */
@@ -3638,10 +3617,6 @@ section.demo > .col-l > .nt {
    Image 542px - card 257px = 285px, a third of which is 95px. 29 + 95 = 124px */
 section.demo > .applink { margin-top: 124px; }
 /* The screenshot on the right sat flush with the right edge of the type area
-   and looked to jut out past the text on the left. A margin on the right brings
-   it slightly inside. The type is shared by three pages, so it takes effect
-   here once */
-/* The screenshot on the right sat flush with the right edge of the type area
    and looked to jut out past the text on the left. Its size is unchanged and
    only its position moves inwards.
    The type is shared by three pages, so it takes effect here once */
@@ -3650,7 +3625,7 @@ section.demo > .ph { margin-top: 29px; transform: translateX(calc(-1 * var(--sp-
 section.demo > p.applink, .applink {
   display: block; width: auto; max-width: none; text-align: left;
   /* The ground is as on the three cards of 38. The same app's card looks the same in the overview and in the detail */
-  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); border-radius: var(--card-r);
+  background: var(--card-bg); border: var(--card-line); border-radius: var(--card-r);
   padding: 24px 40px;
   font-size: var(--t3); line-height: var(--lh-label);
 }
@@ -3706,7 +3681,7 @@ section.aipage .vs { display: flex; gap: var(--sp-11); flex: 1 1 auto; min-heigh
 section.aipage .vs .side { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
       border-radius: var(--card-r); padding: 18px 22px 16px; }
 /* Left = the facts and voices of the world, in grey; right = my own side, in pale blue. As the deck's principle has it */
-section.aipage .vs .world, section.aipage .vs .mine { background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); }
+section.aipage .vs .world, section.aipage .vs .mine { background: var(--card-bg); border: var(--card-line); }
 /* The number stands rather than being buried in the body. Treated as "4,900円" on 4 */
 /* The numbers are shown as a graph, which carries the rise better than type
    alone.
@@ -3770,7 +3745,7 @@ section.rolepage > .roles {
 }
 section.rolepage .role {
   flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
-  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); border-radius: var(--card-r); padding: 22px 26px 20px;
+  background: var(--card-bg); border: var(--card-line); border-radius: var(--card-r); padding: 22px 26px 20px;
 }
 section.rolepage .hd { display: flex; align-items: center; gap: var(--sp-5); }
 section.rolepage .n {
@@ -3828,10 +3803,9 @@ section.rolepage .fig .dia .bub i { font-size: var(--fs-xs); }
 
 /* The difference in language is shown by the words in the bubble. No flags */
 section.rolepage .fig .bub { position: relative; margin-bottom: 11px; display: block; text-align: center;
-      /* The frame is --tile-bd, as on the white tiles of the same page. A raw value
-         puts it out of step with the tail (::before): the frame and the tail
-         split into #c3cbdd and #d3d9e8 */
-      padding: 6px 16px 7px; border-radius: var(--r-lg); background: #fff; border: var(--bd-w) solid var(--tile-bd);
+      /* The frame and the tail (::before) must come from the same variable; raw
+         values put them out of step and they split into two greys */
+      padding: 6px 16px 7px; border-radius: var(--r-lg); background: #fff; border: var(--card-line);
       font-size: var(--t1); color: var(--ink2); line-height: var(--lh-snug); white-space: nowrap; }
 section.rolepage .fig .bub i { display: block; font-style: normal; font-size: var(--fs-xs);
       color: var(--sub); line-height: var(--lh-title); margin-top: 1px; }
@@ -3840,7 +3814,7 @@ section.rolepage .fig .bub::before, section.rolepage .fig .bub::after {
   width: 0; height: 0; border-style: solid; }
 section.rolepage .fig .bub::before { border-width: 12px 9px 0 9px;
   /* It reads as continuous with the bubble's frame, so it takes the same colour */
-  border-color: var(--tile-bd) transparent transparent transparent; }
+  border-color: var(--card-bd) transparent transparent transparent; }
 section.rolepage .fig .bub::after { margin-top: -2px; border-width: 10px 7px 0 7px;
   border-color: #fff transparent transparent transparent; }
 /* 2 is built from the same parts as 1. The arrow stacks word, symbol and
@@ -3877,7 +3851,7 @@ section.rolepage .acts { display: grid; grid-template-columns: repeat(4, 1fr);
    empty white tiles */
 section.rolepage .acts > span {
   display: flex; flex-direction: column; align-items: center;
-  background: #fff; border: var(--bd-w) solid var(--tile-bd); border-radius: var(--r-lg);
+  background: #fff; border: var(--card-line); border-radius: var(--r-lg);
   padding: 7px 12px; font-size: var(--fs-s); color: var(--ink2); font-weight: var(--w-title);
   line-height: var(--lh-snug);
 }
@@ -3909,7 +3883,7 @@ section.trialpage > .cols {
 }
 section.trialpage .col {
   flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-self: stretch;
-  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); overflow: hidden;
+  background: var(--card-bg); border: var(--card-line); overflow: hidden;
   /* The card's inner space is as on 45 (.role) */
   border-radius: var(--card-r); padding: 22px 26px 20px;
 }
@@ -3940,10 +3914,10 @@ section.trialpage .ch .badge {
 section.trialpage .plug { flex: none; width: 268px; text-align: center;
   background: var(--pale-b); border-radius: var(--r-lg); padding: 8px 0;
   display: flex; flex-direction: column; justify-content: center; }
-section.trialpage .plug .pl rect { fill: #fff; stroke: var(--line-fig); stroke-width: 2.5; }
+section.trialpage .plug .pl rect { fill: #fff; stroke: var(--card-bd); stroke-width: 2.5; }
 section.trialpage .plug .hub { fill: var(--tile-bg); stroke: var(--cy); stroke-width: 2.5; }
 /* On the right-hand figure (AI <- SKILL) alone, the AI box is drawn as a supporting line */
-section.trialpage .col:last-child .plug .hub { stroke: var(--line-fig); }
+section.trialpage .col:last-child .plug .hub { stroke: var(--card-bd); }
 section.trialpage .plug .pt rect { fill: var(--cy); opacity: .5; }
 section.trialpage .plug .hb { font-size: var(--t1); font-weight: var(--w-bold); fill: var(--cy);
   font-family: var(--font-mono); }
@@ -3953,10 +3927,9 @@ section.trialpage .plug .sd { font-size: var(--fs-s); font-weight: var(--w-label
 section.trialpage .plug .bk path { fill: #fff; stroke: var(--cy); stroke-width: 2.5; }
 section.trialpage .plug .bk .spine { fill: var(--tile-bg); }
 section.trialpage .plug .bk .ttl { fill: var(--tile-bg); stroke: var(--tile-c1-bd); stroke-width: 2; }
-/* The rule inside the book. The raw #c3cbdd is all but the same colour as
-   --tile-bd, and there is no reason for the deck to hold the same colour
-   twice */
-section.trialpage .plug .bk .ln path { fill: none; stroke: var(--tile-bd); stroke-width: 3; stroke-linecap: round; }
+/* The rule inside the book takes the deck's line colour; a raw #c3cbdd here
+   would be a second name for all but the same grey */
+section.trialpage .plug .bk .ln path { fill: none; stroke: var(--card-bd); stroke-width: 3; stroke-linecap: round; }
 section.trialpage .plug .ct { font-size: var(--fs-s); font-weight: var(--w-bold); fill: var(--cy);
   font-family: var(--font-mono); }
 section.trialpage .plug em { display: block; margin-top: var(--pair-s); font-style: normal;
@@ -3965,9 +3938,6 @@ section.trialpage .plug em i { display: block; font-style: normal; font-size: va
   /* Without a colour it inherits --ink2 from the parent (the Japanese caption)
      and the English comes out as dark as the Japanese. The English is --en-c */
   color: var(--en-c); margin-top: var(--pair-box); }
-/* The explanation's left edge aligns with the centre of the round tile (50% of
-   the tile), the deck's shared rule. The tile is 56px, so half of it, 28px, is
-   added at the left */
 /* The explanation's left edge aligns with the centre of the round tile (50% of
    the tile = 28px), the deck's shared rule.
    The top margin is negative, pulling it up rather than being dragged by the
@@ -4045,9 +4015,7 @@ section.trialpage .en {
 }
 
 /* The lead is the same line on every page, so it keeps the deck's paired
-   English (26px) even here. Without this it is caught by the page-wide
-   defaults above and comes out at 20px, which shows up when the leads are
-   lined up side by side */
+   English (26px) even here, out of the page-wide defaults above */
 section.trialpage > .lead .en, section.aipage > .lead .en,
 section.rolepage > .lead .en { font-size: var(--fs-l); }
 
@@ -4112,7 +4080,10 @@ section.horizon > .erow {
   flex: none; width: 100%; max-width: var(--body-w); margin: 14px auto 0;
 }
 /* An era's card. It is fact about the world, so it is white with a frame rather
-   than grey, keeping the screens inside from sinking */
+   than grey, keeping the screens inside from sinking. The frame carries the
+   era's hue, like the band across the top, the icon and the heading, but at the
+   weight of the deck's line so it does not read thinner than the frames on
+   every other page at the same width */
 section.horizon .ea {
   display: flex; flex-direction: column; min-width: 0;
   background: #fff; border: var(--card-line); border-radius: var(--card-r); padding: 18px 18px 10px;
@@ -4136,10 +4107,10 @@ section.horizon .erow > .ea:nth-child(2) .ic, section.horizon .erow > .ea:nth-ch
    The frame colour alone is too weak to show the connection */
 section.horizon .ea { position: relative; overflow: hidden; }
 section.horizon .ea::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 7px; }
+section.horizon .erow > .ea:nth-child(1) { border-color: var(--era1-bd); }
+section.horizon .erow > .ea:nth-child(2) { border-color: var(--era2-bd); }
 section.horizon .erow > .ea:nth-child(1)::before { background: var(--era1); }
 section.horizon .erow > .ea:nth-child(2)::before { background: var(--era2); }
-section.horizon .erow > .ea:nth-child(1) { border-color: #c2d4ee; }
-section.horizon .erow > .ea:nth-child(2) { border-color: #b8e0eb; }
 section.horizon .ea .ic svg { width: 100%; height: 100%; display: block; }
 section.horizon .ea .tt { font-size: var(--t3); font-weight: var(--w-title); color: var(--cy); line-height: var(--lh-tight); }
 section.horizon .ea .d { margin: 8px 0 0; padding-left: 19px; font-size: var(--t2); color: var(--ink); line-height: var(--lh-snug);
@@ -4246,11 +4217,10 @@ section.cubedemo > .rel { margin: 24px 0 0; text-align: center;
    The row spacing is computed from --row-h and --row-pad. Set in raw px it
    scatters, as 56/62/68 */
 section.nodetree {
-  /* The tree's lines. Lines in figures are var(--line-fig), as in the socket
-     figure on 46. The weight is 2px: a 1px line disappears under projection, and
-     a colour as pale as a frame drawn at 1.5px all but dissolves into the card's
-     ground (var(--card-bg)) */
-  --tree-line: var(--line-fig);
+  /* The tree's lines take the deck's line colour, as the socket figure on 46
+     does. They are 2px, the same as the timeline's axis on 35: a line that runs
+     through the items and leads the eye is a step above the frames it crosses */
+  --tree-line: var(--card-bd);
   --tree-w: 2px;
   /* The height of one row of the tree. The two-line Japanese/English explanation
      (about 49px) is taller than the card (about 46px), so it follows that.
@@ -4276,7 +4246,7 @@ section.nodetree .th {
    matched */
 section.nodetree .tree .card {
   flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center;
-  background: var(--card-bg); border: var(--bd-w) solid var(--card-bd); border-radius: var(--card-r);
+  background: var(--card-bg); border: var(--card-line); border-radius: var(--card-r);
   /* The left matches the bar's allowance (32px), so the heading's type and the left edge of the tree do not step */
   padding: 22px 30px;
 }
@@ -4337,11 +4307,11 @@ section.nodetree .nd {
   /* Laid over the trunk. Without it, the line looks to grow out from inside the card */
   position: relative; z-index: 1;
   flex: none; min-width: 6ch; text-align: center;
-  /* The frame is var(--tile-bd), as on the white tiles of 46. Any paler and it dissolves into the card's ground */
-  /* On white it is buried in the trunk lines and hard to read, so a pale blue
-     face is laid under it. The root is a step deeper at --badge, so the children
-     take the step below that, --pale-b */
-  background: var(--pale-b); border: var(--bd-w) solid var(--tile-bd); border-radius: var(--r-md); padding: 7px 16px;
+  /* A pale blue face, not white: on white the name is buried in the trunk
+     lines. The root is a step deeper at --badge, so the children take the step
+     below it, --pale-b */
+  background: var(--pale-b); border: var(--card-line); border-width: var(--bd-w-rep);
+  border-radius: var(--r-md); padding: 7px 16px;
   font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
   font-size: var(--t2); color: var(--ink); line-height: var(--lh-title);
 }
@@ -4385,7 +4355,7 @@ section.wrapup .grp > b {
 /* On 15 the heading's translation is inline; here the heading is long, so it goes on the next line */
 section.wrapup .grp > b .en { display: block; margin-top: var(--pair-s);
   /* The heading is the larger of the two lines, so its English cannot be the
-     smaller one: at --fs-m it came out under the 24px of the .a/.b below */
+     smaller one: --fs-m sits under the 24px of the .a/.b below it */
   font-size: var(--fs-ml); font-weight: var(--w-body); letter-spacing: var(--ls-en); color: var(--sub); }
 section.wrapup .grp .a, section.wrapup .grp .b { color: var(--ink); font-size: var(--fs-2xl); line-height: var(--lh-body); }
 section.wrapup .grp .a .en, section.wrapup .grp .b .en {
