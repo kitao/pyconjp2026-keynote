@@ -22,4 +22,6 @@ fi
 NODE_PATH="$WORK/node_modules" CHROME="$CHROME" \
   node tools/slides/topdf.js "$PWD/.build.html" "$OUT"
 rm -f .build.html
+# Chrome turns a page on its side now and again; checkpdf.py stops that shipping
+python3 "$(dirname "$0")/checkpdf.py" "$OUT" || exit 1
 ls -l "$OUT"
