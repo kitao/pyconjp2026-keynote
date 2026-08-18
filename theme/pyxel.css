@@ -4382,3 +4382,21 @@ section:has(> .pack) > .issue .tx .en,
 section.aipage > .concl .en {
   font-size: var(--fs-ml);
 }
+
+/* -- Print ------------------------------------------------------
+   The five blurred shadows are dropped from the PDF. macOS renders a PDF
+   through Quartz, and Preview with it, and it flattens a blurred box-shadow
+   into an opaque grey rectangle: on 28 the three cards came out standing on
+   one grey block reaching across the row. poppler goes the other way and
+   drops the shadow on 4 entirely. A shadow that survives in neither is not
+   worth the lift it gives on paper, and every surface that carries one also
+   carries its own frame, so nothing loses its edge. The HTML keeps them.
+   The keycap on 33 is not listed: its shadow is inset and unblurred, which
+   both renderers draw as asked */
+@media print {
+  .pair.fit figure > img:not(.dot),
+  section.mock .doc,
+  .bio .cover,
+  .doable .tools img,
+  .cards.left .card { box-shadow: none; }
+}
