@@ -41,6 +41,9 @@ PYXEL = Path(os.environ.get("PYXEL_DIR") or ROOT.parent / "pyxel")
 EXAMPLES = Path(os.environ.get("PYXEL_EXAMPLES_DIR") or ROOT.parent / "pyxel-user-examples")
 CACHE = ROOT / ".offline"
 PYPI = CACHE / "pypi"
+# --fetch unpacks segno here rather than installing it, so this is where the
+# QR encoder is imported from. Harmless when the directory is not there yet.
+sys.path.append(str(PYPI))
 PORT = int(os.environ.get("PORT") or 8080)
 
 # Every absolute URL these pages reach for, and the path that answers it once
@@ -128,7 +131,9 @@ def swap(text):
 def rewrite(text, html):
     if not html:
         return swap(text)
-    attrs = lambda part: ATTR_URL.sub(lambda m: m.group(1) + swap(m.group(2)), part)
+    def attrs(part):
+        return ATTR_URL.sub(lambda m: m.group(1) + swap(m.group(2)), part)
+
     out, last = [], 0
     for match in SCRIPT_BLOCK.finditer(text):
         # Inside a script tag every URL is code, so all of it is fair game. The
@@ -198,14 +203,17 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 def draw_qr(query):
     """Stand in for api.qrserver.com, whose parameters this mirrors."""
-    if str(PYPI) not in sys.path:
-        sys.path.insert(0, str(PYPI))
     try:
         import segno
     except ImportError:
         return None
-    first = lambda key, fallback: query.get(key, [fallback])[0]
-    size = int(first("size", "128x128").split("x")[0])
+    def first(key, fallback):
+        return query.get(key, [fallback])[0]
+
+    try:
+        size = int(first("size", "128x128").split("x")[0])
+    except ValueError:
+        size = 128
     # qrserver returns exactly the size asked for and leaves no quiet zone, so
     # the code fills the box. Matching both matters: the demo types MML in and
     # the audience watches the code grow, and a border of its own would make
@@ -229,16 +237,22 @@ def draw_qr(query):
 
 def fetch_segno():
     """Unpack the segno wheel into .offline/, rather than installing it."""
-    with urllib.request.urlopen("https://pypi.org/pypi/segno/json", timeout=60) as response:
-        release = json.load(response)["urls"]
-    wheel = next(u["url"] for u in release if u["filename"].endswith("-py3-none-any.whl"))
-    with urllib.request.urlopen(wheel, timeout=60) as response:
-        data = response.read()
+    try:
+        with urllib.request.urlopen("https://pypi.org/pypi/segno/json", timeout=60) as response:
+            release = json.load(response)["urls"]
+        wheel = next(u["url"] for u in release
+                     if u["filename"].endswith("-py3-none-any.whl"))
+        with urllib.request.urlopen(wheel, timeout=60) as response:
+            data = response.read()
+    except (OSError, ValueError, KeyError, StopIteration) as error:
+        print("  skip segno (%s); the MML Studio QR code will not draw" % error)
+        return 0
     PYPI.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(io.BytesIO(data)) as archive:
         archive.extractall(PYPI)
     print("  %7.1f KB  %s (for the MML Studio QR code)"
           % (len(data) / 1024, PYPI.relative_to(ROOT)))
+    return len(data)
 
 
 def wanted_urls():
@@ -302,7 +316,7 @@ def fetch():
         dest.write_bytes(data)
         total += len(data)
         print("  %7.1f KB  %s" % (len(data) / 1024, dest.relative_to(ROOT)))
-    fetch_segno()
+    total += fetch_segno()
     print("cached %.1f MB under %s" % (total / 1048576, CACHE.relative_to(ROOT)))
 
 
@@ -323,6 +337,9 @@ def serve():
     print("code maker      %s/pyxel/web/code-maker/" % base)
     print("mml studio      %s/pyxel/web/mml-studio/" % base)
     print("user examples   %s/pyxel-user-examples/" % base)
+    if not (PYPI / "segno").is_dir():
+        print("\n! no qr encoder in .offline/; MML Studio will show no QR code."
+              "\n  run --fetch again while the network is good")
     print("\nlinks in the slides now point here. misses are listed below.\n")
     webbrowser.open_new_tab(base + "/")
     try:
