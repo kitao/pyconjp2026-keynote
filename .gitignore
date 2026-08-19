@@ -8,6 +8,9 @@
 *.pdf
 !pyconjp2026-keynote.pdf
 
+# Third-party files fetched for the offline demos (tools/stage/offline.py --fetch)
+.offline/
+
 # Python intermediates
 __pycache__/
 *.pyc
