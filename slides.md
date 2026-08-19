@@ -228,7 +228,7 @@ paginate: true
 ---
 
 <!-- _class: ch0 f2 -->
-# Pyxelで、プログラミングを遊ぼう！<span class="t2">—「楽しく作る」をデザインする</span>
+# Pyxelで、プログラミングを遊ぼう！<span class="t2">──「楽しく作る」をデザインする</span>
 ## Let’s Play Programming with Pyxel! — Designing the Fun of Making
 
 <p class="agenda-h">本日は、Pyxelがどのようにプログラミングを「遊び」に変えているのか、<br>その仕組みや考え方、そこに込めた想いについてお話しします<span class="en block">How Pyxel turns programming into play — the mechanisms, the thinking, and the wish behind them</span></p>
@@ -903,7 +903,7 @@ pyxel.show()
 # URLだけで遊べる究極形へ
 ## The Ultimate Form: Play From a URL Alone
 
-<p class="lead"><a target="_blank" rel="noopener" href="https://kitao.github.io/pyxel/web/launcher/">Pyxel Web Launcher</a> — GitHubに置いたファイルを、URLで指定して起動する <span class="en block">Pyxel Web Launcher — point a URL at a file on GitHub to launch it</span></p>
+<p class="lead"><a target="_blank" rel="noopener" href="https://kitao.github.io/pyxel/web/launcher/">Pyxel Web Launcher</a> ── GitHubに置いたファイルを、URLで指定して起動する <span class="en block">Pyxel Web Launcher — point a URL at a file on GitHub to launch it</span></p>
 
 <p class="urlmap">
 <span class="sg fx"><b>https://kitao.github.io/pyxel/web/launcher/</b><i>ランチャーの場所<span class="en block">the launcher</span></i></span>

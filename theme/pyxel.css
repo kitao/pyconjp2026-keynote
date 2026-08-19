@@ -300,7 +300,7 @@
   --ch3: var(--p2);   /* Chapter 3: grape */
   --ch0: #b4682c;     /* The introduction. Warm, so its colour also says it is not a numbered chapter */
   /* The two groups on 46: run = blue, inspect = teal. Shared by the icon tiles and the card borders */
-  --run-bd: #8fb4e0;   /* Border of the run group. Contrast against white raised from 1.49 to 2.05 so it is visible */
+  --run-bd: #8fb4e0;   /* Border of the run group. 2.05 against white, deep enough to hold when projected */
   --run-fg: var(--cy);
   --chk-bd: #74bcc2;   /* Border of the inspect group, likewise */
   --chk-fg: #127f86;
@@ -1121,15 +1121,11 @@ section p code{
   padding: 2px 10px;
   font-size: var(--fs-code-in);
 }
-/* A fragment of code inside a lead. Same surface as the body, with the type in the chapter colour */
-/* One size, --fs-code-in. This alone carried a literal .94em; there is no
-   reason for code mixed into the body to hold two values, so it was brought in */
-/* A command inside body text or a heading. The surface is the body's, the type
-   the accent navy. Treated the same in the lead on 30 (import pyxel) and in the
-   steps on 36 (pyxel app2html).
+/* A command inside body text or a heading: the body's surface, the accent navy,
+   and one size for all of it (--fs-code-in). The same in the lead on 30
+   (import pyxel) and in the steps on 36 (pyxel app2html).
    It is monospaced so that "pyxel app2html", which contains a space, does not
    read as two words.
-   The size is .9em, so it follows whatever line it sits in.
    Left unwritten, Marp's defaults appear (a different face, 4.93px padding) and
    fall outside the deck's scale */
 section p.lead code, .steps .step .w > code {
@@ -2971,9 +2967,9 @@ section.spec td img.pal {
 /* Two points on the ring are the key to this chapter (show it and let them
    play / hear back what they thought). They are marked in two reds, with two
    conditions for achieving each placed to the right */
-/* --key used to be held by each card individually. The frames are gone, so the
-   chapter colour is held here */
-/* The same type as 16: heading -> grey rule -> children, run through by a single vertical bar */
+/* The same type as 16: heading -> grey rule -> children, run through by a single
+   vertical bar. --key is held here rather than on each card, which carries no
+   frame of its own */
 .keys {
   display: flex; flex-direction: column; gap: var(--sp-9); --key: var(--p8);
   position: relative; padding-left: 32px;
