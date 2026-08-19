@@ -1,25 +1,25 @@
-# ビルドの中間ファイル
+# Build intermediates
 .build.html
 .cover.html
-# 検品で1ページだけ撮ったもの（tools/inspect/page.sh）
+# One page captured for checking (tools/inspect/page.sh)
 .page.png
 
-# 配布する PDF だけ追跡する。それ以外は中間物
+# Track only the PDF that is handed out; the rest are intermediates
 *.pdf
 !pyconjp2026-keynote.pdf
 
-# Python の中間物
+# Python intermediates
 __pycache__/
 *.pyc
 
-# ページを画像に書き出したもの（見た目の確認用）
+# Pages written out as images, to check how they look
 render/
 
-# エディタ・OS
+# Editor and OS
 .vscode/
 .DS_Store
 
-# 撮影・書き出しの中間物（完成品は assets/ と demo/ と trailer/ に置く）
+# Capture and export intermediates; the finished files live in assets/, demo/ and trailer/
 tools/capture/fr_*/
 tools/capture/g4_*
 tools/capture/g5_*
