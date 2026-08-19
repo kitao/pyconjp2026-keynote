@@ -104,20 +104,19 @@ paginate: true
 # ゲームデザインとは
 ## What Is Game Design?
 
-<p class="lead">「やりたいこと」と「達成感」を両立させ、「遊び」にする仕掛け<span class="en block">Devices that make freedom and achievement work together — and turn it into play</span></p>
+<p class="lead">プレイヤーに「楽しい」「面白い」と感じさせる仕組み<span class="en block">The workings that make players find it fun and interesting</span></p>
 
 <div class="gd">
-<div class="gd-goal"><span class="lb">目的：<span class="en">Goal</span></span>
+<div class="gd-goal"><span class="lb">目指す体験：<span class="en">The experience to aim for</span></span>
 <div class="b b-free"><span class="ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8 39.84 23.8l17.43 2.5-12.63 12.31 3.05 17.43L32 47.76l-15.68 8.28 3.05-17.43L6.73 26.3l17.43-2.5L32 8z"/></svg></span><span class="tx">やりたいことができる <span class="en block">You can do what you want</span></span></div>
-<div class="vs">↔</div>
 <div class="b b-reward"><span class="ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19.09 6.72h25.83v12.91c0 10.57-5.52 17.61-12.91 17.61s-12.91-7.04-12.91-17.61V6.72z"/>
   <path d="M19.09 11.42H8.52v5.87c0 8.22 5.28 12.91 12.33 12.91"/>
   <path d="M44.91 11.42h10.57v5.87c0 8.22-5.28 12.91-12.33 12.91"/>
   <path d="M32 37.24v10.57"/>
   <path d="M22.61 57.2h18.78"/>
-  <path d="M26.13 47.81h11.74"/></svg></span><span class="tx">達成感を得る <span class="en block">You feel you achieved something</span></span></div>
+  <path d="M26.13 47.81h11.74"/></svg></span><span class="tx">達成感が得られる <span class="en block">You get a sense of achievement</span></span></div>
 </div>
-<div class="gd-means"><span class="lb">手段：<span class="en">Means</span></span>
+<div class="gd-means"><span class="lb">実現手段：<span class="en">How it is done</span></span>
 <div class="g"><div class="gh"><span class="ic"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="25.13"/>
   <path d="M6.87 32h50.27"/>
   <path d="M32 6.87c8.38 7.33 12.57 15.71 12.57 25.13S40.38 49.8 32 57.13"/>
