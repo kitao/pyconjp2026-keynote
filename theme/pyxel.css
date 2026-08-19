@@ -141,7 +141,7 @@
      from measured balance (11 = 26, 31 = 28, 37 = 29) do not use this step. */
   --lead-gap: 27px;
 
-  /* -- Tables ------------------------------------------------- */
+  /* -- Tables ------------------------------------------------ */
   /* The vertical scale of the career table (.bio); the only place that holds
      these values. The space a line box adds above and below the type has
      already been subtracted, so every value here is the gap you SEE. That is
@@ -157,7 +157,7 @@
                              cell stops reading as one block */
   --bio-sub:     .94;     /* How much the hanging line shrinks. Japanese and English shrink alike */
 
-  /* -- Type scale (16px base, 1.25 ratio) ----- */
+  /* -- Type scale (16px base, 1.25 ratio) -------------------- */
   --t1: 20px;
   --t2: 25px;
   --t3: 31px;
@@ -176,7 +176,7 @@
   --p5: #395c98;   /* BLUE   -> the word to bring forward (--cy) and chapter 1 (--ch1) */
   --p8: #d4186c;   /* RED    -> the pink used for warnings and emphasis */
 
-  /* -- Colour -------------------------------------------------- */
+  /* -- Colour ------------------------------------------------ */
   --ink: #22222b;         /* Body ink. Pure black is hard when projected on white, so it is lifted */
   --ink-t: var(--p1);     /* Ink for large headings: the navy of the logo. Pure black is heavy at this weight */
   --odd: #8f4a86;         /* The odd word out inside a chapter title */
@@ -289,7 +289,7 @@
   --ls-tag:   .14em;   /* Contents label */
   --ls-num:   .18em;   /* Chapter number */
 
-  /* -- Transparency ------------------------------------------- */
+  /* -- Transparency ------------------------------------------ */
   --op-mid:  .72;      /* Supporting type */
 
   /* -- Chapter colours -----------------------------------------
@@ -324,7 +324,7 @@
   --paper-ink2:  #4f4536;   /* Softer ink on the paper */
   --paper-sub:   #8a7f6a;   /* Supporting text and English on the paper */
 
-  /* -- Coloured tiles, shared by .pack on 34 and .flow on 37 ---- */
+  /* -- Coloured tiles, shared by 34 and 37 ------------------- */
   /* Six colours for icon tiles. The numbers mean the same thing from page to
      page, so the mapping never changes. Two of the same colour side by side stop
      the drawings reading apart, so neighbouring tiles take different numbers */
@@ -401,7 +401,7 @@
      width */
   --body-w: 1500px;
 
-  /* -- Margins, in actual px against 1920x1080 ---------------- */
+  /* -- Margins, in actual px against 1920x1080 --------------- */
   --pad-t: 65px;
   --pad-h: 131px;
   /* The bottom margin is derived from 1080 - 999 + 59, so that the same 59px
@@ -419,7 +419,7 @@
        45 = 950 / 46 = 950  padding-bottom is 130px on both, to match card heights
        47 = 950  section.horizon sets padding-bottom: 130px */
 
-  /* -- Type ---------------------------------------------------- */
+  /* -- Type -------------------------------------------------- */
   --fs-h1: 60px;          /* Heading, Japanese */
   --fs-h2: 38px;          /* English title of a heading: 0.64 of h1, the same ratio as the chapter slides and slide 2 */
   --fs-body: 36px;        /* Body */
@@ -428,7 +428,7 @@
                              heading labels that sit alongside it. Their role is fixed, so they do
                              not shrink with the body on dense pages */
 
-  /* -- Weight: lighter as the type grows, heavier as it shrinks - */
+  /* -- Weight: lighter as the type grows --------------------- */
   --w-cover: 700;         /* Large type on the cover and chapter slides */
   --w-title: 500;         /* Slide headings */
   --w-label: 600;         /* Small labels and table headings */
@@ -451,7 +451,7 @@
   --w-bold: 800;          /* Stronger in that one place: table headings, years, the conclusion band */
   --w-light: 300;         /* Large English titles. Lighter than the body, following the rule that larger type is lighter */
 
-  /* -- Type faces --------------------------------------------- */
+  /* -- Type faces -------------------------------------------- */
   --font-ja: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
   --font-mono: "Noto Sans Mono", "SFMono-Regular", "SF Mono", Menlo, monospace;
 
@@ -820,7 +820,7 @@ section.section .no {
   letter-spacing: var(--ls-num);
   margin: 0 0 18px;
 }
-/* -- Slides that carry one large sentence ------------------- */
+/* -- Slides that carry one large sentence -------------------- */
 /* -- Slides that carry one spoken line -----------------------
    Speech rather than a heading, so it is clearly softer than a chapter title.
    Centred, with no ornament and no logo. It is meant to be read plainly. */
@@ -952,7 +952,7 @@ td:first-child, th:first-child { width: 360px; padding-right: 38px; }
 }
 .step .w { flex: 1; }
 
-/* -- The bundling figure (pyxapp) --------------------------- */
+/* -- The bundling figure (pyxapp) ---------------------------- */
 /* -- The pyxapp figure on 34 ---------------------------------
    Hand over the whole set -> package -> one file -> play -> it runs on their
    machine. The boxes are built as on 36 (rounded corners, light border) to keep
@@ -1331,7 +1331,7 @@ section p.lead .en code {
   display: block; width: 147px; height: 147px; border-radius: var(--r-md);
 }
 
-/* -- Closing -------------------------------------------------- */
+/* -- Closing ------------------------------------------------- */
 section.closing { justify-content: center; align-items: center; text-align: center; }
 section.closing h1 { border: none; min-height: 0; margin: 0; padding: 0; font-size: var(--fs-8xl); font-weight: var(--w-cover); }
 section.closing h1 + h2 { border: none; min-height: 0; padding: 0; font-size: var(--fs-4xl); margin-top: 17px; }
@@ -1762,7 +1762,7 @@ section.wrapup .grp::before {
   grid-column: 1 / -1; align-self: end;
   position: relative; margin: 0; text-align: center;
   background: var(--pale-n); font-weight: var(--w-title);   /* Ink colour comes from the wrap-up section below, as --ink */
-   padding: 30px 36px;
+  padding: 30px 36px;
 }
 .why .goal .en { color: var(--en-c); font-weight: var(--w-body); }
 /* The arrows dropping from each column into the band, standing at the centre of
