@@ -206,13 +206,25 @@ def draw_qr(query):
         return None
     first = lambda key, fallback: query.get(key, [fallback])[0]
     size = int(first("size", "128x128").split("x")[0])
-    code = segno.make(first("data", ""), error="l")
-    modules = len(code.matrix) + 8  # segno's default quiet zone, both sides
+    # qrserver returns exactly the size asked for and leaves no quiet zone, so
+    # the code fills the box. Matching both matters: the demo types MML in and
+    # the audience watches the code grow, and a border of its own would make
+    # this one read smaller than the one on the slide.
     buffer = io.BytesIO()
-    code.save(buffer, kind="png", scale=max(1, -(-size // modules)),
-              dark="#" + first("color", "000000"),
-              light="#" + first("bgcolor", "ffffff"))
-    return buffer.getvalue()
+    segno.make(first("data", ""), error="l").save(
+        buffer, kind="png", scale=1, border=0,
+        dark="#" + first("color", "000000"),
+        light="#" + first("bgcolor", "ffffff"))
+    buffer.seek(0)
+    try:
+        from PIL import Image
+    except ImportError:
+        return buffer.getvalue()
+    # Nearest, so the modules stay square-edged at the size the page asks for.
+    grown = Image.open(buffer).convert("RGB").resize((size, size), Image.NEAREST)
+    out = io.BytesIO()
+    grown.save(out, format="PNG")
+    return out.getvalue()
 
 
 def fetch_segno():
