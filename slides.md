@@ -135,7 +135,7 @@ paginate: true
 ---
 
 <!-- _class: ch0 -->
-# 達成感は錯覚でも良い
+# 「達成感」は錯覚でも良い
 ## An Illusion of Achievement Is Fine
 
 <div class="pair fit">
