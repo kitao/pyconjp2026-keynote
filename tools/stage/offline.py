@@ -17,13 +17,15 @@ belong to other projects, and this repo carries the talk rather than a copy of
 their releases. The Pyxel side is not copied at all — it is read from ../pyxel
 and ../pyxel-user-examples (override with PYXEL_DIR / PYXEL_EXAMPLES_DIR).
 
-One thing stays broken offline and cannot be fixed here: the QR image on MML
-Studio is drawn by api.qrserver.com. It encodes the address of the page it is
-on, so offline it would read "localhost" and mean nothing to the room even if
-it did render.
+MML Studio draws its QR code with api.qrserver.com, and the closing line of
+that demo points at it. --fetch unpacks the segno wheel into .offline/ and this
+draws the code itself, so the beat survives with the network down. Nothing is
+installed; deleting .offline/ undoes it.
 """
 
 import http.server
+import io
+import json
 import mimetypes
 import os
 import re
@@ -31,12 +33,14 @@ import sys
 import urllib.parse
 import urllib.request
 import webbrowser
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PYXEL = Path(os.environ.get("PYXEL_DIR") or ROOT.parent / "pyxel")
 EXAMPLES = Path(os.environ.get("PYXEL_EXAMPLES_DIR") or ROOT.parent / "pyxel-user-examples")
 CACHE = ROOT / ".offline"
+PYPI = CACHE / "pypi"
 PORT = int(os.environ.get("PORT") or 8080)
 
 # Every absolute URL these pages reach for, and the path that answers it once
@@ -49,6 +53,7 @@ REWRITES = (
     ("https://cdn.jsdelivr.net/pyodide/", "/vendor/pyodide/"),
     ("https://cdn.jsdelivr.net/npm/", "/vendor/npm/"),
     ("https://cdnjs.cloudflare.com/ajax/libs/", "/vendor/cdnjs/"),
+    ("https://api.qrserver.com/v1/create-qr-code/", "/qr"),
     # The launcher asks GitHub which commit a branch points at and falls back to
     # the branch name when no answer comes. Refusing at once is that same
     # fallback, without waiting out a DNS timeout in front of an audience.
@@ -146,6 +151,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.respond(False)
 
     def respond(self, send_body):
+        if self.path.split("?", 1)[0] == "/qr":
+            png = draw_qr(urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query))
+            if png is None:
+                return self.reply(404, b"no qr encoder", "text/plain", send_body)
+            return self.reply(200, png, "image/png", send_body)
         full = local_path(self.path)
         if full is None:
             return self.reply(404, b"not served here", "text/plain", send_body)
@@ -184,6 +194,39 @@ class Handler(http.server.BaseHTTPRequestHandler):
         # A 200 says nothing; a miss is the only thing worth seeing on stage.
         if len(args) > 1 and str(args[1]) != "200":
             sys.stderr.write("  %s %s\n" % (args[1], args[0]))
+
+
+def draw_qr(query):
+    """Stand in for api.qrserver.com, whose parameters this mirrors."""
+    if str(PYPI) not in sys.path:
+        sys.path.insert(0, str(PYPI))
+    try:
+        import segno
+    except ImportError:
+        return None
+    first = lambda key, fallback: query.get(key, [fallback])[0]
+    size = int(first("size", "128x128").split("x")[0])
+    code = segno.make(first("data", ""), error="l")
+    modules = len(code.matrix) + 8  # segno's default quiet zone, both sides
+    buffer = io.BytesIO()
+    code.save(buffer, kind="png", scale=max(1, -(-size // modules)),
+              dark="#" + first("color", "000000"),
+              light="#" + first("bgcolor", "ffffff"))
+    return buffer.getvalue()
+
+
+def fetch_segno():
+    """Unpack the segno wheel into .offline/, rather than installing it."""
+    with urllib.request.urlopen("https://pypi.org/pypi/segno/json", timeout=60) as response:
+        release = json.load(response)["urls"]
+    wheel = next(u["url"] for u in release if u["filename"].endswith("-py3-none-any.whl"))
+    with urllib.request.urlopen(wheel, timeout=60) as response:
+        data = response.read()
+    PYPI.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(io.BytesIO(data)) as archive:
+        archive.extractall(PYPI)
+    print("  %7.1f KB  %s (for the MML Studio QR code)"
+          % (len(data) / 1024, PYPI.relative_to(ROOT)))
 
 
 def wanted_urls():
@@ -247,6 +290,7 @@ def fetch():
         dest.write_bytes(data)
         total += len(data)
         print("  %7.1f KB  %s" % (len(data) / 1024, dest.relative_to(ROOT)))
+    fetch_segno()
     print("cached %.1f MB under %s" % (total / 1048576, CACHE.relative_to(ROOT)))
 
 
