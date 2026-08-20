@@ -1,4 +1,11 @@
-"""Teaser for the PyCon JP 2026 keynote.
+# title: PyCon JP 2026 Keynote Trailer
+# author: Takashi Kitao
+# desc: A 60-second trailer for the PyCon JP 2026 keynote
+# site: https://kitao.github.io/pyconjp2026-keynote/
+# license: MIT (bundled M+ fonts: SIL OFL 1.1)
+# version: 1.0
+
+"""Trailer for the PyCon JP 2026 keynote.
 
 A moonlit sea. Waves roll in, fireworks rise, and the water carries their
 light. At the end the residents of Cursed Caverns walk the shore to see you
@@ -406,7 +413,7 @@ class Movie:
 
 
 def main():
-    pyxel.init(W, H, title="PyCon JP 2026 KEYNOTE teaser", display_scale=4)
+    pyxel.init(W, H, title="PyCon JP 2026 Keynote Trailer", display_scale=4)
     movie = Movie()
     movie.sound_setup()
 
