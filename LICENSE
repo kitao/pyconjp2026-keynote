@@ -8,14 +8,16 @@ See CREDITS.md for the rights holders and sources of each material.
 
 
 ================================================================
-1. コード — MIT License
+1. コードと予告動画 — MIT License
 ================================================================
 
 対象 / Applies to:
-  demo/   スライドに登場する実物のゲームと Web 実行ページ
-          The actual game and web runner shown in the talk
-  tools/  ビルド・検品・撮影のスクリプト
-          Build, inspection, and capture scripts
+  demo/     スライドに登場する実物のゲームと Web 実行ページ
+            The actual game and web runner shown in the talk
+  tools/    ビルド・検品・撮影のスクリプト
+            Build, inspection, and capture scripts
+  trailer/  予告動画のプログラムと書き出した動画（同梱フォントは第3節）
+            The trailer program and the video it produces (fonts: see 3)
 
 Copyright (c) 2026 Takashi Kitao
 
@@ -43,8 +45,7 @@ SOFTWARE.
 ================================================================
 
 対象 / Applies to:
-  slides.md, theme/, assets/, index.html,
-  pyconjp2026-keynote.pdf, trailer/
+  slides.md, theme/, assets/, index.html, pyconjp2026-keynote.pdf
 
 Copyright (c) 2026 Takashi Kitao
 
