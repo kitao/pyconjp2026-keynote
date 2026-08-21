@@ -1410,3 +1410,5 @@ class Enemy(Node):
 <a class="x" href="https://x.com/kitao"><i></i><b>@kitao</b><em>Pyxel関連のニュースを発信しています<span class="en block">News around Pyxel</span></em></a>
 <a class="gh" href="https://github.com/kitao/pyxel"><i></i><b>https://github.com/kitao/pyxel</b><em>スターをつけて応援よろしくお願いします！<span class="en block">A star would mean a lot</span></em></a>
 </p>
+
+<p class="qrend"><img src="assets/works/qr_slides.svg" alt="この発表資料を開くQRコード"><b>発表資料<span class="en">Slides</span></b></p>

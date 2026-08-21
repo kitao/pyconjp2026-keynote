@@ -1880,6 +1880,38 @@ section.closing .links em .en { display: block; margin-top: var(--pair-box);
 section.closing .links > a:hover { border-bottom: var(--card-line); }
 section.closing .links > a:hover b { text-decoration: underline; text-underline-offset: .16em; }
 
+/* -- The QR to the published slides (52) ----------------------
+   Bottom right, the one corner left free here: the residents have moved to the
+   centre to mirror the cover, and the page number is bottom left.
+   It sits outside the type area on purpose — a code in a corner reads as a
+   corner mark, not as another block of text — and keeps 72px from the right
+   against 48px from the bottom. The two differ for the reason the page itself
+   differs: 131px at the sides and 31px at the footer, so a mark holding more at
+   the side than underneath still reads as part of this page. Equal offsets and
+   the code hangs off the right; 96px and it rejoins the cards.
+   The code is written without its quiet zone (33 modules, not the usual 41), so
+   the box is the ink and these offsets can be read straight off the page. The
+   zone is still there: white out to the two outer edges, and 24px between the
+   code and the caption above it. The standard asks for 4 modules (20px); at
+   exactly that the caption reads as pressed onto the code and a blurred
+   photograph has nothing in hand, and much past it the two stop reading as one
+   label.
+   The caption goes above; below, the corner leaves no room */
+section.closing .qrend {
+  position: absolute; right: var(--sp-14); bottom: var(--sp-12); margin: 0;
+  display: flex; flex-direction: column-reverse; align-items: center; gap: var(--sp-5);
+}
+/* 33 modules at 5px each. A fractional module blurs the edges and slows the
+   scan, and rounding the corners would bite into the finder patterns */
+section.closing .qrend img { display: block; width: 165px; height: 165px; }
+section.closing .qrend b {
+  font-weight: var(--w-body); font-size: var(--fs-m); color: var(--ja2); text-align: center;
+}
+/* The shared 0.62 ratio would put this English at 13.6px, below the smallest
+   step the deck has. Set instead to the size the English on this page's cards
+   uses; the pair still holds because the colour, not the size, separates them */
+section.closing .qrend b .en { font-size: var(--fs-sm); }
+
 /* -- How a placeholder frame is placed ------------------------
    The height is decided first and the width follows from the aspect ratio.
    At width 100% the height would grow with the ratio and crush everything else.
