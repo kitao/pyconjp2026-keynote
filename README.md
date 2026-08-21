@@ -18,8 +18,8 @@ PyCon JP 2026 基調講演（北尾 崇・[@kitao](https://x.com/kitao)）の発
 - **[Trailer / 予告動画](https://kitao.github.io/pyxel/web/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer)** — 60 seconds, plays in the browser<br>
   60秒、ブラウザでそのまま動きます
 
-- **[Pyxel](https://github.com/kitao/pyxel)** — the engine the talk is about<br>
-  講演で扱っているゲームエンジン
+- **[Pyxel](https://github.com/kitao/pyxel)** — a retro game engine for Python<br>
+  Python 向けのレトロゲームエンジン
 
 ## Credits and license / 権利とライセンス
 
