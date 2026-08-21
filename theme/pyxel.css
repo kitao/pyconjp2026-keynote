@@ -1311,35 +1311,39 @@ section p.lead .en code {
   background: var(--pale-n);
   /* The QR overlaps at the right. Put in the flow it would shift the centre of the
      words left, so it is taken out of it. The band is a good deal shorter than
-     the QR (178px), which therefore hangs below it like a tag */
+     the QR (163px), which therefore hangs below it like a tag */
   position: relative;
 }
 /* Hung from the bottom of the band rather than centred in it: the card above
    ends at 817 and the residents begin at 999, and centred the code would grow
-   into the card. That leaves 181px, and the code's 148 of ink splits the rest
-   17px above against 16px below. 33 will not halve, and the odd pixel goes
-   above, because the card overhead is a large white box while the residents
-   below are small: the eye splits the gap against that weight, and without it
-   the code reads as riding high */
-.fnote .qrslot { position: absolute; right: 24px; bottom: -31.5px; display: flex; }
+   into the card. That leaves 181px, and the code's 149 of ink splits the rest
+   16px above and 16px below.
+   The 29px at the right holds the ink 36px inside the column edge, where it sat
+   when the band was drawn. The number has to carry the white border as well, so
+   it moved with it when that came down from 12px to 7px */
+.fnote .qrslot { position: absolute; right: 29px; bottom: -24px; display: flex; }
 
 /* The URL centres across the whole band. The QR is the URL itself, so it goes
    at the right of the band below (.fnote); bottom right it would intrude on the
    residents and the page number */
 .urlmap { position: relative; justify-content: center; }
-/* The QR is 49 modules square including its 4-module quiet zone. At 178px a
-   module is 3.63px rather than the whole 3px it held at 147, and the fraction
-   is worth the size: the module is a fifth larger, while the cost is half a
-   pixel of antialiasing at the module edges. The deck's own render decodes at
-   this size, and in the PDF the code is vector and has no pixel grid at all.
-   178 is as large as the gap allows: any more and the four clear modules the
-   standard asks for would run under the card's rule above.
-   The 10px radius is inside the quiet zone (14px), so rounding takes nothing off
-   the code.
-   The white ground belongs to the QR itself; placed straight on the pale blue
-   band it would not scan */
+/* The code carries a 2-module white border rather than the 4 the standard asks
+   for, so that the white stops reading as a sticker laid on the band. The other
+   two modules come off the page: the band either side is #f0f1f5, and above and
+   below the white runs 16px, so the code keeps its quiet zone and only the outer
+   half of it is not white. With no white at all the margin would be two-tone,
+   since the code hangs past the band top and bottom.
+   45 modules at 163px puts one module at 3.63px rather than the whole 3px the
+   code held at 147, and the fraction is worth the size: the module is a fifth
+   larger, while the cost is half a pixel of antialiasing at its edges. The
+   deck's own render decodes at this size, and in the PDF the code is vector and
+   has no pixel grid at all.
+   The ink comes to 149px, as large as the gap allows: any larger and the four
+   clear modules would run under the card's rule above.
+   No rounding. With the border down to 7px, the 10px radius used elsewhere
+   would bite into the finder patterns */
 .qrslot img {
-  display: block; width: 178px; height: 178px; border-radius: var(--r-md);
+  display: block; width: 163px; height: 163px;
 }
 
 /* -- Closing ------------------------------------------------- */
