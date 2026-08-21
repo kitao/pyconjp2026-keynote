@@ -38,7 +38,7 @@ Third-party materials included in this repository, used for citation in the talk
 | P.19 | `assets/quote/dragon_sculpt.jpg` | Dragon phantom beast（3DCG作品） | &copy; Keita Okada / [Villard Inc.](https://www.villard.co.jp/) | 引用 |
 | P.19 | `assets/quote/minecraft_mont.jpg` | Mont-Saint-Michel（Minecraft 内の建築） | &copy; milk猫（[@milk94698164](https://x.com/milk94698164)） | 引用 |
 | P.20 | `assets/quote/noguchi_mikaichi.jpg` | フルカラーのキャラクターイラスト | &copy; Toshio Noguchi | 引用 |
-| P.20 | `assets/pyxel/illust.png` | ドット絵イラストとキャラクター | &copy; Toshio Noguchi、&copy; [@helpcomputer0](https://x.com/helpcomputer0) | 引用 |
+| P.20 | `assets/pyxel/illust.png` | ドット絵のキャラクターイラスト | &copy; Toshio Noguchi、&copy; [@helpcomputer0](https://x.com/helpcomputer0) | 引用 |
 | P.30 | `assets/works/watchdogs.png` | [Watch Dogs Go](https://github.com/LOCOSP/WatchDogsGo) の画面 | &copy; LOCOSP | 引用 |
 | P.30 | `assets/works/pos.png` | [GPD Pocket POS](https://github.com/game-de-it/GPD-Pocket-POS) の画面 | &copy; moto（[@0_game_it](https://x.com/0_game_it)） | MIT |
 | P.30 | `assets/works/penapple.mp4` `assets/works/penapple_poster.png` | [Pen Apple](https://github.com/RuneBlaze/pineapple-pen) のプレイ動画 | &copy; RuneBlaze | 引用 |

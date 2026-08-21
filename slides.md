@@ -392,7 +392,7 @@ paginate: true
 <img class="dots dot" src="assets/pyxel/illust.png" alt="Pyxelで描かれたドット絵のイラスト">
 <p class="chars-big"><img class="dot" src="assets/chr/player.gif" alt=""><img class="dot" src="assets/chr/slime_green.gif" alt=""><img class="dot" src="assets/chr/mummy.gif" alt=""><img class="dot" src="assets/chr/flower.gif" alt=""><img class="dot" src="assets/chr/gem_red.png" alt=""></p>
 </div>
-<figcaption>ドット絵イラストとキャラクター<span class="en block">A pixel-art illustration and characters</span></figcaption>
+<figcaption>ドット絵のキャラクターイラスト<span class="en block">A pixel-art character illustration</span></figcaption>
 <p class="credit">&copy; Toshio Noguchi　&copy; @helpcomputer0</p>
 </figure>
 </div>
