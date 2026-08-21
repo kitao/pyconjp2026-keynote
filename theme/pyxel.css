@@ -1891,15 +1891,18 @@ section.closing .links > a:hover b { text-decoration: underline; text-underline-
    the code hangs off the right; 96px and it rejoins the cards.
    The code is written without its quiet zone (33 modules, not the usual 41), so
    the box is the ink and these offsets can be read straight off the page. The
-   zone is still there: white out to the two outer edges, and 24px between the
-   code and the caption above it. The standard asks for 4 modules (20px); at
-   exactly that the caption reads as pressed onto the code and a blurred
-   photograph has nothing in hand, and much past it the two stop reading as one
-   label.
+   zone is still there: white out to the two outer edges, and 20px between the
+   code and the caption above it — the gap below is set smaller than that,
+   because the caption's line box already leaves 6px under its ink. The 20px is
+   a floor rather than a choice: 4
+   modules at 5px is what the standard asks for, and tighter eats the quiet
+   zone. It still reads a shade open, because 20px is about the height of the
+   caption itself and a space the size of a line reads as a line. The way out
+   of that is the caption's size, not this gap.
    The caption goes above; below, the corner leaves no room */
 section.closing .qrend {
   position: absolute; right: var(--sp-14); bottom: var(--sp-12); margin: 0;
-  display: flex; flex-direction: column-reverse; align-items: center; gap: var(--sp-5);
+  display: flex; flex-direction: column-reverse; align-items: center; gap: var(--sp-3);
 }
 /* 33 modules at 5px each. A fractional module blurs the edges and slows the
    scan, and rounding the corners would bite into the finder patterns */
