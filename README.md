@@ -1,7 +1,7 @@
 # PyCon JP 2026 Keynote / 基調講演
 
-Slides and materials for the PyCon JP 2026 keynote, by Takashi Kitao ([@kitao](https://x.com/kitao)).<br>
-PyCon JP 2026 基調講演（北尾 崇・[@kitao](https://x.com/kitao)）の発表資料です。
+Slides and materials for the PyCon JP 2026 keynote, by [Takashi Kitao](https://x.com/kitao).<br>
+PyCon JP 2026 基調講演（[北尾 崇](https://x.com/kitao)）の発表資料です。
 
 **Let's Play Programming with Pyxel! — Designing the Fun of Making**<br>
 **Pyxelで、プログラミングを遊ぼう！──「楽しく作る」をデザインする**
