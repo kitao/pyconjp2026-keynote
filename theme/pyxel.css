@@ -1310,25 +1310,36 @@ section p.lead .en code {
   border-radius: var(--card-r); padding: 21px 179px 21px 38px; border: none; text-align: center;
   background: var(--pale-n);
   /* The QR overlaps at the right. Put in the flow it would shift the centre of the
-     words left, so it is taken out of it. The band is shorter than the QR
-     (147px), which therefore rides slightly proud of it, like a tag */
+     words left, so it is taken out of it. The band is a good deal shorter than
+     the QR (178px), which therefore hangs below it like a tag */
   position: relative;
 }
-.fnote .qrslot { position: absolute; right: 24px; top: 50%; transform: translateY(-50%); display: flex; }
+/* Hung from the bottom of the band rather than centred in it: the card above
+   ends at 817 and the residents begin at 999, and centred the code would grow
+   into the card. That leaves 181px, and the code's 148 of ink splits the rest
+   17px above against 16px below. 33 will not halve, and the odd pixel goes
+   above, because the card overhead is a large white box while the residents
+   below are small: the eye splits the gap against that weight, and without it
+   the code reads as riding high */
+.fnote .qrslot { position: absolute; right: 24px; bottom: -31.5px; display: flex; }
 
 /* The URL centres across the whole band. The QR is the URL itself, so it goes
    at the right of the band below (.fnote); bottom right it would intrude on the
    residents and the page number */
 .urlmap { position: relative; justify-content: center; }
-/* The QR is 49 modules square including its 4-module quiet zone. At 147px each
-   module is exactly 3px; at 145px it would be 2.96px, blurring the edges and
-   slowing the scan.
-   The 10px radius is inside the quiet zone (12px), so rounding takes nothing off
+/* The QR is 49 modules square including its 4-module quiet zone. At 178px a
+   module is 3.63px rather than the whole 3px it held at 147, and the fraction
+   is worth the size: the module is a fifth larger, while the cost is half a
+   pixel of antialiasing at the module edges. The deck's own render decodes at
+   this size, and in the PDF the code is vector and has no pixel grid at all.
+   178 is as large as the gap allows: any more and the four clear modules the
+   standard asks for would run under the card's rule above.
+   The 10px radius is inside the quiet zone (14px), so rounding takes nothing off
    the code.
    The white ground belongs to the QR itself; placed straight on the pale blue
    band it would not scan */
 .qrslot img {
-  display: block; width: 147px; height: 147px; border-radius: var(--r-md);
+  display: block; width: 178px; height: 178px; border-radius: var(--r-md);
 }
 
 /* -- Closing ------------------------------------------------- */
