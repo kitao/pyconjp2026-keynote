@@ -81,7 +81,7 @@ Third-party materials included in this repository, used for citation in the talk
 Pyxel 本体は MIT ライセンスです → https://github.com/kitao/pyxel
 
 **利用条件は [LICENSE](LICENSE) を参照してください。**
-`demo/`（スライドに登場するゲームの実物）・`tools/`・`trailer/`（予告動画）は **MIT ライセンス**なので、自由に使えます。
+`demo/`（スライドに登場するゲームの実物）・`tools/`・`trailer/`（トレーラー）は **MIT ライセンス**なので、自由に使えます。
 発表資料そのもの（`slides.md`・`theme/`・`assets/`・PDF）は著作権を保持しています。
 
 See [LICENSE](LICENSE) for terms. `demo/` (the actual game shown in the talk), `tools/`, and
@@ -93,7 +93,7 @@ See [LICENSE](LICENSE) for terms. `demo/` (the actual game shown in the talk), `
 
 | ファイル | 内容 | 権利者・出典 | ライセンス |
 |---|---|---|---|
-| `trailer/umplus_j10r.bdf` `trailer/umplus_j12r.bdf` | 予告動画の日本語表示に使う M+ ビットマップフォント（Pyxel 同梱のものと同一） | [M+ FONTS](https://mplusfonts.github.io/) | SIL Open Font License 1.1 |
+| `trailer/umplus_j10r.bdf` `trailer/umplus_j12r.bdf` | トレーラーの日本語表示に使う M+ ビットマップフォント（Pyxel 同梱のものと同一） | [M+ FONTS](https://mplusfonts.github.io/) | SIL Open Font License 1.1 |
 | `assets/font/NotoSansJP-330.woff2` ほか計6本（385・425・460・500・620） | スライド本文の書体。Noto Sans JP を太さごとに静的化し、本文で使う文字にサブセット（`tools/slides/font.sh` で生成） | [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)（全文は `assets/font/OFL-NotoSansJP.txt`） | SIL Open Font License 1.1 |
 | `assets/font/NotoSans-ipa-subset.woff2` | P.11 の発音記号3文字（Noto Sans JP に収録がないため） | [Noto Sans](https://fonts.google.com/noto/specimen/Noto+Sans)（全文は `assets/font/OFL-NotoSans.txt`） | SIL Open Font License 1.1 |
 | `assets/font/NotoSansKR-hangul-subset.woff2` | 「안녕하세요」の5文字（同上） | [Noto Sans KR](https://fonts.google.com/noto/specimen/Noto+Sans+KR)（全文は `assets/font/OFL-NotoSansKR.txt`） | SIL Open Font License 1.1 |

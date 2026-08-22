@@ -8,7 +8,7 @@ See CREDITS.md for the rights holders and sources of each material.
 
 
 ================================================================
-1. コードと予告動画 — MIT License
+1. コードとトレーラー — MIT License
 ================================================================
 
 対象 / Applies to:
@@ -16,8 +16,8 @@ See CREDITS.md for the rights holders and sources of each material.
             The actual game and web runner shown in the talk
   tools/    ビルド・検品・撮影のスクリプト
             Build, inspection, and capture scripts
-  trailer/  予告動画のプログラムと書き出した動画（同梱フォントは第3節）
-            The trailer program and the video it produces (fonts: see 3)
+  trailer/  トレーラーのアプリと書き出した動画（同梱フォントは第3節）
+            The trailer app and the video it produces (fonts: see 3)
 
 Copyright (c) 2026 Takashi Kitao
 

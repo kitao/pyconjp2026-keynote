@@ -1,12 +1,12 @@
 # PyCon JP 2026 Keynote / 基調講演
 
-Slides and materials for "Let’s Play Programming with Pyxel! — Designing the Fun of Making", the PyCon JP 2026 keynote by [Takashi Kitao](https://x.com/kitao). 22 August 2026, 17:05–17:50, Hiroshima International Conference Center, Phoenix Hall.
+Slides and materials for the PyCon JP 2026 keynote "Let’s Play Programming with Pyxel! — Designing the Fun of Making", given by [Takashi Kitao](https://x.com/kitao) on 22 August 2026 at the Hiroshima International Conference Center, Phoenix Hall.
 
-PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！──「楽しく作る」をデザインする』（[北尾 崇](https://x.com/kitao)）の発表資料です。2026年8月22日 17:05–17:50、広島国際会議場 フェニックスホール。
+PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！──「楽しく作る」をデザインする』（[北尾 崇](https://x.com/kitao)、2026年8月22日、広島国際会議場 フェニックスホール）の発表資料です。
 
 - **[Slides / 発表資料](https://kitao.github.io/pyconjp2026-keynote/)** — arrow keys to move, `F` for full screen / 矢印キーでページ送り、`F` で全画面
 - **[PDF](https://kitao.github.io/pyconjp2026-keynote/pyconjp2026-keynote.pdf)** — video pages appear as stills / 動画の面は静止画になります
-- **[Trailer / 予告動画](https://kitao.github.io/pyxel/web/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer)** — 60 seconds, plays in the browser / 60秒、ブラウザでそのまま動きます
+- **[Trailer / トレーラー](https://kitao.github.io/pyxel/web/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer)** — a 60-second Pyxel app, runs in the browser / 60秒の Pyxel アプリ、ブラウザでそのまま動きます
 - **[Pyxel](https://github.com/kitao/pyxel)** — a retro game engine for Python / Python 向けのレトロゲームエンジン
 
 ## Credits and license / 権利とライセンス

@@ -924,7 +924,7 @@ pyxel.show()
 <div class="fb"><div class="fh"><span class="sq c6"><img src="assets/icon/play.svg" alt=""></span><span class="ft-h">ブラウザで実行<span class="en block">Run in the browser</span></span></div><div class="ft"><span>ダウンロードしたファイルをWeb版Pyxelに渡して動かす<span class="en block">It hands the downloaded files to Pyxel for the web and runs them</span></span></div></div>
 </div>
 
-<p class="fnote">共有の準備は必要なく、GitHubで公開されていれば、そのまま遊べる<span class="en block">No setup to share — if it is public on GitHub, it just plays</span><span class="qrslot"><img src="assets/works/qr_trailer.svg" alt="この講演の予告動画を Web Launcher で開くQRコード"></span></p>
+<p class="fnote">共有の準備は必要なく、GitHubで公開されていれば、そのまま遊べる<span class="en block">No setup to share — if it is public on GitHub, it just plays</span><span class="qrslot"><img src="assets/works/qr_trailer.svg" alt="この講演のトレーラーを Web Launcher で開くQRコード"></span></p>
 
 
 ---
