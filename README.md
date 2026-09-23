@@ -4,10 +4,12 @@ Slides and materials for the PyCon JP 2026 keynote "Let’s Play Programming wit
 
 PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！──「楽しく作る」をデザインする』（[北尾 崇](https://x.com/kitao)、2026年8月22日、広島国際会議場 フェニックスホール）の発表資料です。
 
-- **[Slides / 発表資料](https://kitao.github.io/pyconjp2026-keynote/)** — arrow keys to move, `F` for full screen / 矢印キーでページ送り、`F` で全画面
-- **[PDF](https://kitao.github.io/pyconjp2026-keynote/pyconjp2026-keynote.pdf)** — video pages appear as stills / 動画の面は静止画になります
-- **[Trailer / トレーラー](https://kitao.github.io/pyxel/web/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer)** — a 60-second Pyxel app, runs in the browser / 60秒の Pyxel アプリ、ブラウザでそのまま動きます
-- **[Pyxel](https://github.com/kitao/pyxel)** — a retro game engine for Python / Python 向けのレトロゲームエンジン
+- **[Pyxel](https://github.com/kitao/pyxel)** — Retro game engine for Python / Python向けレトロゲームエンジン
+- **[Slides / 講演スライド](https://kitao.github.io/pyconjp2026-keynote/)**
+- **[PDF / スライドのPDF版](https://kitao.github.io/pyconjp2026-keynote/pyconjp2026-keynote.pdf)**
+- **[Trailer / トレーラー](https://kitao.github.io/pyxel/web/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer)** — Runs in your browser / ブラウザで動きます
+
+https://github.com/user-attachments/assets/0f094c22-4ecd-49bb-a604-561b4fcd7505
 
 ## Credits and license / 権利とライセンス
 
