@@ -7,9 +7,8 @@ PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！─�
 - **[Pyxel](https://github.com/kitao/pyxel)** — Retro game engine for Python / Python向けレトロゲームエンジン
 - **[Slides / 講演スライド](https://kitao.github.io/pyconjp2026-keynote/)**
 - **[PDF / スライドのPDF版](https://kitao.github.io/pyconjp2026-keynote/pyconjp2026-keynote.pdf)**
-- **[Trailer / トレーラー](https://kitao.github.io/pyxel/web/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer)** — Runs in your browser / ブラウザで動きます
-
-https://github.com/user-attachments/assets/0f094c22-4ecd-49bb-a604-561b4fcd7505
+- **[Trailer app / トレーラーアプリ](https://kitao.github.io/pyxel/web/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer)** — Runs in your browser / ブラウザで動きます
+- **[Trailer video / トレーラー動画](https://github.com/user-attachments/assets/0f094c22-4ecd-49bb-a604-561b4fcd7505)**
 
 ## Credits and license / 権利とライセンス
 
