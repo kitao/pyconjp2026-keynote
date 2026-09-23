@@ -13,10 +13,6 @@ https://github.com/user-attachments/assets/0f094c22-4ecd-49bb-a604-561b4fcd7505
 
 ## Credits and license / 権利とライセンス
 
-Includes **images owned by third parties**, used for citation. Reuse follows each rights holder's terms — see [`CREDITS.md`](CREDITS.md).
+Includes **images owned by third parties**, used for citation. Reuse follows each rights holder's terms — see [`CREDITS.md`](CREDITS.md). `demo/`, `tools/`, and `trailer/` are MIT licensed; the presentation materials are all rights reserved. See [`LICENSE`](LICENSE).
 
-第三者が権利を持つ画像を含みます。再利用は各権利者の条件に従ってください。一覧は [`CREDITS.md`](CREDITS.md) にあります。
-
-`demo/`, `tools/`, and `trailer/` are MIT licensed; the presentation materials are all rights reserved. See [`LICENSE`](LICENSE).
-
-`demo/`・`tools/`・`trailer/` は MIT ライセンス、発表資料そのものは著作権を保持しています。
+第三者が権利を持つ画像を含みます。再利用は各権利者の条件に従ってください。一覧は [`CREDITS.md`](CREDITS.md) にあります。`demo/`・`tools/`・`trailer/` は MIT ライセンス、発表資料そのものは著作権を保持しています。
