@@ -10,7 +10,7 @@ assert.equal(config.name, 'pyconjp2026-keynote');
 assert.equal(config.workers_dev, false);
 assert.equal(config.preview_urls, false);
 assert.deepEqual(config.routes, [
-  { pattern: url.host + base.slice(0, -1), zone_name: url.host },
+  { pattern: url.host + base.slice(0, -1) + '*', zone_name: url.host },
   { pattern: url.host + base + '*', zone_name: url.host },
 ]);
 assert.equal(config.assets.directory, './dist');
@@ -44,6 +44,7 @@ const allowed = new Set([
     'LICENSE',
     'demo/web/pyxel-run.html',
     'trailer/index.html',
+    'trailer/app/index.html',
     'trailer/trailer.pyxapp',
     'trailer/trailer.mp4',
     'trailer/poster.jpg',

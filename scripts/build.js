@@ -135,11 +135,13 @@ export async function buildSite() {
     for (const [template, output] of [
       ['404.html', '404.html'],
       ['trailer.html', 'trailer/index.html'],
+      ['trailer-app.html', 'trailer/app/index.html'],
     ]) {
       const text = (await readFile(join(root, 'src', template), 'utf8')).replaceAll(
         '{{BASE}}',
         base,
       );
+      await mkdir(dirname(join(site, output)), { recursive: true });
       await writeFile(join(site, output), text);
     }
     const readme = await readFile(join(root, 'README.md'), 'utf8');

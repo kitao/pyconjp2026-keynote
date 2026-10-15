@@ -7,7 +7,7 @@ PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！─�
 - **[Pyxel](https://kitao.dev/pyxel/)** — Retro game engine for Python / Python向けレトロゲームエンジン
 - **[Slides / 講演スライド](https://kitao.dev/pyconjp2026-keynote/slides/)**
 - **[PDF / スライドのPDF版](https://kitao.dev/pyconjp2026-keynote/pyconjp2026-keynote.pdf)**
-- **[Trailer app / トレーラーアプリ](https://kitao.dev/pyxel/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer)** — Runs in your browser / ブラウザで動きます
+- **[Trailer app / トレーラーアプリ](https://kitao.dev/pyconjp2026-keynote/trailer/app/)** — Runs in your browser / ブラウザで動きます
 - **[Trailer video / トレーラー動画](https://kitao.dev/pyconjp2026-keynote/trailer/)**
 
 ## Build and preview / ビルドと確認
@@ -50,6 +50,10 @@ Browser tests use installed Google Chrome. To use Playwright's Chromium instead,
 The publication target is **<https://kitao.dev/pyconjp2026-keynote/>**, using a dedicated Worker with Static Assets. Building prepares the files without publishing them. `wrangler.jsonc` limits the routes to that path; `package.json` holds its canonical URL. When changing the target, update both and run the checks.
 
 公開先は **<https://kitao.dev/pyconjp2026-keynote/>** です。専用 Worker の Static Assets で配信します。ビルドは公開ファイルを生成するだけで、公開先には反映しません。`wrangler.jsonc` の配信範囲と `package.json` の公開 URL を揃え、変更後は検査を実行してください。
+
+The root route ends in a wildcard so Cloudflare matches slashless URLs with query strings. Public files remain in the `pyconjp2026-keynote/` subtree. The trailer app loads its packaged file from this site, using the pinned Pyxel runtime on `kitao.dev`.
+
+Cloudflare が末尾スラッシュなし・クエリ付きの URL にも一致するよう、ルートの指定には末尾のワイルドカードを使います。公開ファイルは `pyconjp2026-keynote/` 配下にまとめています。トレーラーアプリはこのサイトのアプリファイルと、`kitao.dev` の固定した Pyxel ランタイムで起動します。
 
 After approving the target and built content, publish locally with:
 

@@ -16,7 +16,13 @@ test('the README top page opens first and links to the slides and materials', as
   await expect(page.locator('main')).toContainText('広島国際会議場 フェニックスホール');
   await expect(page.locator('svg.bespoke-marp-slide')).toHaveCount(0);
   await expect(page.locator('main')).not.toContainText('npm run');
-  for (const path of ['pyconjp2026-keynote.pdf', 'trailer/', 'CREDITS.md', 'LICENSE']) {
+  for (const path of [
+    'pyconjp2026-keynote.pdf',
+    'trailer/',
+    'trailer/app/',
+    'CREDITS.md',
+    'LICENSE',
+  ]) {
     await expect(page.locator(`a[href="${path}"], a[href="${base}${path}"]`).first()).toBeVisible();
     expect((await request.get(base + path)).status()).toBe(200);
   }
