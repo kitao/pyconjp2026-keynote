@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Trailer — PyCon JP 2026 Keynote</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 1.5rem;
+        background: #101820;
+        color: #f5f5f5;
+        font:
+          1rem/1.8 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 60rem;
+        margin: auto;
+      }
+      h1 {
+        font-size: clamp(1.3rem, 4vw, 2rem);
+      }
+      video {
+        display: block;
+        width: 100%;
+        background: #000;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
+        margin: 1.5rem 0;
+      }
+      a {
+        color: #7dd3fc;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>PyCon JP 2026 Keynote — Trailer</h1>
+      <video
+        src="trailer.mp4"
+        poster="poster.jpg"
+        controls
+        playsinline
+        preload="metadata"
+        aria-label="基調講演トレーラー / Keynote trailer"
+      ></video>
+      <nav aria-label="関連資料 / Materials">
+        <a
+          href="https://kitao.dev/pyxel/launcher/?play=kitao/pyconjp2026-keynote/main/trailer/trailer"
+          target="_blank"
+          rel="noopener"
+          >アプリを遊ぶ / Play the app</a
+        >
+        <a href="trailer.pyxapp" download>アプリを保存 / Download the app</a>
+        <a href="{{BASE}}slides/">講演スライド / Slides</a>
+        <a href="{{BASE}}pyconjp2026-keynote.pdf">PDF</a>
+        <a href="{{BASE}}">トップページ / Home</a>
+      </nav>
+    </main>
+  </body>
+</html>

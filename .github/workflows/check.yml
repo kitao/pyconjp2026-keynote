@@ -1,0 +1,34 @@
+name: Check
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check
+      - run: npm run test:browser
+        env:
+          KEYNOTE_BROWSER_CHANNEL: chromium
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: browser-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 7

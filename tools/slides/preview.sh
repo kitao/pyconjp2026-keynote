@@ -11,7 +11,7 @@
 # appear on every mouse move and get in the way of playing and scrubbing the
 # videos. Nothing is lost, since the slides print the page number themselves.
 cd "$(dirname "$0")/../.."
-npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
+npx --no-install marp slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bespoke --bespoke.osc=false \
   -o index.html </dev/null >/dev/null 2>&1 || exit 1
 

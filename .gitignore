@@ -1,4 +1,10 @@
 # Build intermediates
+.wrangler/
+node_modules/
+dist/
+.keynote-build-*/
+playwright-report/
+test-results/
 .build.html
 .cover.html
 # One page captured for checking (tools/inspect/page.sh)

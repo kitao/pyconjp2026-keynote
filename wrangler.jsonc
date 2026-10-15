@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "pyconjp2026-keynote",
+  "compatibility_date": "2026-10-13",
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "kitao.dev/pyconjp2026-keynote", "zone_name": "kitao.dev" },
+    { "pattern": "kitao.dev/pyconjp2026-keynote/*", "zone_name": "kitao.dev" }
+  ],
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

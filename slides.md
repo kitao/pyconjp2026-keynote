@@ -2,6 +2,7 @@
 marp: true
 theme: pyxel
 paginate: true
+lang: ja-JP
 # 文言はこのファイルを直接書き換えてください。
 # 見た目をまとめて変えるときは theme/pyxel.css を触ります。
 ---
@@ -199,7 +200,7 @@ paginate: true
 <div class="r"><div class="k">同梱ツール<span class="en block">Bundled tools</span></div><div class="v">イメージエディタ／サウンドエディタ<span class="en block">Image editor and sound editor</span></div></div>
 <div class="r"><div class="k">ライセンス<span class="en block">License</span></div><div class="v">MITライセンス<span class="en block">MIT License</span><span class="ymean">商用利用も含め、無料で自由に使える<span class="en block">Free to use, including commercially</span></span></div></div>
 <div class="r"><div class="k">採用実績<span class="en block">Adoption</span></div><div class="v">世界中の教育機関やプログラミング教室で採用<span class="en block">Schools, coding classes, and more, worldwide</span><span class="ymean">慶應義塾大学、大阪大学、Tentoなど<span class="en block">Keio University, Osaka University, Tento, and more</span></span></div></div>
-<div class="r"><div class="k">公式サイト<span class="en block">Website</span></div><div class="v"><a target="_blank" rel="noopener" href="https://github.com/kitao/pyxel">https://github.com/kitao/pyxel</a><span class="en block">Documentation, examples, and source</span></div></div>
+<div class="r"><div class="k">公式サイト<span class="en block">Website</span></div><div class="v"><a target="_blank" rel="noopener" href="https://kitao.dev/pyxel/">https://kitao.dev/pyxel/</a><span class="en block">Documentation, examples, and source</span></div></div>
 </div>
 
 <p><img class="dot" src="assets/pyxel/thanks.png" alt="ユーザー作品のモザイクと、これまでの数"></p>
@@ -707,7 +708,7 @@ pyxel.channels.append(pyxel.Channel())
 # アイデアを形にできると、うれしい
 ## Bringing Your Ideas to Life Feels Great
 
-<p class="lead">みんなのアイデアも形になり、<a target="_blank" rel="noopener" href="https://kitao.github.io/pyxel-user-examples/">Pyxel User Examples</a>に集結 <span class="en block">Other people’s ideas took shape and gathered in Pyxel User Examples</span></p>
+<p class="lead">みんなのアイデアも形になり、<a target="_blank" rel="noopener" href="https://kitao.dev/pyxel/user-examples/">Pyxel User Examples</a>に集結 <span class="en block">Other people’s ideas took shape and gathered in Pyxel User Examples</span></p>
 
 <p class="wall"><video src="assets/works/user_examples_wall.mp4" poster="assets/works/user_examples_wall_poster.png" loop autoplay muted playsinline></video></p>
 
@@ -788,7 +789,7 @@ pyxel.channels.append(pyxel.Channel())
 <span><kbd>Alt</kbd><kbd>3</kbd><span class="tx">直近10秒をGIFで保存 <span class="en block">Last 10s as a GIF</span></span></span>
 </span>
 </span></div></div>
-<div class="ki"><div class="w"><b>作品共有の場</b>：<a target="_blank" rel="noopener" href="https://kitao.github.io/pyxel-user-examples/">Pyxel User Examples</a> <span class="en block">A place to share your work — Pyxel User Examples</span></div></div>
+<div class="ki"><div class="w"><b>作品共有の場</b>：<a target="_blank" rel="noopener" href="https://kitao.dev/pyxel/user-examples/">Pyxel User Examples</a> <span class="en block">A place to share your work — Pyxel User Examples</span></div></div>
 <div class="ki"><div class="w"><b>配布用形式</b>：<span class="nm">Pyxelアプリケーションファイル</span> <span class="en block">A distribution format — the Pyxel application file</span></div></div>
 </div>
 </div>
@@ -880,7 +881,7 @@ pyxel.channels.append(pyxel.Channel())
 <div class="webcode">
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/kitao/pyxel/wasm/pyxel.js"></script>
+<script src="https://kitao.dev/pyxel/2.9.9/pyxel.js"></script>
 
 <pyxel-run script="
 import pyxel
@@ -903,10 +904,10 @@ pyxel.show()
 # URLだけで遊べる究極形へ
 ## The Ultimate Form: Play From a URL Alone
 
-<p class="lead"><a target="_blank" rel="noopener" href="https://kitao.github.io/pyxel/web/launcher/">Pyxel Web Launcher</a> ── GitHubに置いたファイルを、URLで指定して起動する <span class="en block">Pyxel Web Launcher — point a URL at a file on GitHub to launch it</span></p>
+<p class="lead"><a target="_blank" rel="noopener" href="https://kitao.dev/pyxel/launcher/">Pyxel Web Launcher</a> ── GitHubに置いたファイルを、URLで指定して起動する <span class="en block">Pyxel Web Launcher — point a URL at a file on GitHub to launch it</span></p>
 
 <p class="urlmap">
-<span class="sg fx"><b>https://kitao.github.io/pyxel/web/launcher/</b><i>ランチャーの場所<span class="en block">the launcher</span></i></span>
+<span class="sg fx"><b>https://kitao.dev/pyxel/launcher/</b><i>ランチャーの場所<span class="en block">the launcher</span></i></span>
 <span class="sg s1"><b>?run=</b><i>コマンド<span class="en block">command</span></i></span>
 <span class="sg s2"><b>taro</b><i>ユーザー<span class="en block">user</span></i></span>
 <span class="sg sp"><b>/</b></span>
@@ -962,7 +963,7 @@ pyxel.show()
 
 <p class="lead">教室で最初につまずくのは、環境構築 ── ならIDEごとWebアプリにしよう <span class="en block">The first wall in a classroom is setup — so make the IDE itself a web app</span></p>
 
-<p class="applink"><span class="hd"><span class="badge"><img class="ic" src="assets/icon/browser.svg" alt=""></span><span class="ttl"><a class="nm" target="_blank" rel="noopener" href="https://kitao.github.io/pyxel/web/code-maker/">Pyxel Code Maker</a><span class="en block">Pyxel Code Maker</span></span></span><span class="tt kn">ブラウザ上で動く統合開発環境<span class="en block">An IDE that runs in the browser</span></span></p>
+<p class="applink"><span class="hd"><span class="badge"><img class="ic" src="assets/icon/browser.svg" alt=""></span><span class="ttl"><a class="nm" target="_blank" rel="noopener" href="https://kitao.dev/pyxel/code-maker/">Pyxel Code Maker</a><span class="en block">Pyxel Code Maker</span></span></span><span class="tt kn">ブラウザ上で動く統合開発環境<span class="en block">An IDE that runs in the browser</span></span></p>
 <div class="ph wide"><img src="assets/apps/code_maker_lg.png" alt="Pyxel Code Maker の画面。左にPythonのコード、右で実行中"></div>
 
 
@@ -987,7 +988,7 @@ pyxel.show()
 <p class="lead">音楽が文字列で書けるなら ── 曲はQRコードに丸ごと入るのでは？ <span class="en block">If music is just text — then maybe a whole tune fits in a QR code?</span></p>
 
 <div class="col-l">
-<p class="applink"><span class="hd"><span class="badge"><img class="ic" src="assets/icon/note.svg" alt=""></span><span class="ttl"><a class="nm" target="_blank" rel="noopener" href="https://kitao.github.io/pyxel/web/mml-studio/">Pyxel MML Studio</a><span class="en block">Pyxel MML Studio</span></span></span><span class="tt">Pyxel MMLの音楽制作ツール<span class="en block">A music tool for Pyxel MML</span></span></p>
+<p class="applink"><span class="hd"><span class="badge"><img class="ic" src="assets/icon/note.svg" alt=""></span><span class="ttl"><a class="nm" target="_blank" rel="noopener" href="https://kitao.dev/pyxel/mml-studio/">Pyxel MML Studio</a><span class="en block">Pyxel MML Studio</span></span></span><span class="tt">Pyxel MMLの音楽制作ツール<span class="en block">A music tool for Pyxel MML</span></span></p>
 <div class="nt"><b>MML（Music Macro Language）</b>音楽を文字列で書く記法<span class="en block">A notation for writing music as text</span><span class="ex"><code>T120 O4 L8 CDEFGAB&gt;C</code><span class="cm">テンポ120・オクターブ4・8分音符で、ドレミファソラシド<span class="en block">Tempo 120, octave 4, eighth notes — then the scale</span></span></span></div>
 </div>
 <div class="ph wide"><img src="assets/apps/mml_studio_lg.png" alt="Pyxel MML Studio の画面。3チャンネルぶんのMMLが入り、再生中"></div>

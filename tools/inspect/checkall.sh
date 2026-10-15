@@ -11,7 +11,7 @@ TO="${2:-36}"
 
 # Render everything in one pass; calling page.sh per slide spends most of the
 # time starting marp over and over.
-npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
+npx --no-install marp slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css -o .check.html >/dev/null 2>&1 || { echo "conversion failed"; exit 1; }
 python3 tools/slides/hl.py .check.html
 "$CHROME" --headless --disable-gpu \

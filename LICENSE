@@ -16,6 +16,9 @@ See CREDITS.md for the rights holders and sources of each material.
             The actual game and web runner shown in the talk
   tools/    ビルド・検品・撮影のスクリプト
             Build, inspection, and capture scripts
+  scripts/, src/, tests/
+            Web 公開のスクリプト・ページ・検査
+            Web publication scripts, pages, and tests
   trailer/  トレーラーのアプリと書き出した動画（同梱フォントは第3節）
             The trailer app and the video it produces (fonts: see 3)
 

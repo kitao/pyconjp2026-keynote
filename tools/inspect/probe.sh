@@ -7,7 +7,7 @@ cd "$(dirname "$0")/../.." || exit 1
 # Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 
-npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
+npx --no-install marp slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .probe.tmp.html </dev/null >/dev/null 2>&1 \
   || { echo "conversion failed"; exit 1; }
 python3 tools/slides/hl.py .probe.tmp.html

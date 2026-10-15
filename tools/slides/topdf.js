@@ -5,9 +5,8 @@
 // system font, or not at all. Driving the same Chrome through the DevTools
 // protocol lets us wait for document.fonts.ready first.
 //
-// Called from build.sh, which installs puppeteer-core into a temporary folder
-// and points NODE_PATH at it, so nothing is added to the repository.
-const puppeteer = require("puppeteer-core");
+// Called from build.sh, using the dependency pinned in package-lock.json.
+import puppeteer from "puppeteer-core";
 
 const CHROME = process.env.CHROME ||
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";

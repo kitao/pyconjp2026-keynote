@@ -9,7 +9,7 @@ BAND="${1:-4}"
 SCALE=2
 mkdir -p render/hi
 
-npx --yes @marp-team/marp-cli@latest slides.md --no-stdin --html --allow-local-files \
+npx --no-install marp slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .all.tmp.html </dev/null >/dev/null 2>&1 \
   || { echo "conversion failed"; exit 1; }
 python3 tools/slides/hl.py .all.tmp.html
