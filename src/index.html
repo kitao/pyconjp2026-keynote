@@ -56,16 +56,20 @@
       .support-badges {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         align-items: center;
         gap: 8px;
-        margin-bottom: 24px;
+        margin: 0 0 32px;
       }
-      .support-badges a,
+      .support-badges a {
+        display: inline-flex;
+        max-width: 100%;
+      }
       .support-badges img {
         display: block;
-      }
-      .support-badges img {
+        width: auto;
         height: 20px;
+        object-fit: contain;
         max-width: 100%;
       }
       ul {
@@ -90,6 +94,18 @@
         color: #dce7f5;
         font-family: inherit;
         font-size: 0.875em;
+      }
+      @media (max-width: 880px) {
+        .support-badges {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          justify-items: center;
+          max-width: 400px;
+          margin-inline: auto;
+        }
+        .support-badges a:last-child {
+          grid-column: 1 / -1;
+        }
       }
       @media (max-width: 480px) {
         main {
