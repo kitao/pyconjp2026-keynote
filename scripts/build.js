@@ -157,12 +157,10 @@ export async function buildSite() {
       await writeFile(join(site, output), text);
     }
     const readme = await readFile(join(root, 'README.md'), 'utf8');
-    const credits = readme.slice(readme.indexOf('## Credits and license /'));
-    const introduction = readme.split('## Build and preview /')[0];
-    if (!credits.startsWith('## Credits and license /'))
+    if (!readme.includes('\n## Credits and license /'))
       throw new Error('Missing README credits section.');
     const content = marked
-      .parse(introduction + '\n' + credits)
+      .parse(readme)
       .replaceAll(url.href, base)
       .replaceAll(
         'https://kitao.github.io/pyconjp2026-keynote/pyconjp2026-keynote.pdf',
