@@ -16,13 +16,14 @@ save = "--save" in sys.argv
 A = args[0] if len(args) > 0 else "render/hi_before"
 B = args[1] if len(args) > 1 else "render/hi"
 
-pages = sorted(
-    int(os.path.basename(f)[1:-4]) for f in glob.glob(f"{B}/P*.png")
-)
+pages = sorted({
+    int(os.path.basename(f)[1:-4])
+    for folder in (A, B) for f in glob.glob(f"{folder}/P*.png")
+})
 if save:
     os.makedirs("render/diff", exist_ok=True)
 
-SCALE = 2          # render/hi is 2x; probe coordinates are in 1920x1080
+SLIDE_W, SLIDE_H = 1920, 1080  # Probe coordinates; inputs can be 1x or 2x.
 
 # Moving elements (GIFs, videos) land on a different frame every capture.
 # Excluding a whole slide would hide real changes on it, so instead each diff
@@ -40,7 +41,7 @@ except Exception:
 changed, same, missing = [], [], []
 for p in pages:
     fa, fb = f"{A}/P{p}.png", f"{B}/P{p}.png"
-    if not os.path.exists(fa):
+    if not os.path.exists(fa) or not os.path.exists(fb):
         missing.append(p)
         continue
     a = np.asarray(Image.open(fa).convert("RGB")).astype(np.int16)
@@ -59,9 +60,10 @@ for p in pages:
     outside = n
     if p in boxes:
         mask = np.zeros(d.shape, dtype=bool)
+        scale_x, scale_y = a.shape[1] / SLIDE_W, a.shape[0] / SLIDE_H
         for bx0, by0, bx1, by1 in boxes[p]:
-            mask[max(0, int(by0 * SCALE)):int(by1 * SCALE),
-                 max(0, int(bx0 * SCALE)):int(bx1 * SCALE)] = True
+            mask[max(0, int(by0 * scale_y)):int(by1 * scale_y),
+                 max(0, int(bx0 * scale_x)):int(bx1 * scale_x)] = True
         outside = int(((d > 0) & ~mask).sum())
     msg = f"{n:,}px differ  bbox x{bbox[0]}-{bbox[2]} y{bbox[1]}-{bbox[3]}"
     if outside != n:

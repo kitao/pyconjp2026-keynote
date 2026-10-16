@@ -8,10 +8,11 @@ The story of the interaction is: place the dots, set the parameters, listen.
 """
 
 import pyxel
+from pathlib import Path
 
 from edrive import Driver
 
-RES = "../../demo/game/game.pyxres"
+RES = str(Path(__file__).resolve().parents[2] / "demo/game/game.pyxres")
 OUT = "g4_sound"
 SCALE = 5
 

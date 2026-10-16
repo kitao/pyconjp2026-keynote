@@ -4,7 +4,9 @@
 #   ./renderall.sh 4        slides per batch (default 4)
 # Starting Chrome is slow, so several slides are stacked and captured in one
 # go, then cut apart afterwards.
+set -eu
 cd "$(dirname "$0")/../.." || exit 1
+trap 'rm -f .all.tmp.html .all.tmp1.html .band_*.png' EXIT
 BAND="${1:-4}"
 SCALE=2
 mkdir -p render/hi
@@ -44,7 +46,7 @@ svg[data-marpit-svg]{display:block;width:1920px;height:1080px}</style>
                     f"--force-device-scale-factor={scale}",
                     f"--window-size=1920,{1080*n}", "--virtual-time-budget=20000",
                     f"--screenshot={out}", f"file://{os.getcwd()}/.all.tmp1.html"],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     im = Image.open(out)
     for k in range(n):
         pg = start + k

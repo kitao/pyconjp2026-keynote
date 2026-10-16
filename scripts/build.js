@@ -91,6 +91,8 @@ export async function buildSite() {
     run(process.env.PYTHON || 'python3', ['tools/slides/hl.py', htmlPath]);
     const keys = await readFile(join(root, 'tools/slides/keys.js'), 'utf8');
     let html = addFavicon(relocate(await readFile(htmlPath, 'utf8'), url), base);
+    // Internal links stay on the current host in both preview and production.
+    html = html.replaceAll(`href="${url.href}`, `href="${base}`);
     html = html.replace('</body>', `<script>\n${keys}</script></body>`);
     html = html.replace(
       '</head>',
@@ -123,6 +125,7 @@ export async function buildSite() {
       'LICENSE',
       'demo/web/pyxel-run.html',
       'trailer/trailer.pyxapp',
+      'trailer/LICENSE-MPLUS.txt',
       'trailer/trailer.mp4',
       'trailer/poster.jpg',
     ]) {

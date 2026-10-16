@@ -2,6 +2,25 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { cloudflare } from '../scripts/cloudflare.js';
 
+test('commands cannot turn off the keychain or persist an unsafe storage preference', () => {
+  for (const args of [
+    ['login', '--no-use-keyring'],
+    ['login', '--use-keyring=false'],
+    ['login', '--use-keyring', 'false'],
+    ['auth', 'keyring', 'disable'],
+  ]) {
+    let invoked = false;
+    assert.throws(
+      () =>
+        cloudflare(args, {}, () => {
+          invoked = true;
+        }),
+      /keychain/,
+    );
+    assert.equal(invoked, false);
+  }
+});
+
 test('API credentials stop the command without exposing their values', () => {
   for (const name of ['CLOUDFLARE_API_TOKEN', 'CF_API_TOKEN', 'CLOUDFLARE_API_KEY', 'CF_API_KEY']) {
     const value = 'synthetic-secret-for-test';

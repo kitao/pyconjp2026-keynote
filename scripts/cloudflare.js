@@ -5,6 +5,17 @@ import { fileURLToPath } from 'node:url';
 
 export function cloudflare(args, env = process.env, spawn = spawnSync) {
   if (
+    args.some(
+      (arg, index) =>
+        arg === '--no-use-keyring' ||
+        arg === '--use-keyring=false' ||
+        (arg === '--use-keyring' && args[index + 1] === 'false'),
+    ) ||
+    args.slice(0, 3).join(' ') === 'auth keyring disable'
+  ) {
+    throw new Error('Disabling OS-keychain-backed authentication is not allowed.');
+  }
+  if (
     ['CLOUDFLARE_API_TOKEN', 'CF_API_TOKEN', 'CLOUDFLARE_API_KEY', 'CF_API_KEY'].some(
       (name) => env[name],
     )

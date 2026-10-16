@@ -2,7 +2,10 @@
 # Dump the computed styles of every slide into render/probe.json.
 # This is the raw material for comparing values across slides that an image
 # cannot show: type size, weight and colour, rule width and colour, link colour.
+set -eu
 cd "$(dirname "$0")/../.." || exit 1
+mkdir -p render
+trap 'rm -f .probe.tmp.html .probe.tmp1.html .probe.dom.html' EXIT
 
 # Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"

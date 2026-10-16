@@ -1,12 +1,15 @@
 #!/bin/sh
 # Measure a slide's header area in the DOM:
 #   ./measure-header.sh 16 4 7   (slide / English title offset / logo offset)
+set -eu
 cd "$(dirname "$0")/../.."
+trap 'rm -f .p.html .p1.html' EXIT
 
 # Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 npx --no-install marp slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .p.html </dev/null >/dev/null 2>&1 || exit 1
+python3 tools/slides/hl.py .p.html
 python3 - "$1" << 'PYEOF'
 import sys
 n=int(sys.argv[1]); h=open(".p.html").read()

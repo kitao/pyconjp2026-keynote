@@ -2,7 +2,7 @@
 
 ## Build and preview / ビルドと確認
 
-Node.js 24+ and Python 3 are required. / Node.js 24 以降と Python 3 が必要です。
+Node.js 24+ and Python 3.9+ are required. / Node.js 24 以降と Python 3.9 以降が必要です。
 
 ```sh
 npm ci
@@ -22,6 +22,10 @@ npm run deploy:check   # Validate the Cloudflare configuration without publishin
 Browser tests use installed Google Chrome. To use Playwright's Chromium instead, run `npx playwright install chromium` and set `KEYNOTE_BROWSER_CHANNEL=chromium`.
 
 ブラウザ検査はインストール済みの Google Chrome を使います。Playwright の Chromium を使う場合は `npx playwright install chromium` で準備し、`KEYNOTE_BROWSER_CHANNEL=chromium` を指定してください。
+
+Browser tests start their own server on port 4174, separate from the preview on 4173. Set `KEYNOTE_BROWSER_PORT` if that test port is occupied.
+
+ブラウザ検査は、プレビュー用の 4173 と別に、4174 で専用サーバーを起動します。検査用ポートが使用中の場合は `KEYNOTE_BROWSER_PORT` を指定してください。
 
 | Source / 元資料                           | Purpose / 用途                                                                        |
 | ----------------------------------------- | ------------------------------------------------------------------------------------- |

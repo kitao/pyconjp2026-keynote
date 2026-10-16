@@ -72,11 +72,8 @@
     if (el) setTimeout(function () { el.blur(); }, 0);
   }, true);
 
-  // Take them out of the tab order as well, so Tab shows no focus ring
-  window.addEventListener('load', function () {
-    var list = document.querySelectorAll('section a, section video, section audio');
-    for (var i = 0; i < list.length; i++) list[i].tabIndex = -1;
-  });
+  // Keep keyboard access to links and media. Marp hides inactive slides, so
+  // their controls are already excluded from the browser's tab order.
 
   // -- L for a laser pointer: a dot of light at the mouse position --
   var dot = null;

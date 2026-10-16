@@ -1,12 +1,16 @@
 #!/bin/sh
 # Stack the given slides into one image:  ./shot.sh <name> 1 8 18 ...
+set -eu
 cd "$(dirname "$0")/../.."
+mkdir -p render
+trap 'rm -f .p.html .p1.html' EXIT
 
 # Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 OUT="$1"; shift
 npx --no-install marp slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css --template bare -o .p.html </dev/null >/dev/null 2>&1 || exit 1
+python3 tools/slides/hl.py .p.html
 python3 - "$@" << 'PYEOF'
 import sys
 ns=[int(x) for x in sys.argv[1:]]

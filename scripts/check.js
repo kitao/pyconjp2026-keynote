@@ -46,6 +46,7 @@ const allowed = new Set([
     'trailer/index.html',
     'trailer/app/index.html',
     'trailer/trailer.pyxapp',
+    'trailer/LICENSE-MPLUS.txt',
     'trailer/trailer.mp4',
     'trailer/poster.jpg',
   ].map((path) => `${directory}/${path}`),

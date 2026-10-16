@@ -7,7 +7,7 @@ Third-party materials included in this repository, used for citation in the talk
 **Any reuse must follow the terms of the respective rights holders.**
 
 スライドのページ順に並べています。ページ番号は
-[公開版のスライド](https://kitao.github.io/pyconjp2026-keynote/)と同じ通し番号です。
+[公開版のスライド](https://kitao.dev/pyconjp2026-keynote/slides/)と同じ通し番号です。
 
 ---
 
@@ -28,13 +28,6 @@ Third-party materials included in this repository, used for citation in the talk
 | P.16・P.17 | `assets/logo/tic80.png` | TIC-80 のロゴ | Vadim Grigoruk | 商標 |
 | P.16・P.17 | `assets/logo/pico8_plate.png` | PICO-8 のロゴ | Lexaloffle Games | 商標 |
 | P.18 | `assets/logo/python.svg` | Python のロゴ | Python Software Foundation | 商標 |
-| P.34・P.35 | `assets/logo/pyodide.png` | Pyodide のロゴ | Pyodide contributors | 商標 |
-| P.35 | `assets/logo/brython.svg` | Brython のロゴ | Brython project | 商標 |
-| P.35 | `assets/logo/rust.png` | Rust のロゴ | Rust Foundation | 商標 |
-| P.35 | `assets/logo/wasm.png` | WebAssembly のロゴ | WebAssembly Community Group | 商標 |
-| P.35 | `assets/logo/maturin.svg` | maturin のロゴ | PyO3 project | 商標 |
-| P.35 | `assets/logo/sdl.svg` | SDL のロゴ | Simple DirectMedia Layer | 商標 |
-| P.38・P.40 | `assets/logo/vscode.svg` | Visual Studio Code のロゴ | Microsoft Corporation | 商標 |
 | P.19 | `assets/quote/dragon_sculpt.jpg` | Dragon phantom beast（3DCG作品） | &copy; Keita Okada / [Villard Inc.](https://www.villard.co.jp/) | 引用 |
 | P.19 | `assets/quote/minecraft_mont.jpg` | Mont-Saint-Michel（Minecraft 内の建築） | &copy; milk猫（[@milk94698164](https://x.com/milk94698164)） | 引用 |
 | P.20 | `assets/quote/noguchi_mikaichi.jpg` | フルカラーのキャラクターイラスト | &copy; Toshio Noguchi | 引用 |
@@ -42,6 +35,13 @@ Third-party materials included in this repository, used for citation in the talk
 | P.30 | `assets/works/watchdogs.png` | [Watch Dogs Go](https://github.com/LOCOSP/WatchDogsGo) の画面 | &copy; LOCOSP | 引用 |
 | P.30 | `assets/works/pos.png` | [GPD Pocket POS](https://github.com/game-de-it/GPD-Pocket-POS) の画面 | &copy; moto（[@0_game_it](https://x.com/0_game_it)） | MIT |
 | P.30 | `assets/works/penapple.mp4` `assets/works/penapple_poster.png` | [Pen Apple](https://github.com/RuneBlaze/pineapple-pen) のプレイ動画 | &copy; RuneBlaze | 引用 |
+| P.34・P.35 | `assets/logo/pyodide.png` | Pyodide のロゴ | Pyodide contributors | 商標 |
+| P.35 | `assets/logo/brython.svg` | Brython のロゴ | Brython project | 商標 |
+| P.35 | `assets/logo/rust.png` | Rust のロゴ | Rust Foundation | 商標 |
+| P.35 | `assets/logo/wasm.png` | WebAssembly のロゴ | WebAssembly Community Group | 商標 |
+| P.35 | `assets/logo/maturin.svg` | maturin のロゴ | PyO3 project | 商標 |
+| P.35 | `assets/logo/sdl.svg` | SDL のロゴ | Simple DirectMedia Layer | 商標 |
+| P.38・P.40 | `assets/logo/vscode.svg` | Visual Studio Code のロゴ | Microsoft Corporation | 商標 |
 | P.42 | `assets/works/edu_nuitducode.png` | Nuit du Code 2026 の告知画像 | [nuitducode.net](https://www.nuitducode.net/) | 引用 |
 | P.42 | `assets/works/edu_sgj.jpg` | Scientific Game Jam 2025 東京の告知画像 | 東京国際工科専門職大学 | 引用 |
 | P.47 | `assets/hardware/famicom.png` | ファミリーコンピュータ（1983）の本体写真 | Evan-Amos / Wikimedia Commons | Public domain |
@@ -93,7 +93,7 @@ See [LICENSE](LICENSE) for terms. `demo/` (the actual game shown in the talk), `
 
 | ファイル | 内容 | 権利者・出典 | ライセンス |
 |---|---|---|---|
-| `trailer/umplus_j10r.bdf` `trailer/umplus_j12r.bdf` | トレーラーの日本語表示に使う M+ ビットマップフォント（Pyxel 同梱のものと同一） | [M+ FONTS](https://mplusfonts.github.io/) | SIL Open Font License 1.1 |
+| `trailer/umplus_j10r.bdf` `trailer/umplus_j12r.bdf` | トレーラーの日本語表示に使う M+ ビットマップフォント（Pyxel 同梱のものと同一） | COZ / M+ BITMAP FONTS | M+ Bitmap Fonts License（[同梱の全文](trailer/LICENSE-MPLUS.txt)・[元の配布文書](https://sources.debian.org/src/xfonts-mplus/1%3A2.2.4-6/LICENSE_E)） |
 | `assets/font/NotoSansJP-330.woff2` ほか計6本（385・425・460・500・620） | スライド本文の書体。Noto Sans JP を太さごとに静的化し、本文で使う文字にサブセット（`tools/slides/font.sh` で生成） | [Noto Sans JP](https://fonts.google.com/noto/specimen/Noto+Sans+JP)（全文は `assets/font/OFL-NotoSansJP.txt`） | SIL Open Font License 1.1 |
 | `assets/font/NotoSans-ipa-subset.woff2` | P.11 の発音記号3文字（Noto Sans JP に収録がないため） | [Noto Sans](https://fonts.google.com/noto/specimen/Noto+Sans)（全文は `assets/font/OFL-NotoSans.txt`） | SIL Open Font License 1.1 |
 | `assets/font/NotoSansKR-hangul-subset.woff2` | 「안녕하세요」の5文字（同上） | [Noto Sans KR](https://fonts.google.com/noto/specimen/Noto+Sans+KR)（全文は `assets/font/OFL-NotoSansKR.txt`） | SIL Open Font License 1.1 |

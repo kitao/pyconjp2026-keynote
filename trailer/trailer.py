@@ -1,8 +1,8 @@
 # title: PyCon JP 2026 Keynote Trailer
 # author: Takashi Kitao
 # desc: A 60-second trailer for the PyCon JP 2026 keynote
-# site: https://kitao.github.io/pyconjp2026-keynote/
-# license: MIT (bundled M+ fonts: SIL OFL 1.1)
+# site: https://kitao.dev/pyconjp2026-keynote/
+# license: MIT (bundled M+ fonts: M+ Bitmap Fonts License)
 # version: 1.0
 
 """Trailer for the PyCon JP 2026 keynote.

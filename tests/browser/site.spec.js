@@ -64,10 +64,73 @@ test('direct slide URLs and the relocated web-demo link work', async ({ page }) 
   await expect(page.locator(active)).toBeVisible();
   await expect(page.locator(active + ' a')).toHaveAttribute(
     'href',
-    project.homepage + 'demo/web/pyxel-run.html',
+    base + 'demo/web/pyxel-run.html',
   );
   await page.goto(slides + '#52');
   await expect(page.locator(active)).toContainText('Pyxel');
+});
+
+test('every slide uses the bundled fonts without OS-dependent glyph fallbacks', async ({
+  page,
+}) => {
+  await page.goto(slides);
+  await page.evaluate(() => document.fonts.ready);
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await cdp.send('CSS.enable');
+  const { root } = await cdp.send('DOM.getDocument');
+  for (let number = 1; number <= 52; number++) {
+    await page.evaluate((number) => (location.hash = '#' + number), number);
+    await expect(page.locator(active)).toHaveAttribute('id', String(number));
+    await page.evaluate(() => document.fonts.ready);
+    const count = await page.locator(active).evaluate((section, number) => {
+      const nodes = [...section.querySelectorAll('*')].filter((node) =>
+        [...node.childNodes].some((child) => child.nodeType === 3 && child.textContent.trim()),
+      );
+      nodes.forEach((node, index) => node.setAttribute('data-font-check', `${number}-${index}`));
+      return nodes.length;
+    }, number);
+    for (let index = 0; index < count; index++) {
+      const { nodeId } = await cdp.send('DOM.querySelector', {
+        nodeId: root.nodeId,
+        selector: `[data-font-check="${number}-${index}"]`,
+      });
+      const { fonts } = await cdp.send('CSS.getPlatformFontsForNode', { nodeId });
+      expect(fonts.length, `Slide ${number}, text ${index}`).toBeGreaterThan(0);
+      expect(
+        fonts.every((font) => font.isCustomFont && font.familyName.startsWith('Noto')),
+        `Slide ${number}, text ${index}: ${JSON.stringify(fonts)}`,
+      ).toBe(true);
+    }
+  }
+});
+
+test('Tab and Enter reach slide links and video controls', async ({ page }) => {
+  await page.goto(slides + '#52');
+  const links = page.locator(active + ' a');
+  await expect(links).toHaveCount(2);
+  await page.keyboard.press('Tab');
+  await expect(links.nth(0)).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(links.nth(1)).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(links.nth(0)).toBeFocused();
+
+  await page.goto(slides + '#36');
+  const demo = page.locator(active + ' a');
+  await page.keyboard.press('Tab');
+  await expect(demo).toBeFocused();
+  const opened = page.waitForEvent('popup');
+  await page.keyboard.press('Enter');
+  const popup = await opened;
+  await popup.waitForURL(new RegExp(base + 'demo/web/pyxel-run$'), {
+    waitUntil: 'domcontentloaded',
+  });
+  await popup.close();
+
+  await page.goto(slides + '#26');
+  await page.keyboard.press('Tab');
+  await expect(page.locator(active + ' video').first()).toBeFocused();
 });
 
 test('HTML canonicalization preserves queries and unknown/source paths return 404', async ({

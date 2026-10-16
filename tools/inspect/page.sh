@@ -1,6 +1,9 @@
 #!/bin/sh
 # Render a single slide to an image:  ./page.sh 8  ->  render/P8.png
+set -eu
 cd "$(dirname "$0")/../.."
+mkdir -p render
+trap 'rm -f .p.html .p1.html' EXIT
 
 # Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"

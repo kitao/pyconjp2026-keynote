@@ -4,7 +4,7 @@ The page number and the residents in the footer are excluded. It looks at the
 painted pixels rather than the DOM rectangles, so rounded corners and shadows
 count. Used to refresh the measured list kept in theme/pyxel.css.
 
-  python3 tools/bottom.py
+  python3 tools/inspect/bottom.py
 """
 
 import glob, os, json
@@ -22,7 +22,7 @@ SLIDE_W, SLIDE_H = 1920, 1080
 LIMIT = 940                # Bottom of the type area, as used for text
 
 try:
-    motion = {int(k) for k in json.load(open("render/motion.json"))}
+    motion = {r["p"] for r in json.load(open("render/probe.json")) if r.get("t") == "motion"}
 except Exception:
     motion = set()
 

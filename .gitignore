@@ -1,6 +1,7 @@
 # Build intermediates
 .wrangler/
 node_modules/
+.venv/
 dist/
 .keynote-build-*/
 playwright-report/
@@ -30,8 +31,7 @@ render/
 
 # Capture and export intermediates; the finished files live in assets/, demo/ and trailer/
 tools/capture/fr_*/
-tools/capture/g4_*
-tools/capture/g5_*
+tools/capture/g[1-5]_*
 tools/capture/snd_*.wav
 tools/capture/bgm.wav
 tools/capture/_job_tmp*

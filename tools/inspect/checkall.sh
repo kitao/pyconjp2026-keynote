@@ -1,22 +1,26 @@
 #!/bin/sh
 # ./checkall.sh [from [to]]   Inspect a range of slides and list only the ones
 # worth a closer look. check.sh examines one slide in detail; this one tells
-# you which slides to examine. Defaults to 1-36 (up to the start of chapter 3).
+# you which slides to examine. Defaults to every slide.
+set -eu
 cd "$(dirname "$0")/../.." || exit 1
+trap 'rm -f .check.html .check.pdf .check-p*.png' EXIT
 
 # Chrome is looked for in the default location; set CHROME to override it.
 CHROME="${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 FROM="${1:-1}"
-TO="${2:-36}"
+TO="${2:-}"
 
 # Render everything in one pass; calling page.sh per slide spends most of the
 # time starting marp over and over.
 npx --no-install marp slides.md --no-stdin --html --allow-local-files \
   --theme-set theme/pyxel.css -o .check.html >/dev/null 2>&1 || { echo "conversion failed"; exit 1; }
 python3 tools/slides/hl.py .check.html
-"$CHROME" --headless --disable-gpu \
-  --no-pdf-header-footer --virtual-time-budget=20000 \
-  --print-to-pdf=.check.pdf "file://$PWD/.check.html" >/dev/null 2>&1
+if [ -z "$TO" ]; then
+  TO="$(python3 -c 'import re; print(len(re.findall(r"<section\b", open(".check.html").read())))')"
+fi
+CHROME="$CHROME" node tools/slides/topdf.js "$PWD/.check.html" .check.pdf
+python3 tools/slides/checkpdf.py .check.pdf
 pdftoppm -r 96 -png -f "$FROM" -l "$TO" .check.pdf .check-p >/dev/null 2>&1
 
 python3 - "$FROM" "$TO" << 'PYEOF'
@@ -53,7 +57,9 @@ for pg in range(frm, to + 1):
         continue
     a = load(pg)
     if a is None:
-        continue
+        raise SystemExit(f"missing rendered slide: P.{pg}")
+    if a.shape[:2] != (1080, 1920):
+        raise SystemExit(f"unexpected rendered dimensions on P.{pg}: {a.shape[:2]}")
     ink = (np.abs(a - 255).sum(axis=2) > 26)
 
     # Any ink outside the type area, left or right

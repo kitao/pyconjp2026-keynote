@@ -4,7 +4,7 @@ The type area and the headings can line up perfectly and the deck can still
 feel unsteady when paged through, if the gap from the heading rule to the lead
 line, or from the lead line to the body, differs from slide to slide.
 
-  python3 tools/gaps.py
+  python3 tools/inspect/gaps.py
 """
 
 import json

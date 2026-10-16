@@ -49,6 +49,8 @@ PORT = int(os.environ.get("PORT") or 8080)
 # Every absolute URL these pages reach for, and the path that answers it once
 # this server is the only thing listening. Order matters: longest prefix first.
 REWRITES = (
+    ("https://kitao.dev/pyconjp2026-keynote/", "/"),
+    ("https://kitao.dev/pyxel/", "/pyxel/web/"),
     ("https://kitao.github.io/pyconjp2026-keynote/", "/"),
     ("https://kitao.github.io/pyxel-user-examples/", "/pyxel-user-examples/"),
     ("https://kitao.github.io/pyxel/web/", "/pyxel/web/"),
@@ -85,6 +87,8 @@ for _suffix, _type in (
 def local_path(url_path):
     """Map a request path to a file, or None if it is outside what we serve."""
     path = urllib.parse.unquote(url_path.split("?", 1)[0].split("#", 1)[0])
+    if any(part.startswith(".") for part in path.split("/") if part):
+        return None
     if path.startswith("/api-github/"):
         return None
     if path.startswith("/gh/"):
@@ -108,8 +112,12 @@ def local_path(url_path):
     if base is None:
         return None
     base = base.resolve()
-    full = base.joinpath(*[p for p in rest if p and p != ".."]).resolve()
-    return full if full == base or full.is_relative_to(base) else None
+    full = base.joinpath(*[p for p in rest if p]).resolve()
+    if not full.is_relative_to(base):
+        return None
+    if any(part.startswith(".") for part in full.relative_to(base).parts):
+        return None
+    return full
 
 
 # Where a URL may be swapped inside HTML: the value of an attribute, or a CSS
@@ -123,6 +131,8 @@ SCRIPT_BLOCK = re.compile(r"(<script\b[^>]*>)(.*?)(</script\s*>)", re.S | re.I)
 
 
 def swap(text):
+    # Offline demos intentionally use the working copy, just like /gh/ refs.
+    text = re.sub(r"https://kitao\.dev/pyxel/\d+\.\d+\.\d+/", "/pyxel/wasm/", text)
     for url, path in REWRITES:
         text = text.replace(url, path)
     return text
@@ -168,7 +178,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
             # Without the slash the browser resolves ../ one level too high.
             if not self.path.split("?", 1)[0].endswith("/"):
                 self.send_response(301)
-                self.send_header("Location", self.path.split("?", 1)[0] + "/")
+                request = urllib.parse.urlsplit(self.path)
+                self.send_header("Location", urllib.parse.urlunsplit(
+                    ("", "", request.path + "/", request.query, "")))
                 self.send_header("Content-Length", "0")
                 self.end_headers()
                 return
@@ -198,7 +210,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         # A 200 says nothing; a miss is the only thing worth seeing on stage.
         if len(args) > 1 and str(args[1]) != "200":
-            sys.stderr.write("  %s %s\n" % (args[1], args[0]))
+            # Query strings can contain credentials or shared application data.
+            sys.stderr.write("  %s %s\n" % (args[1], urllib.parse.urlsplit(self.path).path))
 
 
 def draw_qr(query):

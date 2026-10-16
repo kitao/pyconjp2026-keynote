@@ -1,8 +1,10 @@
-# Python packages used by the scripts under tools/ (capture and asset builds).
+# Python packages used by tools/ (capture, asset builds, and inspection).
+# These tools need Python 3.11+ for Pyxel 2.9.9.
 # Two other tools are needed as well:
 #   Google Chrome - exporting and inspecting the slides (PDF, page images,
 #                   measured dimensions). Set CHROME to override its location.
 #   ffmpeg        - assembling the videos
 #   python3 -m venv .venv && .venv/bin/pip install -r tools/requirements.txt
-pyxel>=2.9
+pyxel>=2.9.9
 pillow>=10
+numpy>=1.26

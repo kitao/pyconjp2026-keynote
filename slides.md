@@ -88,7 +88,7 @@ lang: ja-JP
 
 <div class="pair fit">
 <figure>
-<img src="assets/quote/job_ad.png" alt="#4の求人票">
+<img src="assets/quote/job_ad.png" alt="前のスライドの求人票">
 </figure>
 <figure>
 <img class="dot" src="assets/quote/smb_1-1.png" alt="スーパーマリオブラザーズ 1-1">

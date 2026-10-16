@@ -6,10 +6,11 @@ it, and repeat.
 """
 
 import pyxel
+from pathlib import Path
 
 from edrive import Driver
 
-RES = "../../demo/game/game.pyxres"
+RES = str(Path(__file__).resolve().parents[2] / "demo/game/game.pyxres")
 OUT = "g4_image"
 SCALE = 5
 
