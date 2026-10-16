@@ -1,5 +1,11 @@
 # PyCon JP 2026 Keynote / 基調講演
 
+<p class="support-badges">
+  <a href="https://github.com/sponsors/kitao"><img src="https://img.shields.io/badge/GitHub%20Sponsors-ea4aaa?style=social&amp;logo=githubsponsors" alt="GitHub Sponsors" height="20"></a>
+  <a href="https://www.patreon.com/tkitao"><img src="https://img.shields.io/badge/Support%20me%20on%20Patreon-000000?style=social&amp;logo=patreon" alt="Patreon" height="20"></a>
+  <a href="https://ko-fi.com/H2H27VDKD"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Ko-fi" height="20" width="149"></a>
+</p>
+
 Slides and materials for the PyCon JP 2026 keynote "Let’s Play Programming with Pyxel! — Designing the Fun of Making", given by [Takashi Kitao](https://x.com/kitao) on 22 August 2026 at the Hiroshima International Conference Center, Phoenix Hall.
 
 PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！──「楽しく作る」をデザインする』（[北尾 崇](https://x.com/kitao)、2026年8月22日、広島国際会議場 フェニックスホール）の発表資料です。

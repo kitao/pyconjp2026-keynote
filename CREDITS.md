@@ -98,3 +98,9 @@ See [LICENSE](LICENSE) for terms. `demo/` (the actual game shown in the talk), `
 | `assets/font/NotoSans-ipa-subset.woff2` | P.11 の発音記号3文字（Noto Sans JP に収録がないため） | [Noto Sans](https://fonts.google.com/noto/specimen/Noto+Sans)（全文は `assets/font/OFL-NotoSans.txt`） | SIL Open Font License 1.1 |
 | `assets/font/NotoSansKR-hangul-subset.woff2` | 「안녕하세요」の5文字（同上） | [Noto Sans KR](https://fonts.google.com/noto/specimen/Noto+Sans+KR)（全文は `assets/font/OFL-NotoSansKR.txt`） | SIL Open Font License 1.1 |
 | `assets/font/NotoSansMono-subset.woff2` | コード面の等幅書体。Noto Sans Mono（コードで使う文字にサブセット） | [Noto Sans Mono](https://fonts.google.com/noto/specimen/Noto+Sans+Mono)（全文は `assets/font/OFL-NotoSansMono.txt`） | SIL Open Font License 1.1 |
+
+## Webサイトのアイコン / Website icon
+
+`assets/favicon.svg`・`assets/favicon.ico` は [PyCon JP 2026 公式サイト](https://2026.pycon.jp/ja)の favicon を変更せずに収録したものです。本基調講演の Web ページを識別するために使用しています。ロゴの作者：[Daksh Jain](https://daksh.design/)。PyCon JP 2026 による提供。ライセンス：[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。出典：[公式ロゴ紹介・利用条件](https://2026.pycon.jp/ja/logo)・[SVG](https://2026.pycon.jp/icon.svg)・[ICO](https://2026.pycon.jp/favicon.ico)。
+
+The website favicon is copied unchanged from the PyCon JP 2026 official website to identify these keynote pages. Logo by Daksh Jain, provided by PyCon JP 2026 under CC BY 4.0; see the linked source and license above.

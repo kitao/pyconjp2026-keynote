@@ -28,6 +28,15 @@ export function relocate(html, url) {
   return html.replaceAll('https://kitao.github.io/pyconjp2026-keynote/', url.href);
 }
 
+function addFavicon(html, base) {
+  return html.replace(
+    '</head>',
+    `<link rel="icon" href="${base}assets/favicon.ico" sizes="48x48">` +
+      `<link rel="icon" href="${base}assets/favicon.svg" type="image/svg+xml" sizes="any">` +
+      '</head>',
+  );
+}
+
 // Only referenced presentation assets and their font licenses enter the public build.
 export function assetPaths(html, base = '') {
   const paths = new Set();
@@ -81,7 +90,7 @@ export async function buildSite() {
     ]);
     run(process.env.PYTHON || 'python3', ['tools/slides/hl.py', htmlPath]);
     const keys = await readFile(join(root, 'tools/slides/keys.js'), 'utf8');
-    let html = relocate(await readFile(htmlPath, 'utf8'), url);
+    let html = addFavicon(relocate(await readFile(htmlPath, 'utf8'), url), base);
     html = html.replace('</body>', `<script>\n${keys}</script></body>`);
     html = html.replace(
       '</head>',
@@ -92,7 +101,7 @@ export async function buildSite() {
         `<link rel="alternate" type="application/pdf" href="${base}pyconjp2026-keynote.pdf">` +
         '</head>',
     );
-    const assets = assetPaths(html);
+    const assets = assetPaths(html, base);
     // The viewer lives under slides/; presentation media stay at the site root.
     html = html
       .replace(
@@ -126,19 +135,22 @@ export async function buildSite() {
     const demo = await readFile(demoPath, 'utf8');
     await writeFile(
       demoPath,
-      '<!doctype html>\n<html lang="ja"><head><meta charset="utf-8">' +
-        '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-        '<title>Pyxel Web Demo — PyCon JP 2026</title></head><body>\n' +
-        demo +
-        '\n</body></html>\n',
+      addFavicon(
+        '<!doctype html>\n<html lang="ja"><head><meta charset="utf-8">' +
+          '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+          '<title>Pyxel Web Demo — PyCon JP 2026</title></head><body>\n' +
+          demo +
+          '\n</body></html>\n',
+        base,
+      ),
     );
     for (const [template, output] of [
       ['404.html', '404.html'],
       ['trailer.html', 'trailer/index.html'],
       ['trailer-app.html', 'trailer/app/index.html'],
     ]) {
-      const text = (await readFile(join(root, 'src', template), 'utf8')).replaceAll(
-        '{{BASE}}',
+      const text = addFavicon(
+        (await readFile(join(root, 'src', template), 'utf8')).replaceAll('{{BASE}}', base),
         base,
       );
       await mkdir(dirname(join(site, output)), { recursive: true });
@@ -162,9 +174,12 @@ export async function buildSite() {
         `${base}trailer/`,
       )
       .replaceAll('（現在の公開版）', '');
-    const home = (await readFile(join(root, 'src/index.html'), 'utf8'))
-      .replaceAll('{{HOME_URL}}', url.href)
-      .replace('{{README}}', content);
+    const home = addFavicon(
+      (await readFile(join(root, 'src/index.html'), 'utf8'))
+        .replaceAll('{{HOME_URL}}', url.href)
+        .replace('{{README}}', content),
+      base,
+    );
     await writeFile(join(site, 'index.html'), home);
     await writeFile(
       join(stage, '_headers'),
