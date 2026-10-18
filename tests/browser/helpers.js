@@ -51,4 +51,22 @@ export async function expectToPlay(video) {
       }),
   );
   expect(outcome).toBe('playing');
+  for (const fraction of [0.75, 0.25]) {
+    const target = await video.evaluate((element, fraction) => {
+      const target = element.duration * fraction;
+      element.currentTime = target;
+      return target;
+    }, fraction);
+    await expect
+      .poll(() =>
+        video.evaluate(
+          (element, target) =>
+            !element.seeking &&
+            element.readyState >= 2 &&
+            Math.abs(element.currentTime - target) < 0.1,
+          target,
+        ),
+      )
+      .toBe(true);
+  }
 }

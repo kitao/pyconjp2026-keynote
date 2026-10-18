@@ -97,10 +97,7 @@ test('a demo link on a slide opens with a tap', async ({ page }) => {
   await popup.close();
 });
 
-test('slide and trailer videos fit the phone and, in Chromium, decode', async ({
-  page,
-  browserName,
-}) => {
+test('slide and trailer videos fit the phone, decode and seek', async ({ page }) => {
   for (const [path, selector] of [
     [slides + '#27', active + ' video'],
     [base + 'trailer/', 'video'],
@@ -109,9 +106,7 @@ test('slide and trailer videos fit the phone and, in Chromium, decode', async ({
     const video = page.locator(selector).first();
     await expect(video).toBeVisible();
     await expectNoSideScroll(page);
-    // A known limitation: WebKit plays a video only from a server that answers range
-    // requests, which Workers Static Assets do not, so playback is checked in Chromium only.
-    if (browserName !== 'webkit') await expectToPlay(video);
+    await expectToPlay(video);
   }
 });
 

@@ -5,7 +5,12 @@
   "workers_dev": false,
   "preview_urls": false,
   "routes": [{ "pattern": "kitao.dev/pyconjp2026-keynote*", "zone_name": "kitao.dev" }],
-  "assets": { "directory": "./dist" },
+  "main": "src/worker.js",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/pyconjp2026-keynote/*.mp4"],
+  },
   "build": {
     "command": "node scripts/build.js && node scripts/check.js",
     // Everything the build reads; dist/ itself must stay out, or each build would start another.

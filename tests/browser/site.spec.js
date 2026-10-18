@@ -305,7 +305,7 @@ test('the PDF, licenses, trailer app and browser demo are served with fitting he
   expect(await demo.text()).toContain('<pyxel-run');
 });
 
-test('every slide video and the trailer decode and play', async ({ page }) => {
+test('every slide video and the trailer decode, play and seek', async ({ page }) => {
   await page.goto(slides);
   const numbers = await page
     .locator('section:has(video)')
