@@ -1,16 +1,29 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "pyconjp2026-keynote",
-  "compatibility_date": "2026-10-13",
+  "compatibility_date": "2026-10-06",
   "workers_dev": false,
   "preview_urls": false,
-  "routes": [
-    { "pattern": "kitao.dev/pyconjp2026-keynote*", "zone_name": "kitao.dev" },
-    { "pattern": "kitao.dev/pyconjp2026-keynote/*", "zone_name": "kitao.dev" }
-  ],
-  "assets": {
-    "directory": "./dist",
-    "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
-  }
+  "routes": [{ "pattern": "kitao.dev/pyconjp2026-keynote*", "zone_name": "kitao.dev" }],
+  "assets": { "directory": "./dist" },
+  "build": {
+    "command": "node scripts/build.js && node scripts/check.js",
+    // Everything the build reads; dist/ itself must stay out, or each build would start another.
+    "watch_dir": [
+      "package.json",
+      "README.md",
+      "CREDITS.md",
+      "LICENSE",
+      "slides.md",
+      "theme",
+      "assets",
+      "pyconjp2026-keynote.pdf",
+      "demo/web/pyxel-run.html",
+      "tools/slides/hl.py",
+      "tools/slides/keys.js",
+      "trailer",
+      "src",
+      "scripts",
+    ],
+  },
 }

@@ -77,15 +77,17 @@ Third-party materials included in this repository, used for citation in the talk
 
 ## 発表者に帰属するもの / Materials by the speaker
 
-上記以外の画像・ドット絵・GIF・動画、`slides.md`、`theme/pyxel.css`、`tools/`、`demo/`、`trailer/` は北尾崇に帰属します。
+上記以外の画像・ドット絵・GIF・動画、`slides.md`、`theme/pyxel.css`、`index.html`、`tools/`、`demo/`、`trailer/`、`scripts/`、`src/`、`tests/` は北尾 崇に帰属します。
 Pyxel 本体は MIT ライセンスです → https://github.com/kitao/pyxel
 
 **利用条件は [LICENSE](LICENSE) を参照してください。**
-`demo/`（スライドに登場するゲームの実物）・`tools/`・`trailer/`（トレーラー）は **MIT ライセンス**なので、自由に使えます。
-発表資料そのもの（`slides.md`・`theme/`・`assets/`・PDF）は著作権を保持しています。
+`demo/`（スライドに登場するゲームの実物）・`tools/`・`trailer/`（トレーラー。同梱フォントを除く）・`scripts/`・`src/`・`tests/`（Web 公開のスクリプト・ページ・テスト）は **MIT ライセンス**なので、自由に使えます。
+発表資料そのもの（`slides.md`・`theme/`・`assets/`・`index.html`・PDF）は著作権を保持しています。
 
-See [LICENSE](LICENSE) for terms. `demo/` (the actual game shown in the talk), `tools/`, and
-`trailer/` are **MIT licensed**. The presentation materials themselves are all rights reserved.
+See [LICENSE](LICENSE) for terms. `demo/` (the actual game shown in the talk), `tools/`,
+`trailer/` (except its bundled fonts), `scripts/`, `src/`, and `tests/` are **MIT licensed**. The
+presentation materials themselves (`slides.md`, `theme/`, `assets/`, `index.html`, and the PDF)
+are all rights reserved.
 
 ---
 

@@ -1,0 +1,9 @@
+# Prettier already skips everything in .gitignore.
+# The presentation and credit tables as delivered: slides, theme, the archived HTML and the browser demo it links to,
+# and the tools that made, captured and checked it, kept as they were used for the talk.
+/CREDITS.md
+/index.html
+/slides.md
+/theme/
+/demo/web/pyxel-run.html
+/tools/

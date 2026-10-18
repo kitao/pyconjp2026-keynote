@@ -3,116 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="{{TALK}}のスライドと資料。北尾 崇 / Takashi Kitao" />
+    <meta property="og:title" content="PyCon JP 2026 Keynote" />
     <meta
-      name="description"
-      content="PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！──「楽しく作る」をデザインする』のスライドと資料。北尾 崇 / Takashi Kitao"
+      property="og:description"
+      content="Slides and materials for Takashi Kitao’s PyCon JP 2026 keynote, “Let’s Play Programming with Pyxel! — Designing the Fun of Making”."
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{URL}}" />
+    <meta property="og:image" content="{{URL}}trailer/poster.jpg" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="720" />
+    <meta property="og:image:alt" content="The talk title over a pixel-art night sea" />
+    <meta name="twitter:card" content="summary_large_image" />
     <title>PyCon JP 2026 Keynote</title>
-    <link rel="canonical" href="{{HOME_URL}}" />
-    <link rel="stylesheet" href="https://kitao.dev/assets/fonts/noto-sans-jp.css" />
-    <style>
-      :root {
-        color-scheme: dark;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        background: #0d1117;
-        color: #f0f6fc;
-        font:
-          16px/1.75 'Noto Sans JP',
-          sans-serif;
-        font-synthesis: none;
-        overflow-wrap: break-word;
-      }
-      main {
-        max-width: 848px;
-        margin: 0 auto;
-        padding: 48px 24px 64px;
-      }
-      h1 {
-        margin: 0 0 24px;
-        padding-bottom: 16px;
-        border-bottom: 1px solid #3d444d;
-        font-size: clamp(1.65rem, 4vw, 2.1rem);
-        line-height: 1.35;
-        word-break: keep-all;
-        overflow-wrap: normal;
-      }
-      h2 {
-        margin: 40px 0 16px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #3d444d;
-        font-size: 1.3rem;
-        line-height: 1.45;
-        word-break: keep-all;
-        overflow-wrap: normal;
-      }
-      p {
-        margin: 0 0 16px;
-      }
-      .support-badges {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        margin: 0 0 32px;
-      }
-      .support-badges a {
-        display: inline-flex;
-        max-width: 100%;
-      }
-      .support-badges img {
-        display: block;
-        width: auto;
-        height: 20px;
-        object-fit: contain;
-        max-width: 100%;
-      }
-      ul {
-        margin: 24px 0 32px;
-        padding-left: 24px;
-      }
-      li {
-        margin: 12px 0;
-      }
-      a {
-        color: #4493f8;
-        text-underline-offset: 0.2em;
-      }
-      a:hover {
-        color: #79b8ff;
-      }
-      a:focus-visible {
-        outline: 2px solid #79b8ff;
-        outline-offset: 4px;
-      }
-      code {
-        color: #dce7f5;
-        font-family: inherit;
-        font-size: 0.875em;
-      }
-      a code {
-        color: inherit;
-      }
-      @media (max-width: 880px) {
-        .support-badges {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          justify-items: center;
-          max-width: 400px;
-          margin-inline: auto;
-        }
-      }
-      @media (max-width: 480px) {
-        main {
-          padding: 28px 20px 48px;
-        }
-      }
-    </style>
+    <link rel="canonical" href="{{URL}}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300..700&amp;display=swap"
+    />
+    <link rel="stylesheet" href="{{BASE}}style.css" />
   </head>
   <body>
     <main>{{README}}</main>

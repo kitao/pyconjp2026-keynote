@@ -1,0 +1,50 @@
+# Every response gets the two headers shared by the kitao.dev sites, and a policy that allows
+# only this site's files, Google Fonts, the badges, and the analytics script Cloudflare adds.
+/pyconjp2026-keynote*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src 'none'; script-src https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://img.shields.io https://ko-fi.com; media-src 'self'; connect-src 'self' https://cloudflareinsights.com; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+
+# The presentation as it was given: the slides run inline code, and the demo and the trailer
+# app load the Pyxel runtime from kitao.dev, which loads Pyodide.
+/pyconjp2026-keynote/slides/
+  ! Content-Security-Policy
+
+/pyconjp2026-keynote/demo/web/pyxel-run
+  ! Content-Security-Policy
+
+/pyconjp2026-keynote/trailer/app/
+  ! Content-Security-Policy
+
+# Browsers display images, text, and the PDF opened on their own with inline styles.
+/pyconjp2026-keynote*.png
+  ! Content-Security-Policy
+
+/pyconjp2026-keynote*.jpg
+  ! Content-Security-Policy
+
+/pyconjp2026-keynote*.gif
+  ! Content-Security-Policy
+
+/pyconjp2026-keynote*.ico
+  ! Content-Security-Policy
+
+/pyconjp2026-keynote*.pdf
+  ! Content-Security-Policy
+
+/pyconjp2026-keynote*.md
+  ! Content-Security-Policy
+
+/pyconjp2026-keynote*.txt
+  ! Content-Security-Policy
+
+# LICENSE is text as well. Without an extension it would be served with no type and its
+# Japanese misread. Both go in one rule, since a second rule for a path replaces the first.
+/pyconjp2026-keynote/LICENSE
+  ! Content-Security-Policy
+  Content-Type: text/plain; charset=utf-8
+
+# The packaged trailer app is a ZIP archive; its extension is unknown to Cloudflare, which
+# would send no type, so browsers would show it as text.
+/pyconjp2026-keynote/trailer/trailer.pyxapp
+  Content-Type: application/zip

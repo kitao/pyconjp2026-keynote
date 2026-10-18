@@ -1,6 +1,7 @@
 {
   "name": "pyconjp2026-keynote",
   "private": true,
+  "license": "SEE LICENSE IN LICENSE",
   "type": "module",
   "description": "Slides and materials for Takashi Kitao's PyCon JP 2026 keynote",
   "homepage": "https://kitao.dev/pyconjp2026-keynote/",
@@ -9,20 +10,22 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "dev": "npm run build && npm run preview",
-    "preview": "node scripts/cloudflare.js dev --local --ip 127.0.0.1 --port 4173",
-    "check": "npm run format:check && npm test && npm run build && node scripts/check.js",
-    "test": "node --test tests/*.test.js && python3 -m unittest discover -s tests -p '*_test.py'",
+    "dev": "node scripts/wrangler.mjs dev --port 4173",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "test": "node --test tests/*.test.js tests/*.test.mjs && python3 -B -m unittest discover -s tests",
     "test:browser": "playwright test",
-    "format": "prettier scripts tests src package.json wrangler.jsonc playwright.config.js .github/workflows/check.yml README.md DEVELOPMENT.md --write",
-    "format:check": "prettier scripts tests src package.json wrangler.jsonc playwright.config.js .github/workflows/check.yml README.md DEVELOPMENT.md --check",
-    "predeploy": "npm run check && npm run test:browser",
-    "deploy": "node scripts/cloudflare.js deploy --strict",
-    "deploy:check": "npm run check && node scripts/cloudflare.js deploy --dry-run"
+    "check": "npm run lint && npm run format:check && npm test && npm run test:browser",
+    "deploy:check": "npm run check && node scripts/wrangler.mjs deploy --dry-run",
+    "deploy": "npm run deploy:check && node scripts/wrangler.mjs deploy --strict"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@marp-team/marp-cli": "4.5.0",
     "@playwright/test": "1.63.0",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
     "marked": "18.1.1",
     "prettier": "3.9.9",
     "puppeteer-core": "25.14.0",
@@ -35,14 +38,6 @@
   },
   "prettier": {
     "singleQuote": true,
-    "printWidth": 100,
-    "overrides": [
-      {
-        "files": "wrangler.jsonc",
-        "options": {
-          "parser": "json"
-        }
-      }
-    ]
+    "printWidth": 100
   }
 }

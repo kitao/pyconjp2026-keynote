@@ -1,0 +1,10 @@
+* text=auto eol=lf
+# Keep the presentation media byte for byte as delivered (one SVG uses CRLF).
+assets/** -text
+# Binary files outside assets/
+*.pdf binary
+*.png binary
+*.jpg binary
+*.mp4 binary
+*.pyxapp binary
+*.pyxres binary

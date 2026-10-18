@@ -9,19 +9,19 @@ npm ci
 npm run dev
 ```
 
-Open <http://127.0.0.1:4173/pyconjp2026-keynote/> for the material overview, then choose Slides to open `/slides/`. The preview uses Cloudflare's local runtime, including redirects, headers, 404s, and video playback.
+Open <http://127.0.0.1:4173/pyconjp2026-keynote/> for the material overview, then choose Slides to open `/slides/`. The preview uses Cloudflare's local runtime, including redirects, headers, 404s, and video playback. Stop it before running the checks or a deploy, which rebuild the same `dist/`.
 
-上記の URL で README に基づいた資料のトップページを確認できます。スライドは `/slides/` に置いています。プレビューは Cloudflare のローカル環境で動き、リダイレクト・ヘッダー・404・動画再生も確認できます。
+上記の URL で README に基づいた資料のトップページを確認できます。スライドは `/slides/` に置いています。プレビューは Cloudflare のローカル環境で動き、リダイレクト・ヘッダー・404・動画再生も確認できます。検査や公開も同じ `dist/` を作り直すため、その前に `npm run dev` を止めてください。
 
 ```sh
-npm run check          # Formatting, tests, build, and public-file checks
-npm run test:browser   # Chrome: slides, links, PDF, video, and phone-width layout
+npm run check          # Formatting, tests, build, public-file checks, and browser tests
+npm run test:browser   # Chrome and WebKit: slides, links, PDF, video, and phone layouts
 npm run deploy:check   # Validate the Cloudflare configuration without publishing
 ```
 
-Browser tests use installed Google Chrome. To use Playwright's Chromium instead, run `npx playwright install chromium` and set `KEYNOTE_BROWSER_CHANNEL=chromium`.
+Browser tests use installed Google Chrome, and Playwright's WebKit (`npx playwright install webkit`) for the iPhone emulation. To use Playwright's Chromium instead, run `npx playwright install chromium` and set `KEYNOTE_BROWSER_CHANNEL=chromium`.
 
-ブラウザ検査はインストール済みの Google Chrome を使います。Playwright の Chromium を使う場合は `npx playwright install chromium` で準備し、`KEYNOTE_BROWSER_CHANNEL=chromium` を指定してください。
+ブラウザ検査はインストール済みの Google Chrome を使い、iPhone のエミュレーションには Playwright の WebKit（`npx playwright install webkit`）を使います。Playwright の Chromium を使う場合は `npx playwright install chromium` で準備し、`KEYNOTE_BROWSER_CHANNEL=chromium` を指定してください。
 
 Browser tests start their own server on port 4174, separate from the preview on 4173. Set `KEYNOTE_BROWSER_PORT` if that test port is occupied.
 
@@ -57,9 +57,9 @@ After approving the target and built content, publish locally with:
 npm run deploy
 ```
 
-The command runs checks and browser tests before deploying. It forces Cloudflare OAuth's OS-keychain-backed storage and refuses API token/key environment variables. If authentication is needed, use `node scripts/cloudflare.js login --use-keyring`; an unavailable keychain stops the operation instead of falling back to plaintext. CI only builds and checks; it does not deploy or require Cloudflare credentials.
+The command runs checks and browser tests before deploying. It forces Cloudflare OAuth's OS-keychain-backed storage and refuses API token/key environment variables. An unavailable keychain stops the operation instead of falling back to plaintext. CI only builds and checks; it does not deploy or require Cloudflare credentials.
 
-公開コマンドは検査とブラウザ確認を実行してからデプロイします。Cloudflare OAuth のキーチェーンを使う保存方式を必須とし、API トークン・キーの環境変数は拒否します。認証が必要な場合は `node scripts/cloudflare.js login --use-keyring` を使います。キーチェーンを利用できなければ停止し、平文保存へ切り替えません。CI はビルドと検査のみで、Cloudflare の認証情報を必要としません。
+公開コマンドは検査とブラウザ確認を実行してからデプロイします。Cloudflare OAuth のキーチェーンを使う保存方式を必須とし、API トークン・キーの環境変数は拒否します。キーチェーンを利用できなければ停止し、平文保存へ切り替えません。CI はビルドと検査のみで、Cloudflare の認証情報を必要としません。
 
 After each deployment, verify the live top page, slides, PDF, demo, trailer, redirects, 404s, and video range responses. The local runtime returns a full response for video range requests; partial transfers require a live check. Existing QR codes and the archived PDF link to GitHub Pages, so retain that distribution path for previously shared materials.
 

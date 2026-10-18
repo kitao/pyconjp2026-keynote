@@ -20,9 +20,8 @@ jobs:
         with:
           python-version: '3.12'
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium webkit
       - run: npm run check
-      - run: npm run test:browser
         env:
           KEYNOTE_BROWSER_CHANNEL: chromium
       - uses: actions/upload-artifact@v7

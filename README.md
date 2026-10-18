@@ -1,6 +1,6 @@
 # PyCon JP 2026 Keynote / 基調講演
 
-<p class="support-badges" align="center">
+<p class="support-badges">
   <a href="https://github.com/kitao/pyconjp2026-keynote"><img src="https://img.shields.io/github/stars/kitao/pyconjp2026-keynote?style=social" alt="GitHub stars" height="20" loading="lazy" decoding="async"></a>
   <a href="https://github.com/sponsors/kitao"><img src="https://img.shields.io/github/sponsors/kitao?label=Sponsor%20me&amp;logo=github%20sponsors&amp;style=social" alt="GitHub Sponsors" height="20" loading="lazy" decoding="async"></a>
   <a href="https://www.patreon.com/tkitao"><img src="https://img.shields.io/badge/Support%20me%20on%20Patreon-000000?style=social&amp;logo=patreon" alt="Patreon" height="20" loading="lazy" decoding="async"></a>
@@ -19,6 +19,6 @@ PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！─�
 
 ## Credits and license / 権利とライセンス
 
-Includes **images owned by third parties**, used for citation. Reuse follows each rights holder's terms — see [`CREDITS.md`](CREDITS.md). `demo/`, `tools/`, `trailer/`, `scripts/`, `src/`, and `tests/` are MIT licensed; the presentation materials are all rights reserved. See [`LICENSE`](LICENSE).
+Includes **images and videos owned by third parties**, used for citation. Reuse follows each rights holder's terms — see [`CREDITS.md`](CREDITS.md). `demo/`, `tools/`, `trailer/` (except its bundled fonts), `scripts/`, `src/`, and `tests/` are MIT licensed; the presentation materials are all rights reserved. See [`LICENSE`](LICENSE).
 
-第三者が権利を持つ画像を含みます。再利用は各権利者の条件に従ってください。一覧は [`CREDITS.md`](CREDITS.md) にあります。`demo/`・`tools/`・`trailer/`・`scripts/`・`src/`・`tests/` は MIT ライセンス、発表資料そのものは著作権を保持しています。
+第三者が権利を持つ画像・動画を含みます。再利用は各権利者の条件に従ってください。一覧は [`CREDITS.md`](CREDITS.md) にあります。`demo/`・`tools/`・`trailer/`（同梱フォントを除く）・`scripts/`・`src/`・`tests/` は MIT ライセンス、発表資料そのものは著作権を保持しています。
