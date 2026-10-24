@@ -2,7 +2,7 @@
 
 ## Build and preview / ビルドと確認
 
-Node.js 24+ and Python 3.9+ are required. / Node.js 24 以降と Python 3.9 以降が必要です。
+Node.js 24+ and Python 3.11+ are required. / Node.js 24 以降と Python 3.11 以降が必要です。
 
 ```sh
 npm ci
@@ -13,8 +13,15 @@ Open <http://127.0.0.1:4173/pyconjp2026-keynote/> for the material overview, the
 
 上記の URL で README に基づいた資料のトップページを確認できます。スライドは `/slides/` に置いています。プレビューは Cloudflare のローカル環境で動き、リダイレクト・ヘッダー・404・動画再生も確認できます。検査や公開も同じ `dist/` を作り直すため、その前に `npm run dev` を止めてください。
 
+Create and activate a Python environment, then install the pinned lint tool before running checks:
+
+検査の前に Python の仮想環境を作成・有効化し、固定バージョンの静的検査ツールを入れます。
+
 ```sh
-npm run check          # Formatting, tests, build, public-file checks, and browser tests
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -r requirements-dev.txt
+npm run check          # JS/Python lint, formatting, tests, build, and browser tests
 npm run test:browser   # Chrome and WebKit: slides, links, PDF, video, and phone layouts
 npm run deploy:check   # Validate the Cloudflare configuration without publishing
 ```
@@ -61,6 +68,6 @@ The command runs checks and browser tests before deploying. It forces Cloudflare
 
 公開コマンドは検査とブラウザ確認を実行してからデプロイします。Cloudflare OAuth のキーチェーンを使う保存方式を必須とし、API トークン・キーの環境変数は拒否します。キーチェーンを利用できなければ停止し、平文保存へ切り替えません。CI はビルドと検査のみで、Cloudflare の認証情報を必要としません。
 
-After each deployment, verify the live top page, slides, PDF, demo, trailer, redirects, 404s, and video range responses. The local runtime returns a full response for video range requests; partial transfers require a live check. Existing QR codes and the archived PDF link to GitHub Pages, so retain that distribution path for previously shared materials.
+After each deployment, verify the live top page, slides, PDF, demo, trailer, redirects, 404s, and video range responses. Local checks exercise the Worker's partial video responses and seeking; verify those again on the deployed site. Existing QR codes and the archived PDF link to GitHub Pages, so retain that distribution path for previously shared materials.
 
-公開後は実際のトップページ・スライド・PDF・デモ・トレーラー・リダイレクト・404・動画の部分配信を確認します。ローカル環境は動画の Range 要求に全体を返すため、部分配信は公開後に確認が必要です。既存の QR コードと配布 PDF は GitHub Pages を参照しているため、配布済み資料のリンク先を維持してください。
+公開後は実際のトップページ・スライド・PDF・デモ・トレーラー・リダイレクト・404・動画の部分配信を確認します。ローカル検査では Worker による動画の部分配信とシークを検証し、公開後も実際の配信先で再確認します。既存の QR コードと配布 PDF は GitHub Pages を参照しているため、配布済み資料のリンク先を維持してください。

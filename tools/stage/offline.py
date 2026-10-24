@@ -15,7 +15,9 @@ left alone, so the URL page 37 puts on screen still says github.io.
 --fetch puts the third-party files under .offline/, which is not tracked: they
 belong to other projects, and this repo carries the talk rather than a copy of
 their releases. The Pyxel side is not copied at all — it is read from ../pyxel
-and ../pyxel-user-examples (override with PYXEL_DIR / PYXEL_EXAMPLES_DIR).
+and the generated gallery at ../pyxel-user-examples/dist/pyxel/user-examples
+(override with PYXEL_DIR / PYXEL_EXAMPLES_DIR). Build the gallery with its
+scripts/build_pages first; PYXEL_EXAMPLES_DIR is the directory with index.html.
 
 MML Studio draws its QR code with api.qrserver.com, and the closing line of
 that demo points at it. --fetch unpacks the segno wheel into .offline/ and this
@@ -38,7 +40,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 PYXEL = Path(os.environ.get("PYXEL_DIR") or ROOT.parent / "pyxel")
-EXAMPLES = Path(os.environ.get("PYXEL_EXAMPLES_DIR") or ROOT.parent / "pyxel-user-examples")
+EXAMPLES = Path(os.environ.get("PYXEL_EXAMPLES_DIR") or
+                ROOT.parent / "pyxel-user-examples/dist/pyxel/user-examples")
 CACHE = ROOT / ".offline"
 PYPI = CACHE / "pypi"
 # --fetch unpacks segno here rather than installing it, so this is where the
@@ -50,6 +53,8 @@ PORT = int(os.environ.get("PORT") or 8080)
 # this server is the only thing listening. Order matters: longest prefix first.
 REWRITES = (
     ("https://kitao.dev/pyconjp2026-keynote/", "/"),
+    ("https://kitao.dev/pyxel/user-examples/", "/pyxel-user-examples/"),
+    ("https://kitao.dev/pyxel/assets/images/", "/pyxel/docs/images/"),
     ("https://kitao.dev/pyxel/", "/pyxel/web/"),
     ("https://kitao.github.io/pyconjp2026-keynote/", "/"),
     ("https://kitao.github.io/pyxel-user-examples/", "/pyxel-user-examples/"),
@@ -131,6 +136,9 @@ SCRIPT_BLOCK = re.compile(r"(<script\b[^>]*>)(.*?)(</script\s*>)", re.S | re.I)
 
 
 def swap(text):
+    # The generated gallery uses root-relative links for the Pyxel home and icon.
+    if text == "/pyxel/" or text.startswith("/pyxel/assets/images/"):
+        text = "https://kitao.dev" + text
     # Offline demos intentionally use the working copy, just like /gh/ refs.
     text = re.sub(r"https://kitao\.dev/pyxel/\d+\.\d+\.\d+/", "/pyxel/wasm/", text)
     for url, path in REWRITES:
@@ -282,7 +290,7 @@ def wanted_urls():
             if path.suffix.lower() not in TEXT_SUFFIXES or not path.is_file():
                 continue
             if any(p in (".git", "node_modules", "target", "dist", ".offline")
-                   for p in path.parts):
+                   for p in path.relative_to(root).parts):
                 continue
             try:
                 text = path.read_text(encoding="utf-8")
@@ -338,6 +346,10 @@ def serve():
     if missing:
         raise SystemExit("missing: %s\nrun --fetch first, or set PYXEL_DIR / "
                          "PYXEL_EXAMPLES_DIR" % ", ".join(missing))
+    if not (EXAMPLES / "index.html").is_file():
+        raise SystemExit("missing gallery index.html: %s\nbuild the gallery first, "
+                         "or set PYXEL_EXAMPLES_DIR to its generated site directory"
+                         % EXAMPLES)
     # Bind before opening anything: if the port is taken, the old server is
     # still answering and a browser window would hide that this one never ran.
     try:

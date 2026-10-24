@@ -1,9 +1,9 @@
 # Lint settings for the demo, trailer and tests; CI runs `ruff check`. The production
 # tools in tools/ are kept as they were used for the talk.
 extend-exclude = ["tools"]
-# The oldest Python the build, tests and production tools support, as in CI.
+# The oldest Python supported by the demo, trailer and production tools.
 target-version = "py311"
-# The release CI installs; any other release stops with an error instead of linting
+# The release in requirements-dev.txt; other releases stop instead of linting
 # under different rules.
 required-version = "==0.16.10"
 

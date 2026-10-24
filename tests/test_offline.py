@@ -50,6 +50,21 @@ class OfflineTests(unittest.TestCase):
         text = '<a href="https://kitao.dev/pyxel/code-maker/">https://kitao.dev/pyxel/</a>'
         self.assertEqual(offline.rewrite(text, True), '<a href="/pyxel/web/code-maker/">https://kitao.dev/pyxel/</a>')
         self.assertEqual(offline.swap('https://kitao.dev/pyxel/2.9.9/pyxel.js'), '/pyxel/wasm/pyxel.js')
+        gallery = 'https://kitao.dev/pyxel/user-examples/'
+        self.assertIn(gallery, (ROOT / 'slides.md').read_text(encoding='utf-8'))
+        self.assertEqual(offline.rewrite(f'<a href="{gallery}">{gallery}</a>', True),
+                         f'<a href="/pyxel-user-examples/">{gallery}</a>')
+        self.assertEqual(offline.swap('/pyxel/'), '/pyxel/web/')
+        self.assertEqual(offline.swap('/pyxel/assets/images/pyxel_icon_64x64.png'),
+                         '/pyxel/docs/images/pyxel_icon_64x64.png')
+
+    def test_cdn_urls_are_collected_from_a_generated_gallery(self):
+        gallery = self.root / 'dist/pyxel/user-examples'
+        gallery.mkdir(parents=True)
+        url = 'https://cdn.jsdelivr.net/npm/example/main.js'
+        (gallery / 'index.html').write_text(f'<script src="{url}"></script>')
+        with patch.object(offline, 'EXAMPLES', gallery):
+            self.assertIn(url, offline.wanted_urls())
 
     def test_error_logs_do_not_include_query_values(self):
         output = io.StringIO()
@@ -62,6 +77,11 @@ class OfflineTests(unittest.TestCase):
         directory = self.root / "app"
         directory.mkdir()
         (directory / "index.html").write_text("offline app")
+        gallery = self.root / "examples"
+        (gallery / "page/2").mkdir(parents=True)
+        for name, body in {"index.html": "gallery", "styles.css": "body {}",
+                           "page/2/index.html": "next page"}.items():
+            (gallery / name).write_text(body)
 
         class QuietHandler(offline.Handler):
             def log_message(self, *_):
@@ -81,6 +101,15 @@ class OfflineTests(unittest.TestCase):
                 response = connection.getresponse()
                 self.assertEqual(response.status, 404)
                 response.read()
+                for url in ['https://kitao.dev/pyxel/user-examples/',
+                            'https://kitao.github.io/pyxel-user-examples/']:
+                    for suffix, body in [('', b'gallery'), ('styles.css', b'body {}'),
+                                         ('page/2/', b'next page')]:
+                        with self.subTest(url=url, suffix=suffix):
+                            connection.request('GET', offline.swap(url) + suffix)
+                            response = connection.getresponse()
+                            self.assertEqual(response.status, 200)
+                            self.assertEqual(response.read(), body)
                 connection.close()
             finally:
                 server.shutdown()

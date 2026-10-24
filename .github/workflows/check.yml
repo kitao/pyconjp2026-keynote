@@ -20,6 +20,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: npm ci
+      - run: python3 -m pip install -r requirements-dev.txt
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run check
         env:

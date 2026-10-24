@@ -6,7 +6,10 @@ if (!Number.isInteger(port) || port < 1 || port > 65535)
   throw new Error('KEYNOTE_BROWSER_PORT must be an integer from 1 to 65535.');
 const baseURL = `http://127.0.0.1:${port}`;
 // A fake audio output keeps video playback independent of the machine's sound device.
-const chromium = { launchOptions: { args: ['--disable-audio-output'] } };
+const chromium = {
+  channel: process.env.KEYNOTE_BROWSER_CHANNEL ?? 'chrome',
+  launchOptions: { args: ['--disable-audio-output'] },
+};
 
 export default defineConfig({
   testDir: './tests/browser',
