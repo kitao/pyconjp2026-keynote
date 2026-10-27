@@ -255,7 +255,7 @@ test('the presentation pages, and images, text or the PDF opened alone, carry no
 });
 
 test('the share cards name a published image of the stated size', async ({ page }) => {
-  for (const path of ['', 'trailer/']) {
+  for (const path of ['', 'slides/', 'trailer/', 'trailer/app/']) {
     await page.goto(base + path);
     const meta = async (name) => {
       const tag = page.locator(`meta[property="${name}"], meta[name="${name}"]`);

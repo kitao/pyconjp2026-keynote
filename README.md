@@ -7,9 +7,9 @@
   <a href="https://ko-fi.com/H2H27VDKD"><img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Support me on Ko-fi" height="20" loading="lazy" decoding="async"></a>
 </p>
 
-Slides and materials for the PyCon JP 2026 keynote "Let’s Play Programming with Pyxel! — Designing the Fun of Making", given by [Takashi Kitao](https://x.com/kitao) on 22 August 2026 at the Hiroshima International Conference Center, Phoenix Hall.
+Slides and materials for the PyCon JP 2026 keynote "Let’s Play Programming with Pyxel! — Designing the Fun of Making", given by [Takashi Kitao](https://kitao.dev/) on 22 August 2026 at the Hiroshima International Conference Center, Phoenix Hall.
 
-PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！──「楽しく作る」をデザインする』（[北尾 崇](https://x.com/kitao)、2026年8月22日、広島国際会議場 フェニックスホール）の発表資料です。
+PyCon JP 2026 基調講演『Pyxelで、プログラミングを遊ぼう！──「楽しく作る」をデザインする』（[北尾 崇](https://kitao.dev/)、2026年8月22日、広島国際会議場 フェニックスホール）の発表資料です。
 
 - **[Pyxel](https://kitao.dev/pyxel/)** — Retro game engine for Python / Python向けレトロゲームエンジン
 - **[Slides / 講演スライド](https://kitao.dev/pyconjp2026-keynote/slides/)**

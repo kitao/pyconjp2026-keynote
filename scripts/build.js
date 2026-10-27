@@ -102,8 +102,11 @@ async function buildSlides(url, base, site) {
   run('python3', ['tools/slides/hl.py', htmlPath]);
   const keys = await readFile(join(root, 'tools/slides/keys.js'), 'utf8');
   const slidesURL = new URL('slides/', url);
-  // The head stays exactly as when the slides were first published on kitao.dev.
   const html = addFavicon(await readFile(htmlPath, 'utf8'), base)
+    .replace(
+      '<meta name="twitter:card" content="summary">',
+      '<meta name="twitter:card" content="summary_large_image">',
+    )
     // The slide links into this repository's GitHub Pages copy stay on the current host.
     .replaceAll('href="https://kitao.github.io/pyconjp2026-keynote/', `href="${base}`)
     .replace('</body>', () => `<script>\n${keys}</script></body>`)
@@ -112,7 +115,11 @@ async function buildSlides(url, base, site) {
       `<link rel="canonical" href="${slidesURL.href}">` +
         `<meta property="og:url" content="${slidesURL.href}">` +
         `<meta name="description" content="${talk}北尾 崇 / Takashi Kitao">` +
-        `<meta property="og:image" content="${url.href}assets/pyxel/logo.png">` +
+        `<meta property="og:description" content="${talk}北尾 崇 / Takashi Kitao">` +
+        `<meta property="og:image" content="${url.href}trailer/poster.jpg">` +
+        '<meta property="og:image:width" content="1280">' +
+        '<meta property="og:image:height" content="720">' +
+        '<meta property="og:image:alt" content="The talk title over a pixel-art night sea">' +
         `<link rel="alternate" type="application/pdf" href="${base}pyconjp2026-keynote.pdf">` +
         '</head>',
     )
